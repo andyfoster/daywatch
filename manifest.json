@@ -1,0 +1,9 @@
+{
+  "name": "Countdown Timers",
+  "version": "1.0",
+  "description": "A simple Chrome extension that lets users create and manage countdown timers on their new tab page.",
+  "manifest_version": 2,
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  }
+}
