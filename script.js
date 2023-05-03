@@ -16,6 +16,7 @@ let timers = [];
 // Load the timers from local storage if they exist
 if (localStorage.getItem('timers')) {
   timers = JSON.parse(localStorage.getItem('timers'));
+  sortTimers();
   renderTimers();
 }
 
@@ -40,6 +41,7 @@ function addTimer(eventName, eventDate) {
   };
 
   timers.push(timer);
+  sortTimers();
   localStorage.setItem('timers', JSON.stringify(timers));
   renderTimers();
 }
@@ -49,6 +51,18 @@ function removeTimer(index) {
   timers.splice(index, 1);
   localStorage.setItem('timers', JSON.stringify(timers));
   renderTimers();
+}
+
+// Edit a timer in the array and render the updated timers on the page
+function editTimer(index, eventName, eventDate) {
+  sortTimers();
+  localStorage.setItem('timers', JSON.stringify(timers));
+  renderTimers();
+}
+
+// Sort the timers by due date
+function sortTimers() {
+  timers.sort((a, b) => a.date - b.date);
 }
 
 // Render the timers on the page
@@ -65,17 +79,42 @@ function renderTimers() {
     const timerEl = document.createElement('div');
     timerEl.classList.add('timer');
 
-    // Create a header element for the timer name
-    const timerNameEl = document.createElement('h2');
-    timerNameEl.textContent = timer.name;
-    timerEl.appendChild(timerNameEl);
+    // Create a header element for the days remaining
+    const daysRemainingEl = document.createElement('h2');
+    daysRemainingEl.classList.add('days-remaining');
+    daysRemainingEl.textContent = `${daysRemaining}`;
+    timerEl.appendChild(daysRemainingEl);
 
-    // Create a paragraph element for the date and days remaining
-    const timerDateEl = document.createElement('p');
-    timerDateEl.textContent = `${new Date(
-      timer.date
-    ).toLocaleDateString()} (${daysRemaining} days remaining)`;
-    timerEl.appendChild(timerDateEl);
+    // Create a paragraph element for the due date and timer name
+    const daysLeftEl = document.createElement('p');
+    daysLeftEl.classList.add('event-name');
+    daysLeftEl.textContent = `${timer.name}`;
+    timerEl.appendChild(daysLeftEl);
+
+    // Create a paragraph element for the due date and timer name
+    const dueDateEl = document.createElement('p');
+    dueDateEl.classList.add('due-date');
+    dueDateEl.textContent = `(${new Date(timer.date).toLocaleDateString()})`;
+    timerEl.appendChild(dueDateEl);
+
+    // Create a button element to edit the timer
+    const editBtn = document.createElement('button');
+    editBtn.classList.add('edit-btn');
+    editBtn.textContent = 'Edit';
+    editBtn.addEventListener('click', () => {
+      showModal();
+      modalTitle.textContent = 'Edit Timer';
+      eventNameInput.value = timer.name;
+      eventDateInput.value = new Date(timer.date).toISOString().slice(0, 10);
+      const submitBtn = document.getElementById('submit-timer-btn');
+      submitBtn.textContent = 'Save Changes';
+      submitBtn.removeEventListener('click', addTimer);
+      submitBtn.addEventListener('click', () => {
+        editTimer(index, eventNameInput.value.trim(), eventDateInput.value);
+        hideModal();
+      });
+    });
+    timerEl.appendChild(editBtn);
 
     // Create a button element to remove the timer
     const removeBtn = document.createElement('button');
@@ -116,6 +155,7 @@ const style = document.createElement('style');
 style.textContent = `
 .container {
 text-align: center;
+display: inline-block;
 }
 
 .timer {
@@ -126,24 +166,55 @@ padding: 20px;
 margin: 10px;
 text-align: center;
 width: 300px;
+display: flex;
+flex-direction: column;
 }
 
+.event-name {
+font-size: 1.5rem;
+margin: 10;
+color: black;
+font-weight: bold;
+}
+
+.days-remaining {
+font-size: 4rem;
+margin: 0;
+padding: 0;
+font-weight: bold;
+}
+
+.due-date {
+font-size: 1rem;
+color: #999;
+margin: 0;
+padding: 0;
+}
+
+
+
+.edit-btn,
 .remove-btn {
-background-color: #f44336;
+background-color: transparent;
 border: none;
-color: white;
+color: #999;
 padding: 8px 16px;
 text-align: center;
 text-decoration: none;
-display: inline-block;
 font-size: 14px;
+display: inline-block;
 margin-top: 10px;
 cursor: pointer;
 border-radius: 4px;
+transition: color 0.2s;
+width: 40%;
 }
 
+
+
+.edit-btn:hover,
 .remove-btn:hover {
-background-color: #ff6659;
+color: #555;
 }
 
 .modal {
@@ -159,18 +230,38 @@ background-color: rgba(0,0,0,0.4);
 }
 
 .modal-content {
-background-color: #fefefe;
-margin: 15% auto;
-padding: 20px;
-border: 1px solid #888;
-width: 80%;
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 50%;
+  font-size: 2em;
+}
+
+.modal-content input {
+  font-size: 1em;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.modal-content button {
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin-top: 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
 }
 
 .close {
-color: #
-
-
-.aaaaaa;
+color: #aaaaaa;
 float: right;
 font-size: 28px;
 font-weight: bold;
