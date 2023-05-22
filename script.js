@@ -86,21 +86,24 @@ function renderTimers() {
     timerEl.appendChild(daysRemainingEl);
 
     // Create a paragraph element for the due date and timer name
-    const daysLeftEl = document.createElement('p');
-    daysLeftEl.classList.add('event-name');
-    daysLeftEl.textContent = `${timer.name}`;
-    timerEl.appendChild(daysLeftEl);
-
-    // Create a paragraph element for the due date and timer name
     const dueDateEl = document.createElement('p');
     dueDateEl.classList.add('due-date');
-    dueDateEl.textContent = `(${new Date(timer.date).toLocaleDateString()})`;
+    // add random color background
+    const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+    dueDateEl.style.color = `#${randomColor}`;
+    dueDateEl.textContent = `${timer.name}`;
     timerEl.appendChild(dueDateEl);
 
     // Create a button element to edit the timer
     const editBtn = document.createElement('button');
     editBtn.classList.add('edit-btn');
-    editBtn.textContent = 'Edit';
+    // output the date as a day of the week (e.g Mon) and date (e.g 01/01/2021)
+
+    // output timer.date as day of week and date
+    editBtn.textContent = `${new Date(timer.date).toLocaleDateString('en-NZ', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}`;
+
+    // editBtn.textContent = `Edit (${new Date(timer.date).getDay().} ${new Date(timer.date).toLocaleDateString()})`;
+    // editBtn.textContent = `Edit (${new Date(timer.date).toLocaleDateString()})`;
     editBtn.addEventListener('click', () => {
       showModal();
       modalTitle.textContent = 'Edit Timer';
@@ -119,7 +122,7 @@ function renderTimers() {
     // Create a button element to remove the timer
     const removeBtn = document.createElement('button');
     removeBtn.classList.add('remove-btn');
-    removeBtn.textContent = 'Remove';
+    removeBtn.textContent = 'x';
     removeBtn.addEventListener('click', () => {
       removeTimer(index);
     });
@@ -155,7 +158,6 @@ const style = document.createElement('style');
 style.textContent = `
 .container {
 text-align: center;
-display: inline-block;
 }
 
 .timer {
@@ -170,13 +172,6 @@ display: flex;
 flex-direction: column;
 }
 
-.event-name {
-font-size: 1.5rem;
-margin: 10;
-color: black;
-font-weight: bold;
-}
-
 .days-remaining {
 font-size: 4rem;
 margin: 0;
@@ -185,13 +180,11 @@ font-weight: bold;
 }
 
 .due-date {
-font-size: 1rem;
-color: #999;
+font-size: 2rem;
 margin: 0;
 padding: 0;
+font-weight: bold;
 }
-
-
 
 .edit-btn,
 .remove-btn {
@@ -201,16 +194,13 @@ color: #999;
 padding: 8px 16px;
 text-align: center;
 text-decoration: none;
-font-size: 14px;
 display: inline-block;
+font-size: 14px;
 margin-top: 10px;
 cursor: pointer;
 border-radius: 4px;
 transition: color 0.2s;
-width: 40%;
 }
-
-
 
 .edit-btn:hover,
 .remove-btn:hover {
@@ -230,34 +220,11 @@ background-color: rgba(0,0,0,0.4);
 }
 
 .modal-content {
-  background-color: #fefefe;
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 50%;
-  font-size: 2em;
-}
-
-.modal-content input {
-  font-size: 1em;
-  width: 100%;
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-.modal-content button {
-  background-color: #4caf50;
-  border: none;
-  color: white;
-  padding: 16px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  margin-top: 10px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.2s;
+background-color: #fefefe;
+margin: 15% auto;
+padding: 20px;
+border: 1px solid #888;
+width: 80%;
 }
 
 .close {

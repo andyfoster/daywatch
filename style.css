@@ -1,17 +1,233 @@
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  margin-top: 5em;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#timers-container {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.timer {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  padding: 20px;
+  position: relative;
+  text-align: center;
+  width: 300px;
+  height: 200px;
+}
+
+.timer.small {
+  width: 200px;
+  height: 150px;
+}
+
+.days-remaining {
+  font-size: 4rem;
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+}
+.days-remaining::after {
+  break-after: always;
+  content: ' days';
+  font-size: 0.8rem;
+}
+
+.event-name {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.due-date {
+  font-size: 1.5rem;
+  margin: 0;
+  padding: 0;
+  color: dimgray;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 10px;
+}
+
+.edit-btn,
+.remove-btn {
+  background-color: transparent;
+  border: none;
+  color: #999;
+  padding: 0;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  margin: 0;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.edit-btn:hover,
+.remove-btn:hover {
+  color: #555;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 500px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+}
+
+.modal-content h2 {
+  margin: 0;
+  padding: 20px;
+}
+
+.modal-content label {
+  display: block;
+  margin: 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.modal-content input[type='text'],
+.modal-content input[type='date'] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.modal-content button[type='submit'] {
+  background-color: #4caf50;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.modal-content button[type='submit']:hover {
+  background-color: #45a049;
+}
+
+#add-timer-btn,
+#toggle-view-btn {
+  width: 100px;
+  height: 50px;
+  background-color: gainsboro;
+  color: white;
+  border: none;
+  border-radius: 20%;
+  cursor: pointer;
+  font-size: 1rem;
+  position: fixed;
+  bottom: 20px;
 }
 
 #add-timer-btn {
-  margin-bottom: 1em;
-  background-color: #fff;
+  right: 20px;
+}
+
+#toggle-view-btn {
+  left: 20px;
+}
+
+#toggle-view-btn.list-view {
+  background-color: #f44336;
+}
+
+#more-timers-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 20px;
+  height: 100px;
+  overflow: scroll;
+}
+
+#more-timers-container li {
+  list-style: none;
+  margin: 10px;
+  padding: 10px;
   border: 1px solid #ccc;
-  border-radius: 3px;
-  padding: 2em;
-  cursor: pointer;
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
+  border-radius: 8px;
+  /* box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); */
+  width: 300px;
+  height: 10px;
+}
+
+
+@media (max-width: 600px) {
+  .timer {
+    width: 100%;
+    height: auto;
+  }
+  .timer.small {
+    width: 90%;
+  }
 }
