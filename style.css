@@ -159,6 +159,14 @@ body {
   box-sizing: border-box;
 }
 
+.modal-content input[type='color'] {
+  display: inline-block;
+  box-sizing: border-box;
+  margin-left: 20px;
+  margin-top: 0px;
+  margin-bottom: 20px;
+}
+
 .modal-content button[type='submit'] {
   background-color: #4caf50;
   color: white;

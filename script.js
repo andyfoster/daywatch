@@ -9,6 +9,7 @@ const modalTitle = document.getElementById('modal-title');
 const timerForm = document.getElementById('timer-form');
 const eventNameInput = document.getElementById('event-name');
 const eventDateInput = document.getElementById('event-date');
+const eventColorInput = document.getElementById('event-color');
 
 // Create an empty array to store the timers
 let timers = [];
@@ -73,7 +74,9 @@ function renderTimers() {
     // Calculate the time remaining
     const now = new Date().getTime();
     const timeRemaining = timer.date - now;
-    const daysRemaining = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+
+    // add 1 to make 0 be today
+    const daysRemaining = Math.floor(timeRemaining / (1000 * 60 * 60 * 24)) + 1;
 
     // Create a timer element
     const timerEl = document.createElement('div');
@@ -122,7 +125,7 @@ function renderTimers() {
     // Create a button element to remove the timer
     const removeBtn = document.createElement('button');
     removeBtn.classList.add('remove-btn');
-    removeBtn.textContent = 'x';
+    removeBtn.textContent = 'X';
     removeBtn.addEventListener('click', () => {
       removeTimer(index);
     });
@@ -195,11 +198,15 @@ padding: 8px 16px;
 text-align: center;
 text-decoration: none;
 display: inline-block;
-font-size: 14px;
+font-size: 20px;
 margin-top: 10px;
 cursor: pointer;
 border-radius: 4px;
 transition: color 0.2s;
+}
+
+.remove-btn {
+  margin-left: auto;
 }
 
 .edit-btn:hover,
