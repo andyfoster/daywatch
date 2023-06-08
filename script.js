@@ -26,6 +26,7 @@ function showModal() {
   modalTitle.textContent = 'Add Timer';
   eventNameInput.value = '';
   eventDateInput.value = '';
+  eventColorInput.value = '#000000';
   timerModal.style.display = 'block';
 }
 
@@ -113,11 +114,12 @@ function renderTimers() {
       modalTitle.textContent = 'Edit Timer';
       eventNameInput.value = timer.name;
       eventDateInput.value = new Date(timer.date).toISOString().slice(0, 10);
+      eventColorInput.value = timer.color;
       const submitBtn = document.getElementById('submit-timer-btn');
       submitBtn.textContent = 'Save Changes';
       submitBtn.removeEventListener('click', addTimer);
       submitBtn.addEventListener('click', () => {
-        editTimer(index, eventNameInput.value.trim(), eventDateInput.value);
+        editTimer(index, eventNameInput.value.trim(), eventDateInput.value, eventColorInput.value);
         hideModal();
       });
     });
