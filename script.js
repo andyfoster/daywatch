@@ -35,10 +35,11 @@ function hideModal() {
 }
 
 // Add a new timer to the array and render it on the page
-function addTimer(eventName, eventDate) {
+function addTimer(eventName, eventDate, eventColor) {
   const timer = {
     name: eventName,
     date: new Date(eventDate).getTime(),
+    color: eventColor,
   };
 
   timers.push(timer);
@@ -55,7 +56,7 @@ function removeTimer(index) {
 }
 
 // Edit a timer in the array and render the updated timers on the page
-function editTimer(index, eventName, eventDate) {
+function editTimer(index, eventName, eventDate, eventColor) {
   sortTimers();
   localStorage.setItem('timers', JSON.stringify(timers));
   renderTimers();
@@ -92,8 +93,8 @@ function renderTimers() {
     const dueDateEl = document.createElement('p');
     dueDateEl.classList.add('due-date');
     // add random color background
-    const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-    dueDateEl.style.color = `#${randomColor}`;
+    // const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+    dueDateEl.style.color = `${timer.color}`;
     dueDateEl.textContent = `${timer.name}`;
     timerEl.appendChild(dueDateEl);
 
@@ -140,8 +141,9 @@ timerForm.addEventListener('submit', (event) => {
   event.preventDefault();
   const eventName = eventNameInput.value.trim();
   const eventDate = eventDateInput.value;
+  const eventColor = eventColorInput.value;
   if (eventName && eventDate) {
-    addTimer(eventName, eventDate);
+    addTimer(eventName, eventDate, eventColor);
     hideModal();
   }
 });
