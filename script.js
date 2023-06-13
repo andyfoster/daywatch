@@ -105,7 +105,12 @@ function renderTimers() {
     // output the date as a day of the week (e.g Mon) and date (e.g 01/01/2021)
 
     // output timer.date as day of week and date
-    editBtn.textContent = `${new Date(timer.date).toLocaleDateString('en-NZ', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}`;
+    editBtn.textContent = `${new Date(timer.date).toLocaleDateString('en-NZ', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })}`;
 
     // editBtn.textContent = `Edit (${new Date(timer.date).getDay().} ${new Date(timer.date).toLocaleDateString()})`;
     // editBtn.textContent = `Edit (${new Date(timer.date).toLocaleDateString()})`;
@@ -119,7 +124,12 @@ function renderTimers() {
       submitBtn.textContent = 'Save Changes';
       submitBtn.removeEventListener('click', addTimer);
       submitBtn.addEventListener('click', () => {
-        editTimer(index, eventNameInput.value.trim(), eventDateInput.value, eventColorInput.value);
+        editTimer(
+          index,
+          eventNameInput.value.trim(),
+          eventDateInput.value,
+          eventColorInput.value
+        );
         hideModal();
       });
     });
