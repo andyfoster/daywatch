@@ -138,7 +138,7 @@ function renderTimers() {
     // Create a button element to remove the timer
     const removeBtn = document.createElement('button');
     removeBtn.classList.add('remove-btn');
-    removeBtn.textContent = 'X';
+    removeBtn.innerHTML = '&times';
     removeBtn.addEventListener('click', () => {
       removeTimer(index);
     });
