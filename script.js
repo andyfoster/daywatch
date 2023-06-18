@@ -170,6 +170,18 @@ timersContainer.style.flexWrap = 'wrap';
 timersContainer.style.justifyContent = 'center';
 timersContainer.style.alignItems = 'center';
 
+// Find the h1#date element and set its value to today's date
+// It should be in the format: Monday, 26 July 2023
+const dateEl = document.getElementById('date');
+const today = new Date().toLocaleDateString('en-NZ', {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+dateEl.textContent = today;
+
 // Add some basic styling to the timers
 const style = document.createElement('style');
 style.textContent = `
