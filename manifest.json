@@ -1,7 +1,8 @@
 {
-  "name": "Countdown Timers",
+  "name": "DayWatch: New Tab Countdown Tracker",
+  "short_name": "DayWatch",
   "version": "0.0.1",
-  "description": "A simple Chrome extension that lets users create and manage countdown timers on their new tab page.",
+  "description": "Keep track of days until an event on your new tab page.",
   "manifest_version": 3,
   "action": {
     "default_icon": {
