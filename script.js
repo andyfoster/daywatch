@@ -11,6 +11,8 @@ const eventDateInput = document.getElementById('event-date');
 const eventColorInput = document.getElementById('event-color');
 const closeBtn = document.querySelector('.close');
 const dateEl = document.getElementById('date');
+const removeBtn = document.getElementById('remove-timer-btn');
+
 let timers = JSON.parse(localStorage.getItem('timers')) || [];
 
 let handleFormSubmit;
@@ -45,12 +47,43 @@ window.onload = function () {
   timersContainer.style.alignItems = 'center';
 };
 
-function showModal() {
-  modalTitle.textContent = 'Add Timer';
+// function showModal(isEdit = false, index) {
+//   modalTitle.textContent = isEdit ? 'Edit Timer' : 'Add Timer';
+//   // modalTitle.textContent = 'Add Timer';
+//   eventNameInput.value = '';
+//   eventDateInput.value = '';
+//   eventColorInput.value = '#000000';
+//   timerModal.style.display = 'block';
+
+//   if (isEdit) {
+//     removeBtn.style.display = 'block';
+//     removeBtn.onclick = () => {
+//       removeTimer(index);
+//       hideModal();
+//     };
+//   } else {
+//     removeBtn.style.display = 'none';
+//   }
+// }
+function showModal(isEdit = false, index) {
+  // Remove previous event listener
+  removeBtn.onclick = null;
+
+  modalTitle.textContent = isEdit ? 'Edit Timer' : 'Add Timer';
   eventNameInput.value = '';
   eventDateInput.value = '';
   eventColorInput.value = '#000000';
   timerModal.style.display = 'block';
+
+  if (isEdit) {
+    removeBtn.style.display = 'block';
+    removeBtn.onclick = () => {
+      removeTimer(index);
+      hideModal();
+    };
+  } else {
+    removeBtn.style.display = 'none';
+  }
 }
 
 function hideModal() {
@@ -72,6 +105,7 @@ function addTimer() {
   }
 }
 
+// removeTimer() should delete a single timer from the timers array
 function removeTimer(index) {
   timers.splice(index, 1);
   updateTimers();
@@ -118,13 +152,13 @@ function createTimerElement(timer, index) {
       'en-NZ',
       { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }
     )}</button>
-    <button class="remove-btn">&times</button>
+
   `;
 
   // Add event listeners to the buttons
   const editBtn = timerEl.querySelector('.edit-btn');
   editBtn.addEventListener('click', () => {
-    showModal();
+    showModal(true, index);
     modalTitle.textContent = 'Edit Timer';
     eventNameInput.value = timer.name;
     eventDateInput.value = new Date(timer.date).toISOString().slice(0, 10);
@@ -132,8 +166,8 @@ function createTimerElement(timer, index) {
     handleFormSubmit = () => editTimer(index);
   });
 
-  const removeBtn = timerEl.querySelector('.remove-btn');
-  removeBtn.addEventListener('click', () => removeTimer(index));
+  // const removeBtn = timerEl.querySelector('.remove-btn');
+  // removeBtn.addEventListener('click', () => removeTimer(index));
 
   timersContainer.appendChild(timerEl);
 }
