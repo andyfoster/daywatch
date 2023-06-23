@@ -13,6 +13,10 @@ const closeBtn = document.querySelector('.close');
 const dateEl = document.getElementById('date');
 const removeBtn = document.getElementById('remove-timer-btn');
 
+document.getElementById('add-dummy-timer-btn').addEventListener('click', () => {
+  createDummyTimer();
+});
+
 let timers = JSON.parse(localStorage.getItem('timers')) || [];
 
 let handleFormSubmit;
@@ -41,10 +45,10 @@ window.onload = function () {
     day: 'numeric',
   });
   // Style timers container
-  timersContainer.style.display = 'flex';
-  timersContainer.style.flexWrap = 'wrap';
-  timersContainer.style.justifyContent = 'center';
-  timersContainer.style.alignItems = 'center';
+  // timersContainer.style.display = 'flex';
+  // timersContainer.style.flexWrap = 'wrap';
+  // timersContainer.style.justifyContent = 'center';
+  // timersContainer.style.alignItems = 'center';
 };
 
 // function showModal(isEdit = false, index) {
@@ -138,6 +142,26 @@ function sortTimers() {
 function renderTimers() {
   timersContainer.innerHTML = '';
   timers.forEach((timer, index) => createTimerElement(timer, index));
+}
+
+// Function to create dummy timer for testing
+function createDummyTimer() {
+  // Create a nonsense string for the name
+  const nonsense = Math.random().toString(36).substring(2, 15);
+  // random color
+  const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+
+  // random date in the next two years
+  const randomDate =
+    new Date().getTime() + Math.random() * 1000 * 60 * 60 * 24 * 365 * 2;
+
+  const timer = {
+    name: nonsense,
+    date: randomDate,
+    color: '#' + randomColor,
+  };
+  timers.push(timer);
+  updateTimers();
 }
 
 function createTimerElement(timer, index) {
