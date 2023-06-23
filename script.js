@@ -13,9 +13,9 @@ const closeBtn = document.querySelector('.close');
 const dateEl = document.getElementById('date');
 const removeBtn = document.getElementById('remove-timer-btn');
 
-document.getElementById('add-dummy-timer-btn').addEventListener('click', () => {
-  createDummyTimer();
-});
+// document.getElementById('add-dummy-timer-btn').addEventListener('click', () => {
+//   createDummyTimer();
+// });
 
 let timers = JSON.parse(localStorage.getItem('timers')) || [];
 
