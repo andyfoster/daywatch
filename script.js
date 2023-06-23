@@ -73,7 +73,7 @@ function showModal(isEdit = false, index) {
   // Remove previous event listener
   removeBtn.onclick = null;
 
-  modalTitle.textContent = isEdit ? 'Edit Timer' : 'Add Timer';
+  modalTitle.textContent = isEdit ? 'Edit Timer' : 'New Timer';
   eventNameInput.value = '';
   eventDateInput.value = '';
   eventColorInput.value = '#000000';
