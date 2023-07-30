@@ -1,61 +1,18 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>New Tab</title>
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
-    <div class="container">
-      <!-- Display today's date at the top -->
-      <h1 id="date">Today</h1>
-      <button id="add-timer-btn">+ Timer</button>
-      <!-- <button id="add-dummy-timer-btn">+ Test Timer</button> -->
-      <div id="timers-container"></div>
-      <!--
-        # Future Feature: Show more timers as a list
-        <div id="more-timers-container">
-        <ul>
-          <li>Next Birthday - 300 days</li>
-          <li>Next Party - 350 days</li>
-          <li>After that - 400 days</li>
-          <li>Then this - 4500 days</li>
-          <li>And then this - 500 days</li>
-        </ul>
-      </div> -->
-    </div>
-
-    <div id="timer-modal" class="modal">
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2 id="modal-title">New Timer</h2>
-        <form id="timer-form">
-          <div class="input-group">
-            <label for="event-name">Event Name:</label>
-            <input type="text" id="event-name" name="event-name" required>
-          </div>
-          <div class="input-group">
-          <label for="event-date">Event Date:</label>
-          <!-- // set inut date value to today -->
-
-          <input type="date" id="event-date" name="event-date" required>
-
-
-          </div>
-          <div class="input-group">
-            <label for="color">Color:</label>
-            <input type="color" name="event-color" id="event-color">
-
-          </div>
-
-
-          <br>
-
-          <button type="submit" id="submit-timer-btn">Save</button>
-          <button type="button" id="remove-timer-btn" style="display: none;">&times Remove</button>
-        </form>
-      </div>
-    </div>
-
-    <script src="script.js"></script>
-  </body>
+<head>
+    <title>My App</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/settings.html">Settings</a></li>
+            </ul>
+        </nav>
+    </header>
+    <h1>Welcome to My App</h1>
+    <p>This is the home page of my app.</p>
+</body>
 </html>
