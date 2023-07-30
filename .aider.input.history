@@ -73,3 +73,15 @@
 
 # 2023-07-31 10:36:36.475307
 +Let's make these changes to the files
+
+# 2023-07-31 10:36:52.220813
++/ls
+
+# 2023-07-31 10:36:57.240321
++/diff index.html
+
+# 2023-07-31 10:38:16.316931
++Why aren't you makng any changes to the files?
+
+# 2023-07-31 10:38:30.917897
++/commit
