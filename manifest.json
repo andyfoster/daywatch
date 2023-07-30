@@ -1,7 +1,7 @@
 {
   "name": "DayWatch: New Tab Countdown Tracker",
   "short_name": "DayWatch",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Keep track of days until an event on your new tab page.",
   "manifest_version": 3,
   "action": {
