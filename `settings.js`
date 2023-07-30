@@ -1,0 +1,9 @@
+document.addEventListener('DOMContentLoaded', function() {
+    var form = document.getElementById('date-format-form');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        var selectedFormat = document.getElementById('date-format').value;
+        // Save the selected format to the server or local storage
+        alert('Date format saved: ' + selectedFormat);
+    });
+});

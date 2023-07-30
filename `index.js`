@@ -1,0 +1,14 @@
+document.addEventListener('DOMContentLoaded', function() {
+    var settingsLink = document.querySelector('a[href="/settings.html"]');
+    settingsLink.addEventListener('click', function(event) {
+        event.preventDefault();
+        loadSettingsPage();
+    });
+
+    function loadSettingsPage() {
+        // Use AJAX or fetch to load the settings page content
+        // and replace the current page content with it
+        // For simplicity, we'll just redirect to the settings page
+        window.location.href = '/settings.html';
+    }
+});
