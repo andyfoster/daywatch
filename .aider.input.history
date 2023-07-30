@@ -88,3 +88,21 @@
 
 # 2023-07-31 10:38:56.241307
 +Tidy up the formatting of style.css
+
+# 2023-07-31 10:40:54.105828
++/add index.html
+
+# 2023-07-31 10:40:57.940937
++/a
+
+# 2023-07-31 10:41:13.990007
++/add script.js style.css 
+
+# 2023-07-31 10:41:26.384729
++/ls
+
+# 2023-07-31 10:41:34.416398
++/add manifest.json
+
+# 2023-07-31 10:42:03.905804
++Organise the style.css file
