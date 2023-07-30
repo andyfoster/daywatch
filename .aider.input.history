@@ -37,3 +37,21 @@
 
 # 2023-07-31 10:27:50.044814
 +script.js
+
+# 2023-07-31 10:28:03.757454
++/add script.js
+
+# 2023-07-31 10:28:16.746468
++/add style.css
+
+# 2023-07-31 10:28:31.021997
++/add manifest.json 
+
+# 2023-07-31 10:28:38.243144
++/ls
+
+# 2023-07-31 10:28:45.191980
++/add .gitignore
+
+# 2023-07-31 10:29:10.614898
++fix the styling of the new timer button to look a little nicer
