@@ -11,7 +11,7 @@
       <nav>
         <ul>
           <li><a href="index.html">Home</a></li>
-          <li><a href="settings.html">Settings</a></li>
+          <li><a href="#" id="settings-btn">Settings</a></li>
         </ul>
       </nav>
       <button id="add-timer-btn">+ Timer</button>
@@ -38,6 +38,33 @@
           <br>
           <button type="submit" id="submit-timer-btn">Save</button>
           <button type="button" id="remove-timer-btn" style="display: none;">Remove</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="settings-modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modal-title">Settings</h2>
+        <form id="settings-form">
+          <div class="input-group">
+            <label for="date-format">Date Format:</label>
+            <select id="date-format" name="date-format">
+              <option value="long">Tuesday, 1 August 2023</option>
+              <option value="short">Wed, 6 Dec 2023</option>
+              <!-- Add more date format options here -->
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="display-font">Display Font:</label>
+            <select id="display-font" name="display-font">
+              <option value="Roboto Condensed">Roboto Condensed</option>
+              <option value="Arial">Arial</option>
+              <!-- Add more display font options here -->
+            </select>
+          </div>
+          <br>
+          <button type="submit">Save</button>
         </form>
       </div>
     </div>

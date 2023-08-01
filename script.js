@@ -12,9 +12,11 @@ const eventColorInput = document.getElementById('event-color');
 const closeBtn = document.querySelector('.close');
 const dateEl = document.getElementById('date');
 const removeBtn = document.getElementById('remove-timer-btn');
-const settingsLink = document.querySelector('nav a[href="settings.html"]');
+const settingsBtn = document.getElementById('settings-btn');
+const settingsModal = document.getElementById('settings-modal');
 const settingsForm = document.getElementById('settings-form');
 const dateFormatSelect = document.getElementById('date-format');
+const displayFontSelect = document.getElementById('display-font');
 
 // document.getElementById('add-dummy-timer-btn').addEventListener('click', () => {
 //   createDummyTimer();
@@ -22,6 +24,7 @@ const dateFormatSelect = document.getElementById('date-format');
 
 let timers = JSON.parse(localStorage.getItem('timers')) || [];
 let dateFormat = localStorage.getItem('dateFormat') || 'long';
+let displayFont = localStorage.getItem('displayFont') || 'Roboto Condensed';
 
 let handleFormSubmit;
 
@@ -36,7 +39,16 @@ timerForm.addEventListener('submit', (event) => {
   handleFormSubmit();
   hideModal();
 });
-settingsLink.addEventListener('click', showSettings);
+settingsBtn.addEventListener('click', showSettings);
+settingsForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  dateFormat = dateFormatSelect.value;
+  displayFont = displayFontSelect.value;
+  localStorage.setItem('dateFormat', dateFormat);
+  localStorage.setItem('displayFont', displayFont);
+  hideSettings();
+  renderTimers();
+});
 
 // Set up timers on load
 window.onload = function () {
@@ -53,11 +65,11 @@ window.onload = function () {
 
 function showSettings() {
   timerModal.style.display = 'none';
-  settingsForm.style.display = 'block';
+  settingsModal.style.display = 'block';
 }
 
 function hideSettings() {
-  settingsForm.style.display = 'none';
+  settingsModal.style.display = 'none';
 }
 
 function showModal(isEdit = false, index) {
@@ -139,6 +151,7 @@ function createTimerElement(timer, index) {
   const daysRemaining = Math.floor(timeRemaining / (1000 * 60 * 60 * 24)) + 1;
   const timerEl = document.createElement('div');
   timerEl.classList.add('timer');
+  timerEl.style.fontFamily = displayFont;
   timerEl.innerHTML = `
     <h2 class="days-remaining">${daysRemaining}</h2>
     <p class="due-date" style="color: ${timer.color};">${timer.name}</p>
@@ -175,11 +188,3 @@ function formatDate(date) {
   };
   return new Date(date).toLocaleDateString('en-NZ', options[dateFormat]);
 }
-
-settingsForm.addEventListener('submit', (event) => {
-  event.preventDefault();
-  dateFormat = dateFormatSelect.value;
-  localStorage.setItem('dateFormat', dateFormat);
-  hideSettings();
-  renderTimers();
-});

@@ -252,6 +252,15 @@ body {
   right: 20px;
 }
 
+#settings-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  font-size: 1rem;
+  color: gainsboro;
+  text-decoration: none;
+}
+
 #more-timers-container {
   display: flex;
   justify-content: center;
