@@ -153,7 +153,7 @@ function createTimerElement(timer, index) {
   timerEl.classList.add('timer');
   timerEl.style.fontFamily = displayFont;
   timerEl.innerHTML = `
-    <h2 class="days-remaining">${daysRemaining}</h2>
+    <h2 class="days-remaining">${daysRemaining}<span class="days-label"> days</span></h2>
     <p class="due-date" style="color: ${timer.color};">${timer.name}</p>
     <button class="edit-btn">${formatDate(timer.date)}</button>
   `;

@@ -135,9 +135,8 @@ body {
   padding: 0;
   font-weight: bold;
 }
-.days-remaining::after {
-  break-after: always;
-  content: ' days';
+
+.days-label {
   font-size: 0.8rem;
 }
 
