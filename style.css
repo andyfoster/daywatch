@@ -45,7 +45,9 @@ body {
 }
 
 .edit-btn,
-.remove-btn {
+.remove-btn,
+.settings-btn,
+.add-timer-btn {
   background-color: transparent;
   border: none;
   color: #999;
@@ -60,13 +62,17 @@ body {
   transition: color 0.2s;
 }
 
-.remove-btn {
+.remove-btn,
+.settings-btn,
+.add-timer-btn {
   margin-left: auto;
 }
 
 .edit-btn:hover,
-.remove-btn:hover {
-  color: #555;
+.remove-btn:hover,
+.settings-btn:hover,
+.add-timer-btn:hover {
+  color: #000;
 }
 
 .modal {
@@ -159,7 +165,10 @@ body {
   padding: 10px;
 }
 
-.edit-btn {
+.edit-btn,
+.remove-btn,
+.settings-btn,
+.add-timer-btn {
   background-color: transparent;
   border: none;
   color: #999;
@@ -173,7 +182,9 @@ body {
 }
 
 .edit-btn:hover,
-.remove-btn:hover {
+.remove-btn:hover,
+.settings-btn:hover,
+.add-timer-btn:hover {
   color: #555;
 }
 
@@ -238,20 +249,7 @@ body {
   background-color: #45a049;
 }
 
-#add-timer-btn {
-  width: 100px;
-  height: 50px;
-  border: 1px solid gainsboro;
-  background-color: white;
-  color: gainsboro;
-  border-radius: 20%;
-  cursor: pointer;
-  font-size: 1rem;
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-}
-
+#add-timer-btn,
 #settings-btn {
   width: 100px;
   height: 50px;
@@ -263,6 +261,13 @@ body {
   font-size: 1rem;
   position: fixed;
   bottom: 20px;
+}
+
+#add-timer-btn {
+  right: 20px;
+}
+
+#settings-btn {
   left: 20px;
 }
 
