@@ -12,12 +12,16 @@ const eventColorInput = document.getElementById('event-color');
 const closeBtn = document.querySelector('.close');
 const dateEl = document.getElementById('date');
 const removeBtn = document.getElementById('remove-timer-btn');
+const settingsLink = document.querySelector('nav a[href="settings.html"]');
+const settingsForm = document.getElementById('settings-form');
+const dateFormatSelect = document.getElementById('date-format');
 
 // document.getElementById('add-dummy-timer-btn').addEventListener('click', () => {
 //   createDummyTimer();
 // });
 
 let timers = JSON.parse(localStorage.getItem('timers')) || [];
+let dateFormat = localStorage.getItem('dateFormat') || 'long';
 
 let handleFormSubmit;
 
@@ -32,6 +36,7 @@ timerForm.addEventListener('submit', (event) => {
   handleFormSubmit();
   hideModal();
 });
+settingsLink.addEventListener('click', showSettings);
 
 // Set up timers on load
 window.onload = function () {
@@ -44,31 +49,17 @@ window.onload = function () {
     month: 'long',
     day: 'numeric',
   });
-  // Style timers container
-  // timersContainer.style.display = 'flex';
-  // timersContainer.style.flexWrap = 'wrap';
-  // timersContainer.style.justifyContent = 'center';
-  // timersContainer.style.alignItems = 'center';
 };
 
-// function showModal(isEdit = false, index) {
-//   modalTitle.textContent = isEdit ? 'Edit Timer' : 'Add Timer';
-//   // modalTitle.textContent = 'Add Timer';
-//   eventNameInput.value = '';
-//   eventDateInput.value = '';
-//   eventColorInput.value = '#000000';
-//   timerModal.style.display = 'block';
+function showSettings() {
+  timerModal.style.display = 'none';
+  settingsForm.style.display = 'block';
+}
 
-//   if (isEdit) {
-//     removeBtn.style.display = 'block';
-//     removeBtn.onclick = () => {
-//       removeTimer(index);
-//       hideModal();
-//     };
-//   } else {
-//     removeBtn.style.display = 'none';
-//   }
-// }
+function hideSettings() {
+  settingsForm.style.display = 'none';
+}
+
 function showModal(isEdit = false, index) {
   // Remove previous event listener
   removeBtn.onclick = null;
@@ -109,7 +100,6 @@ function addTimer() {
   }
 }
 
-// removeTimer() should delete a single timer from the timers array
 function removeTimer(index) {
   timers.splice(index, 1);
   updateTimers();
@@ -144,26 +134,6 @@ function renderTimers() {
   timers.forEach((timer, index) => createTimerElement(timer, index));
 }
 
-// Function to create dummy timer for testing
-function createDummyTimer() {
-  // Create a nonsense string for the name
-  const nonsense = Math.random().toString(36).substring(2, 15);
-  // random color
-  const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-
-  // random date in the next two years
-  const randomDate =
-    new Date().getTime() + Math.random() * 1000 * 60 * 60 * 24 * 365 * 2;
-
-  const timer = {
-    name: nonsense,
-    date: randomDate,
-    color: '#' + randomColor,
-  };
-  timers.push(timer);
-  updateTimers();
-}
-
 function createTimerElement(timer, index) {
   const timeRemaining = timer.date - new Date().getTime();
   const daysRemaining = Math.floor(timeRemaining / (1000 * 60 * 60 * 24)) + 1;
@@ -172,14 +142,9 @@ function createTimerElement(timer, index) {
   timerEl.innerHTML = `
     <h2 class="days-remaining">${daysRemaining}</h2>
     <p class="due-date" style="color: ${timer.color};">${timer.name}</p>
-    <button class="edit-btn">${new Date(timer.date).toLocaleDateString(
-      'en-NZ',
-      { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }
-    )}</button>
-
+    <button class="edit-btn">${formatDate(timer.date)}</button>
   `;
 
-  // Add event listeners to the buttons
   const editBtn = timerEl.querySelector('.edit-btn');
   editBtn.addEventListener('click', () => {
     showModal(true, index);
@@ -190,8 +155,31 @@ function createTimerElement(timer, index) {
     handleFormSubmit = () => editTimer(index);
   });
 
-  // const removeBtn = timerEl.querySelector('.remove-btn');
-  // removeBtn.addEventListener('click', () => removeTimer(index));
-
   timersContainer.appendChild(timerEl);
 }
+
+function formatDate(date) {
+  const options = {
+    long: {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    },
+    short: {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    },
+  };
+  return new Date(date).toLocaleDateString('en-NZ', options[dateFormat]);
+}
+
+settingsForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  dateFormat = dateFormatSelect.value;
+  localStorage.setItem('dateFormat', dateFormat);
+  hideSettings();
+  renderTimers();
+});

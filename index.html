@@ -8,20 +8,14 @@
     <div class="container">
       <!-- Display today's date at the top -->
       <h1 id="date">Today</h1>
-      <button id="add-timer-btn">+ Timer</button>
-      <!-- <button id="add-dummy-timer-btn">+ Test Timer</button> -->
-      <div id="timers-container"></div>
-      <!--
-        # Future Feature: Show more timers as a list
-        <div id="more-timers-container">
+      <nav>
         <ul>
-          <li>Next Birthday - 300 days</li>
-          <li>Next Party - 350 days</li>
-          <li>After that - 400 days</li>
-          <li>Then this - 4500 days</li>
-          <li>And then this - 500 days</li>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="settings.html">Settings</a></li>
         </ul>
-      </div> -->
+      </nav>
+      <button id="add-timer-btn">+ Timer</button>
+      <div id="timers-container"></div>
     </div>
 
     <div id="timer-modal" class="modal">
@@ -34,22 +28,14 @@
             <input type="text" id="event-name" name="event-name" required>
           </div>
           <div class="input-group">
-          <label for="event-date">Event Date:</label>
-          <!-- // set inut date value to today -->
-
-          <input type="date" id="event-date" name="event-date" required>
-
-
+            <label for="event-date">Event Date:</label>
+            <input type="date" id="event-date" name="event-date" required>
           </div>
           <div class="input-group">
             <label for="color">Color:</label>
             <input type="color" name="event-color" id="event-color">
-
           </div>
-
-
           <br>
-
           <button type="submit" id="submit-timer-btn">Save</button>
           <button type="button" id="remove-timer-btn" style="display: none;">Remove</button>
         </form>
