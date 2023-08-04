@@ -17,6 +17,7 @@ const settingsModal = document.getElementById('settings-modal');
 const settingsForm = document.getElementById('settings-form');
 const dateFormatSelect = document.getElementById('date-format');
 const displayFontSelect = document.getElementById('display-font');
+const settingsCloseBtn = document.querySelector('#settings-modal .close');
 
 // document.getElementById('add-dummy-timer-btn').addEventListener('click', () => {
 //   createDummyTimer();
@@ -40,6 +41,7 @@ timerForm.addEventListener('submit', (event) => {
   hideModal();
 });
 settingsBtn.addEventListener('click', showSettings);
+settingsCloseBtn.addEventListener('click', hideSettings);
 settingsForm.addEventListener('submit', (event) => {
   event.preventDefault();
   dateFormat = dateFormatSelect.value;
