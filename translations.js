@@ -8,19 +8,9 @@ const translations = {
     color: 'Color:',
     save: 'Save',
     remove: 'Remove',
-    dateFormat: {
-      long: 'Tuesday, 1 August 2023',
-      short: 'Wed, 6 Dec 2023',
-    },
     displayFont: {
       robotoCondensed: 'Roboto Condensed',
       arial: 'Arial',
-    },
-    language: {
-      en: 'English',
-      ja: '日本語',
-      es: 'Español',
-      zh: '中文',
     },
     days: 'days',
   },
@@ -33,19 +23,9 @@ const translations = {
     color: '色：',
     save: '保存',
     remove: '削除',
-    dateFormat: {
-      long: '2023年8月1日（火曜日）',
-      short: '2023年12月6日（水曜日）',
-    },
     displayFont: {
       robotoCondensed: 'Roboto Condensed',
       arial: 'Arial',
-    },
-    language: {
-      en: 'English',
-      ja: '日本語',
-      es: 'Español',
-      zh: '中文',
     },
     days: '日',
   },
@@ -58,19 +38,9 @@ const translations = {
     color: 'Color:',
     save: 'Guardar',
     remove: 'Eliminar',
-    dateFormat: {
-      long: 'Martes, 1 de Agosto de 2023',
-      short: 'Mié, 6 Dic 2023',
-    },
     displayFont: {
       robotoCondensed: 'Roboto Condensed',
       arial: 'Arial',
-    },
-    language: {
-      en: 'English',
-      ja: '日本語',
-      es: 'Español',
-      zh: '中文',
     },
     days: 'días',
   },
@@ -83,19 +53,9 @@ const translations = {
     color: '颜色：',
     save: '保存',
     remove: '删除',
-    dateFormat: {
-      long: '2023年8月1日星期二',
-      short: '2023年12月6日星期三',
-    },
     displayFont: {
       robotoCondensed: 'Roboto Condensed',
       arial: 'Arial',
-    },
-    language: {
-      en: 'English',
-      ja: '日本語',
-      es: 'Español',
-      zh: '中文',
     },
     days: '天',
   },
