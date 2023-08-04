@@ -21,6 +21,70 @@ body {
   padding: 0;
 }
 
+/* Dark mode palette */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #333;
+    color: #fff;
+  }
+
+  .timer {
+    background-color: #222;
+    border: 1px solid #444;
+    color: #fff;
+  }
+
+  .timer.small {
+    background-color: #222;
+    border: 1px solid #444;
+    color: #fff;
+  }
+
+  .edit-btn,
+  .remove-btn,
+  .settings-btn,
+  .add-timer-btn {
+    color: #ccc;
+  }
+
+  .close {
+    color: #ccc;
+  }
+
+  .modal-content {
+    background-color: #444;
+    border: 1px solid #666;
+    color: #fff;
+  }
+
+  .modal-content label {
+    color: #fff;
+  }
+
+  .modal-content input,
+  .modal-content select {
+    color: #fff;
+    background-color: #666;
+    border: 1px solid #888;
+  }
+
+  .modal-content button[type='submit'] {
+    background-color: #4caf50;
+  }
+
+  .modal-content button[type='button'] {
+    background-color: red;
+  }
+
+  .today {
+    color: red;
+  }
+
+  .today-timer {
+    border-color: red;
+  }
+}
+
 .timer {
   background-color: #f5f5f5;
   border: 1px solid #ddd;
