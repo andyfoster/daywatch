@@ -73,7 +73,9 @@ function showModal(isEdit = false, index) {
   // Remove previous event listener
   removeBtn.onclick = null;
 
-  modalTitle.textContent = isEdit ? translations[language].editTimer : translations[language].newTimer;
+  modalTitle.textContent = isEdit
+    ? translations[language].editTimer
+    : translations[language].newTimer;
   eventNameInput.value = '';
   eventDateInput.value = '';
   eventColorInput.value = '#000000';
@@ -157,7 +159,10 @@ function createTimerElement(timer, index) {
   <h2 class="${daysRemaining === 0 ? 'today' : 'days-remaining '}">${
     daysRemaining === 0
       ? translations[language].today
-      : daysRemaining + ' ' + translations[language].days
+      : daysRemaining +
+        ' <span class="days-label">' +
+        translations[language].days +
+        '</span>'
   }</h2>
     <p class="due-date" style="color: ${timer.color};">${timer.name}</p>
     <button class="edit-btn">${formatDate(timer.date)}</button>
@@ -204,17 +209,38 @@ function updateUI() {
   };
   dateEl.textContent = today.toLocaleDateString(language, options);
   modalTitle.textContent = translations[language].newTimer;
-  document.querySelectorAll('label[for="event-name"]')[0].textContent = translations[language].eventName;
-  document.querySelectorAll('label[for="event-date"]')[0].textContent = translations[language].eventDate;
-  document.querySelectorAll('label[for="color"]')[0].textContent = translations[language].color;
-  document.getElementById('submit-timer-btn').textContent = translations[language].save;
-  document.getElementById('remove-timer-btn').textContent = translations[language].remove;
-  document.getElementById('modal-title').textContent = translations[language].settings;
-  document.querySelectorAll('label[for="date-format"]')[0].textContent = translations[language].dateFormat;
-  document.querySelectorAll('label[for="display-font"]')[0].textContent = translations[language].displayFont;
-  document.querySelectorAll('label[for="language"]')[0].textContent = translations[language].language;
-  document.getElementById('settings-form').querySelectorAll('option[value="en"]')[0].textContent = translations[language].language.en;
-  document.getElementById('settings-form').querySelectorAll('option[value="ja"]')[0].textContent = translations[language].language.ja;
-  document.getElementById('settings-form').querySelectorAll('option[value="es"]')[0].textContent = translations[language].language.es;
-  document.getElementById('settings-form').querySelectorAll('option[value="zh"]')[0].textContent = translations[language].language.zh;
+  document.querySelectorAll('label[for="event-name"]')[0].textContent =
+    translations[language].eventName;
+  document.querySelectorAll('label[for="event-date"]')[0].textContent =
+    translations[language].eventDate;
+  document.querySelectorAll('label[for="color"]')[0].textContent =
+    translations[language].color;
+  document.getElementById('submit-timer-btn').textContent =
+    translations[language].save;
+  document.getElementById('remove-timer-btn').textContent =
+    translations[language].remove;
+  document.getElementById('modal-title').textContent =
+    translations[language].settings;
+  document.querySelectorAll('label[for="date-format"]')[0].textContent =
+    translations[language].dateFormat;
+  document.querySelectorAll('label[for="display-font"]')[0].textContent =
+    translations[language].displayFont;
+  document.querySelectorAll('label[for="language"]')[0].textContent =
+    translations[language].language;
+  document
+    .getElementById('settings-form')
+    .querySelectorAll('option[value="en"]')[0].textContent =
+    translations[language].language.en;
+  document
+    .getElementById('settings-form')
+    .querySelectorAll('option[value="ja"]')[0].textContent =
+    translations[language].language.ja;
+  document
+    .getElementById('settings-form')
+    .querySelectorAll('option[value="es"]')[0].textContent =
+    translations[language].language.es;
+  document
+    .getElementById('settings-form')
+    .querySelectorAll('option[value="zh"]')[0].textContent =
+    translations[language].language.zh;
 }
