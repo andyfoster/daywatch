@@ -157,7 +157,7 @@ function createTimerElement(timer, index) {
   <h2 class="${daysRemaining === 0 ? 'today' : 'days-remaining '}">${
     daysRemaining === 0
       ? translations[language].today
-      : daysRemaining + '<span class="days-label">' + translations[language].language.en + '</span>'
+      : daysRemaining + ' ' + translations[language].days
   }</h2>
     <p class="due-date" style="color: ${timer.color};">${timer.name}</p>
     <button class="edit-btn">${formatDate(timer.date)}</button>
@@ -178,14 +178,31 @@ function createTimerElement(timer, index) {
 
 function formatDate(date) {
   const options = {
-    long: translations[language].dateFormat.long,
-    short: translations[language].dateFormat.short,
+    long: {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    },
+    short: {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    },
   };
-  return new Date(date).toLocaleDateString('en-NZ', options[dateFormat]);
+  return new Date(date).toLocaleDateString(language, options[dateFormat]);
 }
 
 function updateUI() {
-  dateEl.textContent = translations[language].today;
+  const today = new Date();
+  const options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  };
+  dateEl.textContent = today.toLocaleDateString(language, options);
   modalTitle.textContent = translations[language].newTimer;
   document.querySelectorAll('label[for="event-name"]')[0].textContent = translations[language].eventName;
   document.querySelectorAll('label[for="event-date"]')[0].textContent = translations[language].eventDate;
@@ -201,4 +218,3 @@ function updateUI() {
   document.getElementById('settings-form').querySelectorAll('option[value="es"]')[0].textContent = translations[language].language.es;
   document.getElementById('settings-form').querySelectorAll('option[value="zh"]')[0].textContent = translations[language].language.zh;
 }
-

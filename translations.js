@@ -22,6 +22,7 @@ const translations = {
       es: 'Español',
       zh: '中文',
     },
+    days: 'days',
   },
   ja: {
     today: '今日',
@@ -46,6 +47,7 @@ const translations = {
       es: 'Español',
       zh: '中文',
     },
+    days: '日',
   },
   es: {
     today: 'Hoy',
@@ -70,6 +72,7 @@ const translations = {
       es: 'Español',
       zh: '中文',
     },
+    days: 'días',
   },
   zh: {
     today: '今天',
@@ -94,6 +97,6 @@ const translations = {
       es: 'Español',
       zh: '中文',
     },
+    days: '天',
   },
 };
-
