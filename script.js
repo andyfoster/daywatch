@@ -160,7 +160,7 @@ function createTimerElement(timer, index) {
     daysRemaining === 0
       ? translations[language].today
       : daysRemaining +
-        ' <span class="days-label">' +
+        '<span class="days-label">' +
         translations[language].days +
         '</span>'
   }</h2>
