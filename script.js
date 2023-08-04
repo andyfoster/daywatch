@@ -61,6 +61,8 @@ window.onload = function () {
     month: 'long',
     day: 'numeric',
   });
+  // Set date format select value
+  dateFormatSelect.value = dateFormat;
 };
 
 function showSettings() {
