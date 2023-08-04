@@ -153,6 +153,10 @@ function createTimerElement(timer, index) {
   const daysRemaining = Math.floor(timeRemaining / (1000 * 60 * 60 * 24)) + 1;
   const timerEl = document.createElement('div');
   timerEl.classList.add('timer');
+  if (daysRemaining === 0) {
+    timerEl.classList.add('today-timer');
+    timerEl.style.borderColor = timer.color;
+  }
   timerEl.style.fontFamily = displayFont;
   timerEl.innerHTML = `
   <h2 class="${daysRemaining === 0 ? 'today' : 'days-remaining '}">${
