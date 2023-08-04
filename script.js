@@ -224,7 +224,7 @@ function updateUI() {
   document.querySelectorAll('label[for="date-format"]')[0].textContent =
     translations[language].dateFormat;
   document.querySelectorAll('label[for="display-font"]')[0].textContent =
-    translations[language].displayFont;
+    translations[language].font;
   document.querySelectorAll('label[for="language"]')[0].textContent =
     translations[language].language;
   document

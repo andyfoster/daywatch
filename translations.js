@@ -13,6 +13,9 @@ const translations = {
       arial: 'Arial',
     },
     days: 'days',
+    dateFormat: 'Date Format:',
+    font: 'Font:',
+    language: 'Language:'
   },
   ja: {
     today: '今日',
@@ -28,6 +31,9 @@ const translations = {
       arial: 'Arial',
     },
     days: '日',
+    dateFormat: '日付形式：',
+    font: 'フォント：',
+    language: '言語：'
   },
   es: {
     today: 'Hoy',
@@ -43,6 +49,9 @@ const translations = {
       arial: 'Arial',
     },
     days: 'días',
+    dateFormat: 'Formato de Fecha:',
+    font: 'Fuente:',
+    language: 'Idioma:'
   },
   zh: {
     today: '今天',
@@ -58,5 +67,8 @@ const translations = {
       arial: 'Arial',
     },
     days: '天',
+    dateFormat: '日期格式：',
+    font: '字体：',
+    language: '语言：'
   },
 };
