@@ -322,7 +322,8 @@ h1#date {
 }
 
 .today {
-  font-size: 2rem;
   font-weight: bold;
-  color: #333;
+  font-size: 3.5em;
+  color: red;
+  margin-bottom: 0;
 }
