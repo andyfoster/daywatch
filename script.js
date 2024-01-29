@@ -51,6 +51,7 @@ settingsForm.addEventListener('submit', (event) => {
   hideSettings();
   renderTimers();
   updateUI();
+  location.reload();
 });
 
 // Set up timers on load
