@@ -163,28 +163,36 @@ function renderTimers() {
 
 function createTimerElement(timer, index) {
   const currentDate = new Date();
+  // Strip the time from the current date
+  currentDate.setHours(0, 0, 0, 0);
+
   const eventDate = new Date(timer.date);
-  const timeDifference = eventDate.getTime() - currentDate.getTime();
+  // Strip the time from the event date
+  eventDate.setHours(0, 0, 0, 0);
+
+  // Compare the dates to see if the event is today
+  const isEventToday = eventDate.getTime() === currentDate.getTime();
+
+  // Calculate the time difference and days remaining
+  const timeDifference = eventDate - currentDate; // Now you can subtract directly since both dates are at midnight
   const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+
   const timerEl = document.createElement('div');
   timerEl.classList.add('timer');
-  if (daysRemaining === 0) {
+  if (isEventToday) {
     timerEl.classList.add('today-timer');
     timerEl.style.borderColor = timer.color;
   }
   timerEl.style.fontFamily = displayFont;
   timerEl.innerHTML = `
-  <h2 class="${daysRemaining === 0 ? 'today' : 'days-remaining '}">${
-    daysRemaining === 0
+    <h2 class="${isEventToday ? 'today' : 'days-remaining'}">${isEventToday
       ? translations[language].today
-      : daysRemaining +
-        '<span class="days-label">' +
-        translations[language].days +
-        '</span>'
-  }</h2>
+      : daysRemaining + '<span class="days-label">' + translations[language].days + '</span>'
+    }</h2>
     <p class="due-date" style="color: ${timer.color};">${timer.name}</p>
     <button class="edit-btn">${formatDate(timer.date)}</button>
   `;
+
 
   const editBtn = timerEl.querySelector('.edit-btn');
   editBtn.addEventListener('click', () => {
@@ -245,6 +253,8 @@ function updateUI() {
     translations[language].remove;
   document.getElementById('modal-title').textContent =
     translations[language].settings;
+  document.getElementById('save-settings-btn').textContent =
+    translations[language].save;
   document.querySelectorAll('label[for="date-format"]')[0].textContent =
     translations[language].dateFormat;
   document.querySelectorAll('label[for="display-font"]')[0].textContent =
