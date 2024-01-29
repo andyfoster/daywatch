@@ -12,12 +12,19 @@ const eventColorInput = document.getElementById('event-color');
 const closeBtn = document.querySelector('.close');
 const dateEl = document.getElementById('date');
 const removeBtn = document.getElementById('remove-timer-btn');
-
-// document.getElementById('add-dummy-timer-btn').addEventListener('click', () => {
-//   createDummyTimer();
-// });
+const settingsBtn = document.getElementById('settings-btn');
+const settingsModal = document.getElementById('settings-modal');
+const settingsForm = document.getElementById('settings-form');
+const dateFormatSelect = document.getElementById('date-format-select');
+const displayFontSelect = document.getElementById('display-font');
+const languageSelect = document.getElementById('language');
+const settingsCloseBtn = document.querySelector('#settings-modal .close');
 
 let timers = JSON.parse(localStorage.getItem('timers')) || [];
+let dateFormat = localStorage.getItem('dateFormat') || 'long';
+let displayFont = localStorage.getItem('displayFont') || 'Roboto Condensed';
+let language = localStorage.getItem('language') || 'en';
+languageSelect.value = language;
 
 let handleFormSubmit;
 
@@ -32,48 +39,59 @@ timerForm.addEventListener('submit', (event) => {
   handleFormSubmit();
   hideModal();
 });
+settingsBtn.addEventListener('click', showSettings);
+settingsCloseBtn.addEventListener('click', hideSettings);
+settingsForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  dateFormat = dateFormatSelect.value;
+  displayFont = displayFontSelect.value;
+  language = languageSelect.value;
+  localStorage.setItem('dateFormat', dateFormat);
+  localStorage.setItem('displayFont', displayFont);
+  localStorage.setItem('language', language);
+  hideSettings();
+  renderTimers();
+  updateUI();
+  location.reload();
+});
 
 // Set up timers on load
 window.onload = function () {
   sortTimers();
   renderTimers();
-  // Set date
-  dateEl.textContent = new Date().toLocaleDateString('en-NZ', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-  // Style timers container
-  // timersContainer.style.display = 'flex';
-  // timersContainer.style.flexWrap = 'wrap';
-  // timersContainer.style.justifyContent = 'center';
-  // timersContainer.style.alignItems = 'center';
+  updateUI();
+  populateDateFormatOptions();
 };
 
-// function showModal(isEdit = false, index) {
-//   modalTitle.textContent = isEdit ? 'Edit Timer' : 'Add Timer';
-//   // modalTitle.textContent = 'Add Timer';
-//   eventNameInput.value = '';
-//   eventDateInput.value = '';
-//   eventColorInput.value = '#000000';
-//   timerModal.style.display = 'block';
+function populateDateFormatOptions() {
+  const today = new Date();
+  const longFormatOption = document.createElement('option');
+  longFormatOption.value = 'long';
+  longFormatOption.text = today.toLocaleDateString(language, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  dateFormatSelect.add(longFormatOption);
 
-//   if (isEdit) {
-//     removeBtn.style.display = 'block';
-//     removeBtn.onclick = () => {
-//       removeTimer(index);
-//       hideModal();
-//     };
-//   } else {
-//     removeBtn.style.display = 'none';
-//   }
-// }
+  const shortFormatOption = document.createElement('option');
+  shortFormatOption.value = 'short';
+  shortFormatOption.text = today.toLocaleDateString(language, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+  dateFormatSelect.add(shortFormatOption);
+}
+
+function showSettings() {
+  timerModal.style.display = 'none';
+  settingsModal.style.display = 'block';
+}
+
+function hideSettings() {
+  settingsModal.style.display = 'none';
+}
+
 function showModal(isEdit = false, index) {
   // Remove previous event listener
   removeBtn.onclick = null;
 
-  modalTitle.textContent = isEdit ? 'Edit Timer' : 'New Timer';
+  modalTitle.textContent = isEdit
+    ? translations[language].editTimer
+    : translations[language].newTimer;
   eventNameInput.value = '';
   eventDateInput.value = '';
   eventColorInput.value = '#000000';
@@ -109,7 +127,6 @@ function addTimer() {
   }
 }
 
-// removeTimer() should delete a single timer from the timers array
 function removeTimer(index) {
   timers.splice(index, 1);
   updateTimers();
@@ -144,54 +161,106 @@ function renderTimers() {
   timers.forEach((timer, index) => createTimerElement(timer, index));
 }
 
-// Function to create dummy timer for testing
-function createDummyTimer() {
-  // Create a nonsense string for the name
-  const nonsense = Math.random().toString(36).substring(2, 15);
-  // random color
-  const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-
-  // random date in the next two years
-  const randomDate =
-    new Date().getTime() + Math.random() * 1000 * 60 * 60 * 24 * 365 * 2;
-
-  const timer = {
-    name: nonsense,
-    date: randomDate,
-    color: '#' + randomColor,
-  };
-  timers.push(timer);
-  updateTimers();
-}
-
 function createTimerElement(timer, index) {
-  const timeRemaining = timer.date - new Date().getTime();
-  const daysRemaining = Math.floor(timeRemaining / (1000 * 60 * 60 * 24)) + 1;
+  const currentDate = new Date();
+  const eventDate = new Date(timer.date);
+  const timeDifference = eventDate.getTime() - currentDate.getTime();
+  const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
   const timerEl = document.createElement('div');
   timerEl.classList.add('timer');
+  if (daysRemaining === 0) {
+    timerEl.classList.add('today-timer');
+    timerEl.style.borderColor = timer.color;
+  }
+  timerEl.style.fontFamily = displayFont;
   timerEl.innerHTML = `
-    <h2 class="days-remaining">${daysRemaining}</h2>
+  <h2 class="${daysRemaining === 0 ? 'today' : 'days-remaining '}">${
+    daysRemaining === 0
+      ? translations[language].today
+      : daysRemaining +
+        '<span class="days-label">' +
+        translations[language].days +
+        '</span>'
+  }</h2>
     <p class="due-date" style="color: ${timer.color};">${timer.name}</p>
-    <button class="edit-btn">${new Date(timer.date).toLocaleDateString(
-      'en-NZ',
-      { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }
-    )}</button>
-
+    <button class="edit-btn">${formatDate(timer.date)}</button>
   `;
 
-  // Add event listeners to the buttons
   const editBtn = timerEl.querySelector('.edit-btn');
   editBtn.addEventListener('click', () => {
     showModal(true, index);
-    modalTitle.textContent = 'Edit Timer';
+    modalTitle.textContent = translations[language].editTimer;
     eventNameInput.value = timer.name;
     eventDateInput.value = new Date(timer.date).toISOString().slice(0, 10);
     eventColorInput.value = timer.color;
     handleFormSubmit = () => editTimer(index);
   });
 
-  // const removeBtn = timerEl.querySelector('.remove-btn');
-  // removeBtn.addEventListener('click', () => removeTimer(index));
-
   timersContainer.appendChild(timerEl);
+}
+
+function formatDate(date) {
+  const options = {
+    long: {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    },
+    short: {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    },
+    full: {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    },
+  };
+  return new Date(date).toLocaleDateString(language, options[dateFormat]);
+}
+
+function updateUI() {
+  const today = new Date();
+  const options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  };
+  dateEl.textContent = today.toLocaleDateString(language, options);
+  modalTitle.textContent = translations[language].newTimer;
+  document.querySelectorAll('label[for="event-name"]')[0].textContent =
+    translations[language].eventName;
+  document.querySelectorAll('label[for="event-date"]')[0].textContent =
+    translations[language].eventDate;
+  document.querySelectorAll('label[for="color"]')[0].textContent =
+    translations[language].color;
+  document.getElementById('submit-timer-btn').textContent =
+    translations[language].save;
+  document.getElementById('remove-timer-btn').textContent =
+    translations[language].remove;
+  document.getElementById('modal-title').textContent =
+    translations[language].settings;
+  document.querySelectorAll('label[for="date-format"]')[0].textContent =
+    translations[language].dateFormat;
+  document.querySelectorAll('label[for="display-font"]')[0].textContent =
+    translations[language].font;
+  document.querySelectorAll('label[for="language"]')[0].textContent =
+    translations[language].language;
+  document
+    .getElementById('settings-form')
+    .querySelectorAll('option[value="en"]')[0].textContent = "English";
+  document
+    .getElementById('settings-form')
+    .querySelectorAll('option[value="ja"]')[0].textContent = "日本語";
+  document
+    .getElementById('settings-form')
+    .querySelectorAll('option[value="es"]')[0].textContent = "Español";
+  document
+    .getElementById('settings-form')
+    .querySelectorAll('option[value="zh"]')[0].textContent = "中文";
 }

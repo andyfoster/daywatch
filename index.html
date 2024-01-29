@@ -2,26 +2,17 @@
 <html>
   <head>
     <title>New Tab</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="dark-mode.css" />
+    <meta charset="UTF-8" />
   </head>
   <body>
     <div class="container">
-      <!-- Display today's date at the top -->
       <h1 id="date">Today</h1>
+
       <button id="add-timer-btn">+ Timer</button>
-      <!-- <button id="add-dummy-timer-btn">+ Test Timer</button> -->
+      <button id="settings-btn">⚙</button>
       <div id="timers-container"></div>
-      <!--
-        # Future Feature: Show more timers as a list
-        <div id="more-timers-container">
-        <ul>
-          <li>Next Birthday - 300 days</li>
-          <li>Next Party - 350 days</li>
-          <li>After that - 400 days</li>
-          <li>Then this - 4500 days</li>
-          <li>And then this - 500 days</li>
-        </ul>
-      </div> -->
     </div>
 
     <div id="timer-modal" class="modal">
@@ -31,31 +22,66 @@
         <form id="timer-form">
           <div class="input-group">
             <label for="event-name">Event Name:</label>
-            <input type="text" id="event-name" name="event-name" required>
+            <input type="text" id="event-name" name="event-name" required />
           </div>
           <div class="input-group">
-          <label for="event-date">Event Date:</label>
-          <!-- // set inut date value to today -->
-
-          <input type="date" id="event-date" name="event-date" required>
-
-
+            <label for="event-date">Event Date:</label>
+            <input type="date" id="event-date" name="event-date" required />
           </div>
           <div class="input-group">
             <label for="color">Color:</label>
-            <input type="color" name="event-color" id="event-color">
-
+            <input type="color" name="event-color" id="event-color" />
           </div>
-
-
-          <br>
-
+          <br />
           <button type="submit" id="submit-timer-btn">Save</button>
-          <button type="button" id="remove-timer-btn" style="display: none;">Remove</button>
+          <button type="button" id="remove-timer-btn" style="display: none">
+            Remove
+          </button>
         </form>
       </div>
     </div>
 
+    <div id="settings-modal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2 id="modal-title">Settings</h2>
+        <form id="settings-form">
+          <div class="input-group">
+            <label for="date-format">Date Format:</label>
+            <select id="date-format-select" name="date-format">
+              <!-- Options will be populated dynamically -->
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="display-font">Font:</label>
+            <select id="display-font" name="display-font">
+              <option value="Roboto Condensed">Roboto Condensed</option>
+              <option value="Arial">Arial</option>
+              <!-- Add more display font options here -->
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="language">Language:</label>
+            <select id="language" name="language">
+              <option value="en">English</option>
+              <option value="ja">日本語</option>
+              <option value="es">Español</option>
+              <option value="zh">中文</option>
+              <option value="fa">فارسی</option>
+            </select>
+          </div>
+          <br />
+          <button type="submit">Save</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="translations.js"></script>
     <script src="script.js"></script>
+    <script>
+      let displayFont =
+        localStorage.getItem('displayFont') || 'Roboto Condensed';
+      let language = localStorage.getItem('language') || 'en';
+    </script>
   </body>
 </html>
