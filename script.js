@@ -24,6 +24,7 @@ let timers = JSON.parse(localStorage.getItem('timers')) || [];
 let dateFormat = localStorage.getItem('dateFormat') || 'long';
 let displayFont = localStorage.getItem('displayFont') || 'Roboto Condensed';
 let language = localStorage.getItem('language') || 'en';
+languageSelect.value = language;
 
 let handleFormSubmit;
 
