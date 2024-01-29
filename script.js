@@ -21,7 +21,6 @@ const languageSelect = document.getElementById('language');
 const settingsCloseBtn = document.querySelector('#settings-modal .close');
 
 let timers = JSON.parse(localStorage.getItem('timers')) || [];
-let dateFormatSelect = document.getElementById('date-format-select');
 let dateFormat = localStorage.getItem('dateFormat') || 'long';
 let displayFont = localStorage.getItem('displayFont') || 'Roboto Condensed';
 let language = localStorage.getItem('language') || 'en';
