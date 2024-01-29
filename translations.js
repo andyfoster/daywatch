@@ -71,4 +71,22 @@ const translations = {
     font: '字体：',
     language: '语言：'
   },
+  fa: {
+    today: 'امروز',
+    newTimer: 'تایمر جدید',
+    editTimer: 'ویرایش تایمر',
+    eventName: 'نام رویداد:',
+    eventDate: 'تاریخ رویداد:',
+    color: 'رنگ:',
+    save: 'ذخیره',
+    remove: 'حذف',
+    displayFont: {
+      robotoCondensed: 'Roboto Condensed',
+      arial: 'Arial',
+    },
+    days: 'روز',
+    dateFormat: 'فرمت تاریخ:',
+    font: 'فونت:',
+    language: 'زبان:'
+  }
 };
