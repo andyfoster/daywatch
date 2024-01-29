@@ -106,6 +106,7 @@ body {
 
 .timer:hover {
   background-color: #e8e8e8;
+  cursor: pointer;
 }
 
 .timer.small {
@@ -220,6 +221,11 @@ body {
   font-size: 2rem;
   margin: 0;
   padding: 0;
+  transition: background-color 0.3s ease;
+}
+
+.due-date:hover {
+  background-color: #e8e8e8;
 }
 
 .button-container {
