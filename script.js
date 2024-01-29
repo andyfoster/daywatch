@@ -230,17 +230,17 @@ function updateUI() {
   document
     .getElementById('settings-form')
     .querySelectorAll('option[value="en"]')[0].textContent =
-    translations[language].language.en;
+    translations[language].languageName;
   document
     .getElementById('settings-form')
     .querySelectorAll('option[value="ja"]')[0].textContent =
-    translations[language].language.ja;
+    translations[language].languageName;
   document
     .getElementById('settings-form')
     .querySelectorAll('option[value="es"]')[0].textContent =
-    translations[language].language.es;
-  document
+    translations[language].languageName;
+    document
     .getElementById('settings-form')
     .querySelectorAll('option[value="zh"]')[0].textContent =
-    translations[language].language.zh;
+    translations[language].languageName;
 }
