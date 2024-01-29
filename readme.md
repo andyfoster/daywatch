@@ -1,6 +1,8 @@
-# Countdown Timers in New Tab
+# DayWatch: New Tab Countdown Tracker
 
-This is a simple Chrome extension that will show you the days left until the date arrives. Make as many timers as you like.
+Chrome extension that shows you the days left until the date arrives. Make as many timers as you like.
+
+Now live on the [Chrome Web Store](https://chrome.google.com/webstore/detail/daywatch-new-tab-countdow/lmaiakmjepidofmhoepdpdicoehkmeoj)
 
 ## Features
 
