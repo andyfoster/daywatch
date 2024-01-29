@@ -232,17 +232,17 @@ function updateUI() {
   document
     .getElementById('settings-form')
     .querySelectorAll('option[value="en"]')[0].textContent =
-    translations[language].languageName;
+    translations["en"].language;
   document
     .getElementById('settings-form')
     .querySelectorAll('option[value="ja"]')[0].textContent =
-    translations[language].languageName;
+    translations["ja"].language;
   document
     .getElementById('settings-form')
     .querySelectorAll('option[value="es"]')[0].textContent =
-    translations[language].languageName;
-    document
+    translations["es"].language;
+  document
     .getElementById('settings-form')
     .querySelectorAll('option[value="zh"]')[0].textContent =
-    translations[language].languageName;
+    translations["zh"].language;
 }
