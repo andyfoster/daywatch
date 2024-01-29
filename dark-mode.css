@@ -10,24 +10,31 @@
   }
 
   #add-timer-btn {
-    background-color: black;
+    background-color: transparent;
+    color: #666;
   }
 
   #settings-btn {
     width: initial;
     padding-left: 20px;
     padding-right: 20px;
-    background-color: black;
+    background-color: transparent;
+    color: #666;
+  }
+
+  #add-timer-btn:hover,
+  #settings-btn:hover {
+    color: gray;
   }
 
   .timer {
-    background-color: #555;
+    background-color: #444;
     border: 1px solid #777;
     color: #fff;
   }
 
   .timer:hover {
-    background-color: #666;
+    background-color: #555;
     border: 1px solid #888;
   }
 

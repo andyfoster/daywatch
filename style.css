@@ -330,11 +330,12 @@ body {
 
 h1#date {
   font-family: 'Roboto Condensed', sans-serif;
-  font-size: 3rem;
+  font-size: 4rem;
   font-weight: 300;
   margin: 0;
   padding: 0;
   color: #333;
+  background-color: transparent;
 }
 
 .today {
