@@ -147,8 +147,9 @@ function renderTimers() {
 
 function createTimerElement(timer, index) {
   const currentDate = new Date();
-  currentDate.setHours(0, 0, 0, 0);
-  const timeRemaining = timer.date - currentDate.getTime();
+  const eventDate = new Date(timer.date);
+  const timeDifference = eventDate.getTime() - currentDate.getTime();
+  const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
   const daysRemaining = Math.floor(timeRemaining / (1000 * 60 * 60 * 24)) + 1;
   const timerEl = document.createElement('div');
   timerEl.classList.add('timer');
