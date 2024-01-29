@@ -231,18 +231,14 @@ function updateUI() {
     translations[language].language;
   document
     .getElementById('settings-form')
-    .querySelectorAll('option[value="en"]')[0].textContent =
-    translations["en"].language;
+    .querySelectorAll('option[value="en"]')[0].textContent = "English";
   document
     .getElementById('settings-form')
-    .querySelectorAll('option[value="ja"]')[0].textContent =
-    translations["ja"].language;
+    .querySelectorAll('option[value="ja"]')[0].textContent = "日本語";
   document
     .getElementById('settings-form')
-    .querySelectorAll('option[value="es"]')[0].textContent =
-    translations["es"].language;
+    .querySelectorAll('option[value="es"]')[0].textContent = "Español";
   document
     .getElementById('settings-form')
-    .querySelectorAll('option[value="zh"]')[0].textContent =
-    translations["zh"].language;
+    .querySelectorAll('option[value="zh"]')[0].textContent = "中文";
 }
