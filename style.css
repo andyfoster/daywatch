@@ -400,6 +400,7 @@ h1#date {
   font-weight: bold;
   font-size: 3.5em;
   color: red;
+  margin-top: 0;
   margin-bottom: 0;
 }
 
