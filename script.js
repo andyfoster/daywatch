@@ -213,6 +213,12 @@ function formatDate(date) {
       month: 'short',
       day: 'numeric',
     },
+    full: {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    },
   };
   return new Date(date).toLocaleDateString(language, options[dateFormat]);
 }
