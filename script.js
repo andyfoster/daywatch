@@ -21,6 +21,7 @@ const languageSelect = document.getElementById('language');
 const settingsCloseBtn = document.querySelector('#settings-modal .close');
 
 let timers = JSON.parse(localStorage.getItem('timers')) || [];
+let dateFormatSelect = document.getElementById('date-format-select');
 let dateFormat = localStorage.getItem('dateFormat') || 'long';
 let displayFont = localStorage.getItem('displayFont') || 'Roboto Condensed';
 let language = localStorage.getItem('language') || 'en';
@@ -58,7 +59,21 @@ window.onload = function () {
   sortTimers();
   renderTimers();
   updateUI();
+  populateDateFormatOptions();
 };
+
+function populateDateFormatOptions() {
+  const today = new Date();
+  const longFormatOption = document.createElement('option');
+  longFormatOption.value = 'long';
+  longFormatOption.text = today.toLocaleDateString(language, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  dateFormatSelect.add(longFormatOption);
+
+  const shortFormatOption = document.createElement('option');
+  shortFormatOption.value = 'short';
+  shortFormatOption.text = today.toLocaleDateString(language, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+  dateFormatSelect.add(shortFormatOption);
+}
 
 function showSettings() {
   timerModal.style.display = 'none';
