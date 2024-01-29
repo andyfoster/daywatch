@@ -2,9 +2,8 @@
 <html>
   <head>
     <title>New Tab</title>
-    <link rel="stylesheet" href="style.css">
-    <meta charset="UTF-8">
-
+    <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8" />
   </head>
   <body>
     <div class="container">
@@ -22,19 +21,21 @@
         <form id="timer-form">
           <div class="input-group">
             <label for="event-name">Event Name:</label>
-            <input type="text" id="event-name" name="event-name" required>
+            <input type="text" id="event-name" name="event-name" required />
           </div>
           <div class="input-group">
             <label for="event-date">Event Date:</label>
-            <input type="date" id="event-date" name="event-date" required>
+            <input type="date" id="event-date" name="event-date" required />
           </div>
           <div class="input-group">
             <label for="color">Color:</label>
-            <input type="color" name="event-color" id="event-color">
+            <input type="color" name="event-color" id="event-color" />
           </div>
-          <br>
+          <br />
           <button type="submit" id="submit-timer-btn">Save</button>
-          <button type="button" id="remove-timer-btn" style="display: none;">Remove</button>
+          <button type="button" id="remove-timer-btn" style="display: none">
+            Remove
+          </button>
         </form>
       </div>
     </div>
@@ -66,10 +67,9 @@
               <option value="es">Español</option>
               <option value="zh">中文</option>
               <option value="fa">فارسی</option>
-              <option value="fa">فارسی</option>
             </select>
           </div>
-          <br>
+          <br />
           <button type="submit">Save</button>
         </form>
       </div>
@@ -78,7 +78,8 @@
     <script src="translations.js"></script>
     <script src="script.js"></script>
     <script>
-      let displayFont = localStorage.getItem('displayFont') || 'Roboto Condensed';
+      let displayFont =
+        localStorage.getItem('displayFont') || 'Roboto Condensed';
       let language = localStorage.getItem('language') || 'en';
     </script>
   </body>
