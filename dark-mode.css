@@ -1,0 +1,87 @@
+/* Dark mode palette */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #333;
+    color: #fff;
+  }
+
+  h1#date {
+    color: gainsboro;
+  }
+
+  #add-timer-btn {
+    background-color: black;
+  }
+
+  #settings-btn {
+    width: initial;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: black;
+  }
+
+  .timer {
+    background-color: #555;
+    border: 1px solid #777;
+    color: #fff;
+  }
+
+  .timer:hover {
+    background-color: #666;
+    border: 1px solid #888;
+  }
+
+  .timer.small {
+    background-color: #222;
+    border: 1px solid #444;
+    color: #fff;
+  }
+
+  .edit-btn,
+  .remove-btn,
+  .settings-btn,
+  .add-timer-btn {
+    color: #ccc;
+  }
+
+  .close {
+    color: #ccc;
+  }
+
+  .modal-content {
+    background-color: #444;
+    border: 1px solid #666;
+    color: #fff;
+  }
+
+  .modal-content label {
+    color: #fff;
+  }
+
+  .modal-content input,
+  .modal-content select {
+    color: #fff;
+    background-color: #666;
+    border: 1px solid #888;
+  }
+
+  .edit-btn:hover {
+    color: #fff;
+  }
+
+  .modal-content button[type='submit'] {
+    background-color: #4caf50;
+  }
+
+  .modal-content button[type='button'] {
+    background-color: red;
+  }
+
+  .today {
+    color: palevioletred;
+  }
+
+  .today-timer {
+    border-color: red;
+  }
+}
