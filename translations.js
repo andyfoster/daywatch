@@ -13,6 +13,7 @@ const translations = {
       arial: 'Arial',
     },
     days: 'days',
+    day: 'day',
     dateFormat: 'Date Format:',
     font: 'Font:',
     language: 'Language:'
@@ -31,6 +32,7 @@ const translations = {
       arial: 'Arial',
     },
     days: '日',
+    day: '日',
     dateFormat: '日付形式：',
     font: 'フォント：',
     language: '言語：'
@@ -49,6 +51,7 @@ const translations = {
       arial: 'Arial',
     },
     days: 'días',
+    day: 'dia',
     dateFormat: 'Formato de Fecha:',
     font: 'Fuente:',
     language: 'Idioma:'
@@ -67,6 +70,7 @@ const translations = {
       arial: 'Arial',
     },
     days: '天',
+    day: '天',
     dateFormat: '日期格式：',
     font: '字体：',
     language: '语言：'
@@ -85,6 +89,7 @@ const translations = {
       arial: 'Arial',
     },
     days: 'روز',
+    day: 'روز',
     dateFormat: 'فرمت تاریخ:',
     font: 'فونت:',
     language: 'زبان:'

@@ -184,15 +184,20 @@ function createTimerElement(timer, index) {
     timerEl.style.borderColor = timer.color;
   }
   timerEl.style.fontFamily = displayFont;
+
+  // Make sure it's '1 day' and not '1 days'
+  let daysString = (daysRemaining === 1 || daysRemaining === -1) ?
+    translations[language].day :
+    translations[language].days;
+
   timerEl.innerHTML = `
     <h2 class="${isEventToday ? 'today' : 'days-remaining'}">${isEventToday
       ? translations[language].today
-      : daysRemaining + '<span class="days-label">' + translations[language].days + '</span>'
+      : daysRemaining + '<span class="days-label">' + daysString + '</span>'
     }</h2>
     <p class="due-date" style="color: ${timer.color};">${timer.name}</p>
     <button class="edit-btn">${formatDate(timer.date)}</button>
   `;
-
 
   const editBtn = timerEl.querySelector('.edit-btn');
   editBtn.addEventListener('click', () => {
