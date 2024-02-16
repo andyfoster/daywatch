@@ -10,7 +10,7 @@ const eventNameInput = document.getElementById('event-name');
 const eventDateInput = document.getElementById('event-date');
 const eventColorInput = document.getElementById('event-color');
 const closeBtn = document.querySelector('.close');
-const dateEl = document.getElementById('date');
+const dateEl = document.getElementById('date'); // h1 that displays the date
 const removeBtn = document.getElementById('remove-timer-btn');
 const settingsBtn = document.getElementById('settings-btn');
 const settingsModal = document.getElementById('settings-modal');
@@ -54,6 +54,22 @@ settingsForm.addEventListener('submit', (event) => {
   updateUI();
   location.reload();
 });
+
+// add double click event listener
+dateEl.addEventListener('dblclick', () => {
+  const isHidden = timersContainer.style.opacity === '0.1';
+
+  // Toggle the opacity
+  timersContainer.style.opacity = isHidden ? '1' : '0.1';
+  // Convert the boolean to a string to store in localStorage
+  localStorage.setItem('hideTimers', isHidden ? 'false' : 'true'); // Toggle the stored value
+});
+
+// Retrieve the value from localStorage and set the opacity accordingly
+// Use JSON.parse to convert the retrieved string back to a boolean
+const storedIsHidden = localStorage.getItem('hideTimers') === 'true';
+timersContainer.style.opacity = storedIsHidden ? '0.1' : '1';
+
 
 // Set up timers on load
 window.onload = function () {

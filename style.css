@@ -132,6 +132,9 @@ body {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  opacity: 1;
+  /* animate the opacity */
+  /* transition: opacity 1s; */
 }
 
 .days-remaining {
@@ -341,6 +344,17 @@ h1#date {
   padding: 0;
   color: #333;
   background-color: transparent;
+  user-select: none;
+}
+
+.overlay {
+  /* position: absolute; */
+  /* left: 0; */
+  /* top: 0; */
+  /* right: 0; */
+  /* bottom: 0; */
+  /* backdrop-filter: blur(11px); */
+  opacity: 0;
 }
 
 .today {
