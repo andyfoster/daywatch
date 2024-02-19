@@ -20,6 +20,10 @@ const displayFontSelect = document.getElementById('display-font');
 const languageSelect = document.getElementById('language');
 const settingsCloseBtn = document.querySelector('#settings-modal .close');
 
+// Side panel
+const toggleButton = document.getElementById('toggle-events-btn');
+const sidePanel = document.getElementById('events-side-panel');
+
 let timers = JSON.parse(localStorage.getItem('timers')) || [];
 let dateFormat = localStorage.getItem('dateFormat') || 'long';
 let displayFont = localStorage.getItem('displayFont') || 'Roboto Condensed';
@@ -31,12 +35,14 @@ let handleFormSubmit;
 // Set up event listeners
 addTimerBtn.addEventListener('click', () => {
   showModal();
-  handleFormSubmit = addTimer;
+  handleFormSubmit = (showOnMainScreen) => addTimer(showOnMainScreen); // Use a wrapper function
 });
 closeBtn.addEventListener('click', hideModal);
 timerForm.addEventListener('submit', (event) => {
   event.preventDefault();
-  handleFormSubmit();
+  const showOnMainScreenCheckbox = document.getElementById('show-on-main-screen'); // Get the checkbox
+  const showOnMainScreen = showOnMainScreenCheckbox.checked; // Get the checked state
+  handleFormSubmit(showOnMainScreen);
   hideModal();
 });
 settingsBtn.addEventListener('click', showSettings);
@@ -54,6 +60,20 @@ settingsForm.addEventListener('submit', (event) => {
   updateUI();
   location.reload();
 });
+
+
+toggleButton.addEventListener('click', function () {
+  if (sidePanel.style.display === 'none' || sidePanel.style.display === '') {
+    sidePanel.style.display = 'block';
+  } else {
+    sidePanel.style.display = 'none';
+  }
+});
+
+
+
+
+
 
 // Add double-click event listener
 dateEl.addEventListener('dblclick', () => {
@@ -121,22 +141,38 @@ function showModal(isEdit = false, index) {
   eventColorInput.value = '#000000';
   timerModal.style.display = 'block';
 
+  const showOnMainScreenCheckbox = document.getElementById('show-on-main-screen');
+
+
   if (isEdit) {
+    const timer = timers[index];
+    modalTitle.textContent = "Edit Timer"; // Adjust according to your translations
+    eventNameInput.value = timer.name;
+    eventDateInput.value = new Date(timer.date).toISOString().slice(0, 10);
+    eventColorInput.value = timer.color;
+    document.getElementById('show-on-main-screen').checked = timer.showOnMainScreen ?? true; // Default to true if undefined
+
     removeBtn.style.display = 'block';
     removeBtn.onclick = () => {
       removeTimer(index);
       hideModal();
     };
+
+    handleFormSubmit = (showOnMainScreen) => editTimer(index, showOnMainScreen);
+
   } else {
     removeBtn.style.display = 'none';
+    showOnMainScreenCheckbox.checked = true; // Default to true for new timers
+    handleFormSubmit = (showOnMainScreen) => addTimer(showOnMainScreen); // Use a wrapper function for consistency
   }
+  timerModal.style.display = 'block';
 }
 
 function hideModal() {
   timerModal.style.display = 'none';
 }
 
-function addTimer() {
+function addTimer(showOnMainScreen) {
   const eventName = eventNameInput.value.trim();
   const eventDate = eventDateInput.value;
   const eventColor = eventColorInput.value;
@@ -145,18 +181,14 @@ function addTimer() {
       name: eventName,
       date: new Date(eventDate).getTime(),
       color: eventColor,
+      showOnMainScreen: showOnMainScreen
     };
     timers.push(timer);
     updateTimers();
   }
 }
 
-function removeTimer(index) {
-  timers.splice(index, 1);
-  updateTimers();
-}
-
-function editTimer(index) {
+function editTimer(index, showOnMainScreen) {
   const eventName = eventNameInput.value.trim();
   const eventDate = eventDateInput.value;
   const eventColor = eventColorInput.value;
@@ -165,10 +197,18 @@ function editTimer(index) {
       name: eventName,
       date: new Date(eventDate).getTime(),
       color: eventColor,
+      showOnMainScreen: showOnMainScreen
     };
     updateTimers();
   }
 }
+
+
+function removeTimer(index) {
+  timers.splice(index, 1);
+  updateTimers();
+}
+
 
 function updateTimers() {
   sortTimers();
@@ -180,9 +220,35 @@ function sortTimers() {
   timers.sort((a, b) => a.date - b.date);
 }
 
+function renderSidebarEvents() {
+  const sidebarList = document.getElementById('events-list');
+  sidebarList.innerHTML = ''; // Clear current list
+
+  timers.forEach((timer, index) => {
+    const li = document.createElement('li');
+    const daysLeft = Math.ceil((new Date(timer.date) - new Date()) / (1000 * 60 * 60 * 24));
+    li.innerHTML = `
+      <span>${timer.name} - ${new Date(timer.date).toLocaleDateString()} - ${daysLeft} days left</span>
+    `;
+
+    const editBtn = document.createElement('button');
+    editBtn.textContent = 'Edit';
+    editBtn.addEventListener('click', () => showModal(true, index)); // Attach event listener
+    li.appendChild(editBtn); // Append the button to the list item
+
+    sidebarList.appendChild(li);
+  });
+}
+
+
 function renderTimers() {
   timersContainer.innerHTML = '';
-  timers.forEach((timer, index) => createTimerElement(timer, index));
+  timers.forEach((timer, index) => {
+    if (timer.showOnMainScreen) { // Only create elements for timers marked to be shown
+      createTimerElement(timer, index);
+    }
+  });
+  renderSidebarEvents(); // Also update the sidebar with all events
 }
 
 function createTimerElement(timer, index) {

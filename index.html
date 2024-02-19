@@ -8,11 +8,23 @@
   </head>
   <body>
     <div class="container">
+      <button id="toggle-events-btn">Events</button>
+      <!-- Toggle Button -->
+
       <h1 id="date" title="Double click to hide/show timers">Today</h1>
 
       <button id="add-timer-btn">+ Timer</button>
       <button id="settings-btn">⚙</button>
       <div id="timers-container"></div>
+    </div>
+
+    <!-- Side Panel for Event List -->
+    <div id="events-side-panel" class="side-panel">
+      <h2>Upcoming Events</h2>
+      <ul id="events-list">
+        here is some stuff
+        <!-- Event items will be added here dynamically -->
+      </ul>
     </div>
 
     <div id="timer-modal" class="modal">
@@ -32,6 +44,15 @@
             <label for="color">Color:</label>
             <input type="color" name="event-color" id="event-color" />
           </div>
+          <div class="input-group">
+            <label for="show-on-main-screen">Show on Main Screen:</label>
+            <input
+              type="checkbox"
+              id="show-on-main-screen"
+              name="show-on-main-screen"
+            />
+          </div>
+
           <br />
           <button type="submit" id="submit-timer-btn">Save</button>
           <button type="button" id="remove-timer-btn" style="display: none">
