@@ -150,7 +150,8 @@ function showModal(isEdit = false, index) {
     eventNameInput.value = timer.name;
     eventDateInput.value = new Date(timer.date).toISOString().slice(0, 10);
     eventColorInput.value = timer.color;
-    document.getElementById('show-on-main-screen').checked = timer.showOnMainScreen ?? true; // Default to true if undefined
+    // document.getElementById('show-on-main-screen').checked = timer.showOnMainScreen ?? true; // Default to true if undefined
+    showOnMainScreenCheckbox.checked = timer.showOnMainScreen;
 
     removeBtn.style.display = 'block';
     removeBtn.onclick = () => {
@@ -162,8 +163,10 @@ function showModal(isEdit = false, index) {
 
   } else {
     removeBtn.style.display = 'none';
-    showOnMainScreenCheckbox.checked = true; // Default to true for new timers
     handleFormSubmit = (showOnMainScreen) => addTimer(showOnMainScreen); // Use a wrapper function for consistency
+    // For new timers, you might want to default the checkbox to checked
+    showOnMainScreenCheckbox.checked = true;
+
   }
   timerModal.style.display = 'block';
 }
@@ -172,7 +175,7 @@ function hideModal() {
   timerModal.style.display = 'none';
 }
 
-function addTimer(showOnMainScreen) {
+function addTimer(showOnMainScreen = true) { // Default to true if not provided
   const eventName = eventNameInput.value.trim();
   const eventDate = eventDateInput.value;
   const eventColor = eventColorInput.value;
@@ -181,12 +184,13 @@ function addTimer(showOnMainScreen) {
       name: eventName,
       date: new Date(eventDate).getTime(),
       color: eventColor,
-      showOnMainScreen: showOnMainScreen
+      showOnMainScreen: showOnMainScreen // Use the provided value or default
     };
     timers.push(timer);
     updateTimers();
   }
 }
+
 
 function editTimer(index, showOnMainScreen) {
   const eventName = eventNameInput.value.trim();

@@ -410,6 +410,34 @@ h1#date {
   transform: translateX(0); /* Move into view when visible */
 }
 
+.large-checkbox {
+  transform: scale(2.5);
+  margin: 5px; /* Add some margin if needed */
+  cursor: pointer; /* Optional: Makes it clear the checkbox is interactive */
+  width: 8% !important;
+}
+
+/* Checkmark design */
+.styled-checkbox:checked + label:after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 6px;
+  height: 12px;
+  border: solid #393939; /* Checkmark color */
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+#events-list {
+  padding: 10px;
+}
+
+#events-list li {
+  padding: 10px;
+}
+
 .border-gradient {
   border: 10px solid;
   border-image-slice: 1;
