@@ -10,7 +10,7 @@ const eventNameInput = document.getElementById('event-name');
 const eventDateInput = document.getElementById('event-date');
 const eventColorInput = document.getElementById('event-color');
 const closeBtn = document.querySelector('.close');
-const dateEl = document.getElementById('date');
+const dateEl = document.getElementById('date'); // h1 that displays the date
 const removeBtn = document.getElementById('remove-timer-btn');
 const settingsBtn = document.getElementById('settings-btn');
 const settingsModal = document.getElementById('settings-modal');
@@ -54,6 +54,30 @@ settingsForm.addEventListener('submit', (event) => {
   updateUI();
   location.reload();
 });
+
+// Add double-click event listener
+dateEl.addEventListener('dblclick', () => {
+  // Check if the .overlay class is currently applied
+  const isHidden = timersContainer.classList.contains('overlay');
+
+  // Toggle the .overlay class
+  if (isHidden) {
+    timersContainer.classList.remove('overlay');
+  } else {
+    timersContainer.classList.add('overlay');
+  }
+
+  // Store the hidden state in localStorage
+  localStorage.setItem('hideTimers', isHidden ? 'false' : 'true');
+});
+
+// Set the initial state based on the value stored in localStorage
+const storedIsHidden = localStorage.getItem('hideTimers') === 'true';
+if (storedIsHidden) {
+  timersContainer.classList.add('overlay');
+} else {
+  timersContainer.classList.remove('overlay');
+}
 
 // Set up timers on load
 window.onload = function () {
