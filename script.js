@@ -55,21 +55,29 @@ settingsForm.addEventListener('submit', (event) => {
   location.reload();
 });
 
-// add double click event listener
+// Add double-click event listener
 dateEl.addEventListener('dblclick', () => {
-  const isHidden = timersContainer.style.opacity === '0.1';
+  // Check if the .overlay class is currently applied
+  const isHidden = timersContainer.classList.contains('overlay');
 
-  // Toggle the opacity
-  timersContainer.style.opacity = isHidden ? '1' : '0.1';
-  // Convert the boolean to a string to store in localStorage
-  localStorage.setItem('hideTimers', isHidden ? 'false' : 'true'); // Toggle the stored value
+  // Toggle the .overlay class
+  if (isHidden) {
+    timersContainer.classList.remove('overlay');
+  } else {
+    timersContainer.classList.add('overlay');
+  }
+
+  // Store the hidden state in localStorage
+  localStorage.setItem('hideTimers', isHidden ? 'false' : 'true');
 });
 
-// Retrieve the value from localStorage and set the opacity accordingly
-// Use JSON.parse to convert the retrieved string back to a boolean
+// Set the initial state based on the value stored in localStorage
 const storedIsHidden = localStorage.getItem('hideTimers') === 'true';
-timersContainer.style.opacity = storedIsHidden ? '0.1' : '1';
-
+if (storedIsHidden) {
+  timersContainer.classList.add('overlay');
+} else {
+  timersContainer.classList.remove('overlay');
+}
 
 // Set up timers on load
 window.onload = function () {
