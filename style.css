@@ -430,12 +430,125 @@ h1#date {
   transform: rotate(45deg);
 }
 
+#events-side-panel .events-header-bar {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Sidebar list styling */
 #events-list {
-  padding: 10px;
+  list-style-type: none; /* Remove default list bullet points */
+  padding: 0; /* Remove default padding */
+  margin: 0; /* Remove default margin */
+}
+
+#events-side-panel h2 {
+  font-weight: bold;
+  font-size: 3em;
+  margin-top: 0;
+  margin: 0;
+  padding-left: 10px;
+}
+
+#events-side-panel .new-timer-btn {
+  height: 20px;
+  align-self: center;
 }
 
 #events-list li {
-  padding: 10px;
+  padding: 3px; /* Add some padding for each list item */
+  font-size: 1.8em;
+  border-bottom: 1px solid #ccc; /* Add a bottom border to each item for separation */
+  cursor: default; /* Change cursor to default to indicate not clickable */
+  position: relative; /* For absolute positioning of the date span */
+}
+
+/* Style for days left and event name */
+#events-list li span {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Color reference as a small square before the event name */
+#events-list li:before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
+  vertical-align: middle;
+  background-color: currentColor; /* Use the text color for the square */
+}
+
+/* Hover effect to show the date */
+#events-list li:hover::after {
+  content: attr(data-date); /* Use the data-date attribute to show the date */
+  position: absolute;
+  right: 10px;
+  background-color: #f9f9f9; /* Light background for the tooltip */
+  border: 1px solid #ccc; /* Tooltip border */
+  padding: 5px; /* Some padding */
+  border-radius: 5px; /* Rounded corners for the tooltip */
+  white-space: nowrap; /* Prevent the date from wrapping */
+}
+
+/* Bold items that are shown on the main screen */
+#events-list .shown-on-main {
+  font-weight: bold; /* Make text bold for items shown on the main screen */
+  text-decoration: underline;
+}
+
+#events-list .edit-btn {
+  margin-left: 10px; /* Space from the event name */
+  padding: 2px 5px; /* Smaller padding for a button-like appearance */
+  font-size: 0.8rem; /* Smaller font size for the button */
+  cursor: pointer; /* Change cursor to indicate clickable */
+  border: 1px solid #ccc; /* Border to define the button */
+  background-color: #f9f9f9; /* Light background for the button */
+  border-radius: 3px; /* Rounded corners */
+}
+
+#events-list .edit-btn:hover {
+  background-color: #e2e2e2; /* Slightly darker background on hover */
+}
+
+#events-list li {
+  cursor: pointer; /* Change cursor to pointer to indicate clickable */
+  position: relative; /* For positioning the date tooltip */
+  padding: 10px; /* Add some padding for each list item */
+  border-bottom: 1px solid #ccc; /* Add a bottom border for separation */
+  list-style: none; /* Remove default list style */
+}
+
+#events-list li:not(.shown-on-main):before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 2px solid; /* Border for the empty block */
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+#events-list li.shown-on-main:before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background-color: currentColor; /* Fill block for shown items */
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+#events-list li:hover::after {
+  content: attr(data-date);
+  position: absolute;
+  right: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  padding: 5px;
+  border-radius: 5px;
+  white-space: nowrap;
 }
 
 .border-gradient {

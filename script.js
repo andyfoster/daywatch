@@ -19,6 +19,8 @@ const dateFormatSelect = document.getElementById('date-format-select');
 const displayFontSelect = document.getElementById('display-font');
 const languageSelect = document.getElementById('language');
 const settingsCloseBtn = document.querySelector('#settings-modal .close');
+const sidebarNewTimerBtn = document.querySelector('#new-timer-btn-sidebar');
+
 
 // Side panel
 const toggleButton = document.getElementById('toggle-events-btn');
@@ -31,6 +33,13 @@ let language = localStorage.getItem('language') || 'en';
 languageSelect.value = language;
 
 let handleFormSubmit;
+
+
+sidebarNewTimerBtn.addEventListener('click', () => {
+  showModal();
+  handleFormSubmit = (showOnMainScreen) => addTimer(showOnMainScreen); // Use a wrapper function
+});
+
 
 // Set up event listeners
 addTimerBtn.addEventListener('click', () => {
@@ -226,23 +235,32 @@ function sortTimers() {
 
 function renderSidebarEvents() {
   const sidebarList = document.getElementById('events-list');
-  sidebarList.innerHTML = ''; // Clear current list
+  sidebarList.innerHTML = ''; // Clear the current list
 
   timers.forEach((timer, index) => {
     const li = document.createElement('li');
-    const daysLeft = Math.ceil((new Date(timer.date) - new Date()) / (1000 * 60 * 60 * 24));
-    li.innerHTML = `
-      <span>${timer.name} - ${new Date(timer.date).toLocaleDateString()} - ${daysLeft} days left</span>
-    `;
+    li.style.color = timer.color; // Set the text color to the timer's color
+    li.setAttribute('data-date', new Date(timer.date).toLocaleDateString()); // Set the date for the hover effect
 
-    const editBtn = document.createElement('button');
-    editBtn.textContent = 'Edit';
-    editBtn.addEventListener('click', () => showModal(true, index)); // Attach event listener
-    li.appendChild(editBtn); // Append the button to the list item
+    const eventNameSpan = document.createElement('span');
+    eventNameSpan.textContent = `${timer.name} - ${Math.ceil((new Date(timer.date) - new Date()) / (1000 * 60 * 60 * 24))} days`;
 
+    li.appendChild(eventNameSpan);
     sidebarList.appendChild(li);
+
+    // Add a class to indicate whether the event is shown on the main screen
+    if (timer.showOnMainScreen) {
+      li.classList.add('shown-on-main');
+    } else {
+      li.classList.add('not-shown-on-main');
+    }
+
+    // Clicking the event name brings up the edit modal
+    li.addEventListener('click', () => showModal(true, index));
   });
 }
+
+
 
 
 function renderTimers() {
