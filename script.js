@@ -23,7 +23,7 @@ const sidebarNewTimerBtn = document.querySelector('#new-timer-btn-sidebar');
 
 
 // Side panel
-const toggleButton = document.getElementById('toggle-events-btn');
+// const toggleButton = document.getElementById('toggle-events-btn');
 const sidePanel = document.getElementById('events-side-panel');
 
 let timers = JSON.parse(localStorage.getItem('timers')) || [];
@@ -70,16 +70,20 @@ settingsForm.addEventListener('submit', (event) => {
   location.reload();
 });
 
+const togglePanel = document.getElementById('toggle-panel');
+// const sidePanel = document.getElementById('events-side-panel');
 
-toggleButton.addEventListener('click', function () {
-  if (sidePanel.style.display === 'none' || sidePanel.style.display === '') {
-    sidePanel.style.display = 'block';
-  } else {
-    sidePanel.style.display = 'none';
-  }
+togglePanel.addEventListener('click', function () {
+  sidePanel.classList.toggle('visible'); // Toggle visibility class
 });
 
-
+// toggleButton.addEventListener('click', function () {
+//   if (sidePanel.style.display === 'none' || sidePanel.style.display === '') {
+//     sidePanel.style.display = 'block';
+//   } else {
+//     sidePanel.style.display = 'none';
+//   }
+// });
 
 
 
@@ -242,25 +246,28 @@ function renderSidebarEvents() {
     li.style.color = timer.color; // Set the text color to the timer's color
     li.setAttribute('data-date', new Date(timer.date).toLocaleDateString()); // Set the date for the hover effect
 
+    // marker = full width space
+    let marker = '\u2003';
+    // Add a class to indicate whether the event is shown on the main screen
+    if (timer.showOnMainScreen) {
+      li.classList.add('shown-on-main');
+      // show a check mark
+      marker = '✔';
+    } else {
+      li.classList.add('not-shown-on-main');
+    }
+
     const eventNameSpan = document.createElement('span');
     eventNameSpan.textContent = `${timer.name} - ${Math.ceil((new Date(timer.date) - new Date()) / (1000 * 60 * 60 * 24))} days`;
 
     li.appendChild(eventNameSpan);
     sidebarList.appendChild(li);
 
-    // Add a class to indicate whether the event is shown on the main screen
-    if (timer.showOnMainScreen) {
-      li.classList.add('shown-on-main');
-    } else {
-      li.classList.add('not-shown-on-main');
-    }
 
     // Clicking the event name brings up the edit modal
     li.addEventListener('click', () => showModal(true, index));
   });
 }
-
-
 
 
 function renderTimers() {

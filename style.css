@@ -390,24 +390,32 @@ h1#date {
   border-image-source: linear-gradient(to left, #743ad5, #d53a9d);
 }
 
+/* Sidebar initial state */
 .side-panel {
-  display: none;
-  left: 0px;
-  top: 0px;
-  background: rgb(206, 206, 206);
+  width: 450px; /* Adjust the width as needed */
   height: 100%;
-  padding: 10px;
-  opacity: 0.95;
-  width: 30%;
-  position: absolute;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
-  z-index: 1000; /* Ensure it's above other content */
-  /* transition: transform 0.3s ease-in-out; Smooth transition for toggling visibility */
-  /* transform: translateX(-100%); Start off-screen */
+  position: fixed;
+  left: -450px; /* Hide sidebar off-screen */
+  top: 0;
+  background: #f9f9f9; /* Sidebar background color */
+  transition: left 0.3s ease; /* Smooth transition for sliding effect */
+  z-index: 1000; /* Ensure sidebar is above other content */
 }
 
+/* Sidebar visible state */
 .side-panel.visible {
-  transform: translateX(0); /* Move into view when visible */
+  left: 0; /* Slide in to be fully visible */
+}
+
+/* Toggle panel styling */
+.toggle-panel {
+  width: 30px; /* Adjust width as needed */
+  height: 100%;
+  position: absolute;
+  right: -30px; /* Position it on the edge of the sidebar */
+  top: 0;
+  background: gainsboro; /* Toggle panel background color */
+  cursor: pointer; /* Change cursor to indicate clickable */
 }
 
 .large-checkbox {
@@ -470,15 +478,15 @@ h1#date {
 }
 
 /* Color reference as a small square before the event name */
-#events-list li:before {
+/* #events-list li:before {
   content: '';
   display: inline-block;
   width: 10px;
   height: 10px;
   margin-right: 5px;
   vertical-align: middle;
-  background-color: currentColor; /* Use the text color for the square */
-}
+  background-color: currentColor; /* Use the text color for the square
+} /*
 
 /* Hover effect to show the date */
 #events-list li:hover::after {
@@ -521,22 +529,22 @@ h1#date {
 }
 
 #events-list li:not(.shown-on-main):before {
-  content: '';
+  content: ' ';
   display: inline-block;
-  width: 10px;
-  height: 10px;
-  border: 2px solid; /* Border for the empty block */
-  margin-right: 5px;
+  width: 30px;
+  /* height: 10px; */
+  /* border: 2px solid; Border for the empty block */
+  /* margin-right: 5px; */
   vertical-align: middle;
 }
 
 #events-list li.shown-on-main:before {
-  content: '';
+  content: '✔';
   display: inline-block;
-  width: 10px;
-  height: 10px;
-  background-color: currentColor; /* Fill block for shown items */
-  margin-right: 5px;
+  width: 30px;
+  /* height: 10px; */
+  /* background-color: currentColor; Fill block for shown items */
+  /* margin-right: 5px; */
   vertical-align: middle;
 }
 
