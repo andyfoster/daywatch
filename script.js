@@ -20,6 +20,7 @@ const displayFontSelect = document.getElementById('display-font');
 const languageSelect = document.getElementById('language');
 const settingsCloseBtn = document.querySelector('#settings-modal .close');
 const sidebarNewTimerBtn = document.querySelector('#new-timer-btn-sidebar');
+const togglePanel = document.getElementById('toggle-panel');
 
 
 // Side panel
@@ -33,6 +34,26 @@ let language = localStorage.getItem('language') || 'en';
 languageSelect.value = language;
 
 let handleFormSubmit;
+
+document.getElementById('toggle-panel').addEventListener('click', function () {
+  const sidebarContainer = document.getElementById('sidebar-container');
+  const toggleArrow = document.getElementById('toggle-arrow');
+
+  // Check the current state of the sidebar
+  const isSidebarVisible = sidebarContainer.style.transform === 'translateX(0px)';
+
+  if (isSidebarVisible) {
+    togglePanel.style.background = 'transparent';
+    // Hide the sidebar
+    sidebarContainer.style.transform = 'translateX(-100%)';
+    toggleArrow.textContent = '>'; // Change arrow direction
+  } else {
+    togglePanel.style.background = '#eee';
+    // Show the sidebar
+    sidebarContainer.style.transform = 'translateX(0)';
+    toggleArrow.textContent = '<'; // Change arrow direction
+  }
+});
 
 
 sidebarNewTimerBtn.addEventListener('click', () => {
@@ -70,7 +91,6 @@ settingsForm.addEventListener('submit', (event) => {
   location.reload();
 });
 
-const togglePanel = document.getElementById('toggle-panel');
 // const sidePanel = document.getElementById('events-side-panel');
 
 togglePanel.addEventListener('click', function () {
