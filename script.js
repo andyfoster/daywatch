@@ -21,7 +21,17 @@ const languageSelect = document.getElementById('language');
 const settingsCloseBtn = document.querySelector('#settings-modal .close');
 const sidebarNewTimerBtn = document.querySelector('#new-timer-btn-sidebar');
 const togglePanel = document.getElementById('toggle-panel');
+const overlay = document.getElementById('overlay');
 
+overlay.addEventListener('click', toggleSidebar);
+togglePanel.addEventListener('click', toggleSidebar);
+
+const sidebarContainer = document.getElementById('sidebar-container');
+const toggleArrow = document.getElementById('toggle-arrow');
+
+
+const downloadTimersBtn = document.getElementById('download-timers-btn');
+downloadTimersBtn.addEventListener('click', downloadTimers);
 
 // Side panel
 // const toggleButton = document.getElementById('toggle-events-btn');
@@ -35,26 +45,23 @@ languageSelect.value = language;
 
 let handleFormSubmit;
 
-document.getElementById('toggle-panel').addEventListener('click', function () {
-  const sidebarContainer = document.getElementById('sidebar-container');
-  const toggleArrow = document.getElementById('toggle-arrow');
+let isSidebarVisible = false;
 
-  // Check the current state of the sidebar
-  const isSidebarVisible = sidebarContainer.style.transform === 'translateX(0px)';
+function toggleSidebar() {
+  sidePanel.classList.toggle('visible'); // Toggle visibility class
 
   if (isSidebarVisible) {
-    togglePanel.style.background = 'transparent';
-    // Hide the sidebar
     sidebarContainer.style.transform = 'translateX(-100%)';
-    toggleArrow.textContent = '>'; // Change arrow direction
+    toggleArrow.textContent = '>';
+    overlay.style.display = 'none'; // Hide the overlay
   } else {
-    togglePanel.style.background = '#eee';
-    // Show the sidebar
     sidebarContainer.style.transform = 'translateX(0)';
-    toggleArrow.textContent = '<'; // Change arrow direction
+    toggleArrow.textContent = '<';
+    overlay.style.display = 'block'; // Show the overlay
   }
-});
 
+  isSidebarVisible = !isSidebarVisible;
+}
 
 sidebarNewTimerBtn.addEventListener('click', () => {
   showModal();
@@ -91,23 +98,6 @@ settingsForm.addEventListener('submit', (event) => {
   location.reload();
 });
 
-// const sidePanel = document.getElementById('events-side-panel');
-
-togglePanel.addEventListener('click', function () {
-  sidePanel.classList.toggle('visible'); // Toggle visibility class
-});
-
-// toggleButton.addEventListener('click', function () {
-//   if (sidePanel.style.display === 'none' || sidePanel.style.display === '') {
-//     sidePanel.style.display = 'block';
-//   } else {
-//     sidePanel.style.display = 'none';
-//   }
-// });
-
-
-
-
 // Add double-click event listener
 dateEl.addEventListener('dblclick', () => {
   // Check if the .overlay class is currently applied
@@ -139,6 +129,46 @@ window.onload = function () {
   updateUI();
   populateDateFormatOptions();
 };
+
+/**
+ * Function to download all the timers into a text file
+ */
+function downloadTimers() {
+  const filename = 'timers.txt';
+  // const text = JSON.stringify(timers, null, 2);
+  const text = convertTimersToText();
+  const element = document.createElement('a');
+  element.setAttribute(
+    'href',
+    'data:text/plain;charset=utf-8,' + encodeURIComponent(text)
+  );
+  element.setAttribute('download', filename);
+  element.style.display = 'none';
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
+}
+
+/**
+ * Change format of timers from
+ *   {
+    "name": "Finish AWS Course",
+    "date": 1708646400000,
+    "color": "#de910d",
+    "showOnMainScreen": true
+  },
+  to
+  Finish AWS Course - 2024-12-23
+ */
+function convertTimersToText() {
+  let text = '';
+  timers.forEach((timer) => {
+    text += `${timer.name}; ${new Date(timer.date).toISOString().slice(0, 10)}; ${timer.color}; ${timer.showOnMainScreen}\n`;
+  }
+  );
+  return text;
+}
+
 
 function populateDateFormatOptions() {
   const today = new Date();
