@@ -377,6 +377,7 @@ h1#date {
   left: 0;
   background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
   z-index: 5; /* Ensure it's below the sidebar but above other content */
+  cursor: pointer;
 }
 
 .overlay .due-date {
@@ -437,6 +438,11 @@ h1#date {
 /* Sidebar visible state */
 .side-panel.visible {
   left: 0; /* Slide in to be fully visible */
+}
+
+/* Hide panel when sidebar open */
+.side-panel.visible + #toggle-panel {
+  display: none;
 }
 
 #sidebar-container {
@@ -518,6 +524,10 @@ h1#date {
   list-style-type: none; /* Remove default list bullet points */
   padding: 0; /* Remove default padding */
   margin: 0; /* Remove default margin */
+}
+
+#events-list li:hover {
+  background-color: #f0f0f0; /* Light background color on hover */
 }
 
 #events-side-panel h2 {
