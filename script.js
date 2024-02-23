@@ -169,6 +169,27 @@ function convertTimersToText() {
   return text;
 }
 
+/**
+ * Accept a string of text in the above format (color and shown option) and convert it to an array of timers
+ */
+function convertTextToTimers(text) {
+  const lines = text.split('\n');
+  const newTimers = [];
+  lines.forEach((line) => {
+    const [name, date, color, showOnMainScreen] = line.split('; ');
+    if (name && date) {
+      newTimers.push({
+        name,
+        date: new Date(date).getTime(),
+        color,
+        showOnMainScreen
+      });
+    }
+
+  });
+  return newTimers;
+}
+
 
 function populateDateFormatOptions() {
   const today = new Date();
