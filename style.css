@@ -129,11 +129,12 @@ body {
 }
 
 #timers-container {
-  margin-top: 20px;
+  /* margin-top: 20px; */
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   opacity: 1;
+  padding: 20px;
   /* animate the opacity */
   /* transition: opacity 1s; */
 }
@@ -358,7 +359,7 @@ body {
 
 h1#date {
   font-family: 'Roboto Condensed', sans-serif;
-  font-size: 4rem;
+  font-size: 3rem;
   font-weight: 300;
   margin: 0;
   padding: 0;
@@ -450,7 +451,7 @@ h1#date {
   top: 0;
   left: 0;
   height: 100%;
-  width: 450px; /* Width of the sidebar */
+  width: 45%; /* Width of the sidebar */
   transition: transform 0.3s ease;
   transform: translateX(-100%); /* Start hidden to the left */
   z-index: 100;
@@ -485,7 +486,7 @@ h1#date {
 }
 
 #toggle-arrow {
-  font-size: 44px;
+  font-size: 24px;
   color: gainsboro;
 }
 
@@ -545,20 +546,6 @@ h1#date {
   cursor: pointer;
 }
 
-#events-list li {
-  padding: 3px; /* Add some padding for each list item */
-  font-size: 1.8em;
-  border-bottom: 1px solid #ccc; /* Add a bottom border to each item for separation */
-  cursor: default; /* Change cursor to default to indicate not clickable */
-  position: relative; /* For absolute positioning of the date span */
-}
-
-/* Style for days left and event name */
-#events-list li span {
-  display: inline-block;
-  vertical-align: middle;
-}
-
 /* Color reference as a small square before the event name */
 /* #events-list li:before {
   content: '';
@@ -603,11 +590,19 @@ h1#date {
 }
 
 #events-list li {
+  font-size: 1.3em;
+  position: relative; /* For absolute positioning of the date span */
   cursor: pointer; /* Change cursor to pointer to indicate clickable */
   position: relative; /* For positioning the date tooltip */
-  padding: 10px; /* Add some padding for each list item */
+  padding: 6px; /* Add some padding for each list item */
   border-bottom: 1px solid #ccc; /* Add a bottom border for separation */
   list-style: none; /* Remove default list style */
+}
+
+/* Style for days left and event name */
+#events-list li span {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 #events-list li:not(.shown-on-main):before {
