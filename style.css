@@ -300,6 +300,7 @@ body {
 
 #add-timer-btn {
   right: 20px;
+  user-select: none;
 }
 
 #settings-btn {
@@ -488,6 +489,7 @@ h1#date {
 #toggle-arrow {
   font-size: 24px;
   color: gainsboro;
+  user-select: none;
 }
 
 #toggle-arrow:hover {
@@ -662,4 +664,14 @@ h1#date {
   100% {
     background-position: 12.5rem top; /*200px*/
   }
+}
+
+/* Keep this at the bottom */
+.privacy-shield * {
+  background: transparent !important;
+  color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-shadow: 0 0 transparent !important;
+  user-select: none;
 }

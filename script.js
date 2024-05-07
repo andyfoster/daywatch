@@ -1,46 +1,45 @@
-'use strict';
+"use strict";
 
 // Global variable definitions
-const timersContainer = document.getElementById('timers-container');
-const addTimerBtn = document.getElementById('add-timer-btn');
-const timerModal = document.getElementById('timer-modal');
-const modalTitle = document.getElementById('modal-title');
-const timerForm = document.getElementById('timer-form');
-const eventNameInput = document.getElementById('event-name');
-const eventDateInput = document.getElementById('event-date');
-const eventColorInput = document.getElementById('event-color');
-const closeBtn = document.querySelector('.close');
-const dateEl = document.getElementById('date'); // h1 that displays the date
-const removeBtn = document.getElementById('remove-timer-btn');
-const settingsBtn = document.getElementById('settings-btn');
-const settingsModal = document.getElementById('settings-modal');
-const settingsForm = document.getElementById('settings-form');
-const dateFormatSelect = document.getElementById('date-format-select');
-const displayFontSelect = document.getElementById('display-font');
-const languageSelect = document.getElementById('language');
-const settingsCloseBtn = document.querySelector('#settings-modal .close');
-const sidebarNewTimerBtn = document.querySelector('#new-timer-btn-sidebar');
-const togglePanel = document.getElementById('toggle-panel');
-const overlay = document.getElementById('overlay');
+const timersContainer = document.getElementById("timers-container");
+const addTimerBtn = document.getElementById("add-timer-btn");
+const timerModal = document.getElementById("timer-modal");
+const modalTitle = document.getElementById("modal-title");
+const timerForm = document.getElementById("timer-form");
+const eventNameInput = document.getElementById("event-name");
+const eventDateInput = document.getElementById("event-date");
+const eventColorInput = document.getElementById("event-color");
+const closeBtn = document.querySelector(".close");
+const dateEl = document.getElementById("date"); // h1 that displays the date
+const removeBtn = document.getElementById("remove-timer-btn");
+const settingsBtn = document.getElementById("settings-btn");
+const settingsModal = document.getElementById("settings-modal");
+const settingsForm = document.getElementById("settings-form");
+const dateFormatSelect = document.getElementById("date-format-select");
+const displayFontSelect = document.getElementById("display-font");
+const languageSelect = document.getElementById("language");
+const settingsCloseBtn = document.querySelector("#settings-modal .close");
+const sidebarNewTimerBtn = document.querySelector("#new-timer-btn-sidebar");
+const togglePanel = document.getElementById("toggle-panel");
+const overlay = document.getElementById("overlay");
 
-overlay.addEventListener('click', toggleSidebar);
-togglePanel.addEventListener('click', toggleSidebar);
+overlay.addEventListener("click", toggleSidebar);
+togglePanel.addEventListener("click", toggleSidebar);
 
-const sidebarContainer = document.getElementById('sidebar-container');
-const toggleArrow = document.getElementById('toggle-arrow');
+const sidebarContainer = document.getElementById("sidebar-container");
+const toggleArrow = document.getElementById("toggle-arrow");
 
-
-const downloadTimersBtn = document.getElementById('download-timers-btn');
-downloadTimersBtn.addEventListener('click', downloadTimers);
+const downloadTimersBtn = document.getElementById("download-timers-btn");
+downloadTimersBtn.addEventListener("click", downloadTimers);
 
 // Side panel
 // const toggleButton = document.getElementById('toggle-events-btn');
-const sidePanel = document.getElementById('events-side-panel');
+const sidePanel = document.getElementById("events-side-panel");
 
-let timers = JSON.parse(localStorage.getItem('timers')) || [];
-let dateFormat = localStorage.getItem('dateFormat') || 'long';
-let displayFont = localStorage.getItem('displayFont') || 'Roboto Condensed';
-let language = localStorage.getItem('language') || 'en';
+let timers = JSON.parse(localStorage.getItem("timers")) || [];
+let dateFormat = localStorage.getItem("dateFormat") || "long";
+let displayFont = localStorage.getItem("displayFont") || "Roboto Condensed";
+let language = localStorage.getItem("language") || "en";
 languageSelect.value = language;
 
 let handleFormSubmit;
@@ -48,50 +47,51 @@ let handleFormSubmit;
 let isSidebarVisible = false;
 
 function toggleSidebar() {
-  sidePanel.classList.toggle('visible'); // Toggle visibility class
+  sidePanel.classList.toggle("visible"); // Toggle visibility class
 
   if (isSidebarVisible) {
-    sidebarContainer.style.transform = 'translateX(-100%)';
-    toggleArrow.textContent = '>';
-    overlay.style.display = 'none'; // Hide the overlay
+    sidebarContainer.style.transform = "translateX(-100%)";
+    toggleArrow.textContent = ">";
+    overlay.style.display = "none"; // Hide the overlay
   } else {
-    sidebarContainer.style.transform = 'translateX(0)';
-    toggleArrow.textContent = '<';
-    overlay.style.display = 'block'; // Show the overlay
+    sidebarContainer.style.transform = "translateX(0)";
+    toggleArrow.textContent = "<";
+    overlay.style.display = "block"; // Show the overlay
   }
 
   isSidebarVisible = !isSidebarVisible;
 }
 
-sidebarNewTimerBtn.addEventListener('click', () => {
+sidebarNewTimerBtn.addEventListener("click", () => {
   showModal();
   handleFormSubmit = (showOnMainScreen) => addTimer(showOnMainScreen); // Use a wrapper function
 });
-
 
 // Set up event listeners
-addTimerBtn.addEventListener('click', () => {
+addTimerBtn.addEventListener("click", () => {
   showModal();
   handleFormSubmit = (showOnMainScreen) => addTimer(showOnMainScreen); // Use a wrapper function
 });
-closeBtn.addEventListener('click', hideModal);
-timerForm.addEventListener('submit', (event) => {
+closeBtn.addEventListener("click", hideModal);
+timerForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  const showOnMainScreenCheckbox = document.getElementById('show-on-main-screen'); // Get the checkbox
+  const showOnMainScreenCheckbox = document.getElementById(
+    "show-on-main-screen",
+  ); // Get the checkbox
   const showOnMainScreen = showOnMainScreenCheckbox.checked; // Get the checked state
   handleFormSubmit(showOnMainScreen);
   hideModal();
 });
-settingsBtn.addEventListener('click', showSettings);
-settingsCloseBtn.addEventListener('click', hideSettings);
-settingsForm.addEventListener('submit', (event) => {
+settingsBtn.addEventListener("click", showSettings);
+settingsCloseBtn.addEventListener("click", hideSettings);
+settingsForm.addEventListener("submit", (event) => {
   event.preventDefault();
   dateFormat = dateFormatSelect.value;
   displayFont = displayFontSelect.value;
   language = languageSelect.value;
-  localStorage.setItem('dateFormat', dateFormat);
-  localStorage.setItem('displayFont', displayFont);
-  localStorage.setItem('language', language);
+  localStorage.setItem("dateFormat", dateFormat);
+  localStorage.setItem("displayFont", displayFont);
+  localStorage.setItem("language", language);
   hideSettings();
   renderTimers();
   updateUI();
@@ -99,27 +99,27 @@ settingsForm.addEventListener('submit', (event) => {
 });
 
 // Add double-click event listener
-dateEl.addEventListener('dblclick', () => {
+dateEl.addEventListener("dblclick", () => {
   // Check if the .overlay class is currently applied
-  const isHidden = timersContainer.classList.contains('overlay');
+  const isHidden = timersContainer.classList.contains("privacy-shield");
 
   // Toggle the .overlay class
   if (isHidden) {
-    timersContainer.classList.remove('overlay');
+    timersContainer.classList.remove("privacy-shield");
   } else {
-    timersContainer.classList.add('overlay');
+    timersContainer.classList.add("privacy-shield");
   }
 
   // Store the hidden state in localStorage
-  localStorage.setItem('hideTimers', isHidden ? 'false' : 'true');
+  localStorage.setItem("hideTimers", isHidden ? "false" : "true");
 });
 
 // Set the initial state based on the value stored in localStorage
-const storedIsHidden = localStorage.getItem('hideTimers') === 'true';
+const storedIsHidden = localStorage.getItem("hideTimers") === "true";
 if (storedIsHidden) {
-  timersContainer.classList.add('overlay');
+  timersContainer.classList.add("privacy-shield");
 } else {
-  timersContainer.classList.remove('overlay');
+  timersContainer.classList.remove("privacy-shield");
 }
 
 // Set up timers on load
@@ -134,16 +134,16 @@ window.onload = function () {
  * Function to download all the timers into a text file
  */
 function downloadTimers() {
-  const filename = 'timers.txt';
+  const filename = "timers.txt";
   // const text = JSON.stringify(timers, null, 2);
   const text = convertTimersToText();
-  const element = document.createElement('a');
+  const element = document.createElement("a");
   element.setAttribute(
-    'href',
-    'data:text/plain;charset=utf-8,' + encodeURIComponent(text)
+    "href",
+    "data:text/plain;charset=utf-8," + encodeURIComponent(text),
   );
-  element.setAttribute('download', filename);
-  element.style.display = 'none';
+  element.setAttribute("download", filename);
+  element.style.display = "none";
   document.body.appendChild(element);
   element.click();
   document.body.removeChild(element);
@@ -161,11 +161,10 @@ function downloadTimers() {
   Finish AWS Course - 2024-12-23
  */
 function convertTimersToText() {
-  let text = '';
+  let text = "";
   timers.forEach((timer) => {
     text += `${timer.name}; ${new Date(timer.date).toISOString().slice(0, 10)}; ${timer.color}; ${timer.showOnMainScreen}\n`;
-  }
-  );
+  });
   return text;
 }
 
@@ -173,44 +172,52 @@ function convertTimersToText() {
  * Accept a string of text in the above format (color and shown option) and convert it to an array of timers
  */
 function convertTextToTimers(text) {
-  const lines = text.split('\n');
+  const lines = text.split("\n");
   const newTimers = [];
   lines.forEach((line) => {
-    const [name, date, color, showOnMainScreen] = line.split('; ');
+    const [name, date, color, showOnMainScreen] = line.split("; ");
     if (name && date) {
       newTimers.push({
         name,
         date: new Date(date).getTime(),
         color,
-        showOnMainScreen
+        showOnMainScreen,
       });
     }
-
   });
   return newTimers;
 }
 
-
 function populateDateFormatOptions() {
   const today = new Date();
-  const longFormatOption = document.createElement('option');
-  longFormatOption.value = 'long';
-  longFormatOption.text = today.toLocaleDateString(language, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const longFormatOption = document.createElement("option");
+  longFormatOption.value = "long";
+  longFormatOption.text = today.toLocaleDateString(language, {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
   dateFormatSelect.add(longFormatOption);
 
-  const shortFormatOption = document.createElement('option');
-  shortFormatOption.value = 'short';
-  shortFormatOption.text = today.toLocaleDateString(language, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+  const shortFormatOption = document.createElement("option");
+  shortFormatOption.value = "short";
+  shortFormatOption.text = today.toLocaleDateString(language, {
+    weekday: "short",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
   dateFormatSelect.add(shortFormatOption);
 }
 
 function showSettings() {
-  timerModal.style.display = 'none';
-  settingsModal.style.display = 'block';
+  timerModal.style.display = "none";
+  settingsModal.style.display = "block";
 }
 
 function hideSettings() {
-  settingsModal.style.display = 'none';
+  settingsModal.style.display = "none";
 }
 
 function showModal(isEdit = false, index) {
@@ -220,13 +227,14 @@ function showModal(isEdit = false, index) {
   modalTitle.textContent = isEdit
     ? translations[language].editTimer
     : translations[language].newTimer;
-  eventNameInput.value = '';
-  eventDateInput.value = '';
-  eventColorInput.value = '#000000';
-  timerModal.style.display = 'block';
+  eventNameInput.value = "";
+  eventDateInput.value = "";
+  eventColorInput.value = "#000000";
+  timerModal.style.display = "block";
 
-  const showOnMainScreenCheckbox = document.getElementById('show-on-main-screen');
-
+  const showOnMainScreenCheckbox = document.getElementById(
+    "show-on-main-screen",
+  );
 
   if (isEdit) {
     const timer = timers[index];
@@ -235,31 +243,30 @@ function showModal(isEdit = false, index) {
     eventDateInput.value = new Date(timer.date).toISOString().slice(0, 10);
     eventColorInput.value = timer.color;
     // document.getElementById('show-on-main-screen').checked = timer.showOnMainScreen ?? true; // Default to true if undefined
-    showOnMainScreenCheckbox.checked = timer.showOnMainScreen;
+    showOnMainScreenCheckbox.checked = timer.showOnMainScreen ?? true;
 
-    removeBtn.style.display = 'block';
+    removeBtn.style.display = "block";
     removeBtn.onclick = () => {
       removeTimer(index);
       hideModal();
     };
 
     handleFormSubmit = (showOnMainScreen) => editTimer(index, showOnMainScreen);
-
   } else {
-    removeBtn.style.display = 'none';
+    removeBtn.style.display = "none";
     handleFormSubmit = (showOnMainScreen) => addTimer(showOnMainScreen); // Use a wrapper function for consistency
     // For new timers, you might want to default the checkbox to checked
     showOnMainScreenCheckbox.checked = true;
-
   }
-  timerModal.style.display = 'block';
+  timerModal.style.display = "block";
 }
 
 function hideModal() {
-  timerModal.style.display = 'none';
+  timerModal.style.display = "none";
 }
 
-function addTimer(showOnMainScreen = true) { // Default to true if not provided
+function addTimer(showOnMainScreen = true) {
+  // Default to true if not provided
   const eventName = eventNameInput.value.trim();
   const eventDate = eventDateInput.value;
   const eventColor = eventColorInput.value;
@@ -268,39 +275,39 @@ function addTimer(showOnMainScreen = true) { // Default to true if not provided
       name: eventName,
       date: new Date(eventDate).getTime(),
       color: eventColor,
-      showOnMainScreen: showOnMainScreen // Use the provided value or default
+      showOnMainScreen: showOnMainScreen, // Use the provided value or default
     };
     timers.push(timer);
     updateTimers();
   }
 }
 
-
 function editTimer(index, showOnMainScreen) {
   const eventName = eventNameInput.value.trim();
   const eventDate = eventDateInput.value;
   const eventColor = eventColorInput.value;
   if (eventName && eventDate) {
+    const existingTimer = timers[index];
+
     timers[index] = {
+      ...existingTimer,
       name: eventName,
       date: new Date(eventDate).getTime(),
       color: eventColor,
-      showOnMainScreen: showOnMainScreen
+      showOnMainScreen: showOnMainScreen,
     };
     updateTimers();
   }
 }
-
 
 function removeTimer(index) {
   timers.splice(index, 1);
   updateTimers();
 }
 
-
 function updateTimers() {
   sortTimers();
-  localStorage.setItem('timers', JSON.stringify(timers));
+  localStorage.setItem("timers", JSON.stringify(timers));
   renderTimers();
 }
 
@@ -309,42 +316,41 @@ function sortTimers() {
 }
 
 function renderSidebarEvents() {
-  const sidebarList = document.getElementById('events-list');
-  sidebarList.innerHTML = ''; // Clear the current list
+  const sidebarList = document.getElementById("events-list");
+  sidebarList.innerHTML = ""; // Clear the current list
 
   timers.forEach((timer, index) => {
-    const li = document.createElement('li');
+    const li = document.createElement("li");
     li.style.color = timer.color; // Set the text color to the timer's color
-    li.setAttribute('data-date', new Date(timer.date).toLocaleDateString()); // Set the date for the hover effect
+    li.setAttribute("data-date", new Date(timer.date).toLocaleDateString()); // Set the date for the hover effect
 
     // marker = full width space
-    let marker = '\u2003';
+    let marker = "\u2003";
     // Add a class to indicate whether the event is shown on the main screen
     if (timer.showOnMainScreen) {
-      li.classList.add('shown-on-main');
+      li.classList.add("shown-on-main");
       // show a check mark
-      marker = '✔';
+      marker = "✔";
     } else {
-      li.classList.add('not-shown-on-main');
+      li.classList.add("not-shown-on-main");
     }
 
-    const eventNameSpan = document.createElement('span');
+    const eventNameSpan = document.createElement("span");
     eventNameSpan.textContent = `${timer.name} - ${Math.ceil((new Date(timer.date) - new Date()) / (1000 * 60 * 60 * 24))} days`;
 
     li.appendChild(eventNameSpan);
     sidebarList.appendChild(li);
 
-
     // Clicking the event name brings up the edit modal
-    li.addEventListener('click', () => showModal(true, index));
+    li.addEventListener("click", () => showModal(true, index));
   });
 }
 
-
 function renderTimers() {
-  timersContainer.innerHTML = '';
+  timersContainer.innerHTML = "";
   timers.forEach((timer, index) => {
-    if (timer.showOnMainScreen) { // Only create elements for timers marked to be shown
+    if (timer.showOnMainScreen) {
+      // Only create elements for timers marked to be shown
       createTimerElement(timer, index);
     }
   });
@@ -367,36 +373,38 @@ function createTimerElement(timer, index) {
   const timeDifference = eventDate - currentDate; // Now you can subtract directly since both dates are at midnight
   const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
 
-  const timerEl = document.createElement('div');
-  timerEl.classList.add('timer');
+  const timerEl = document.createElement("div");
+  timerEl.classList.add("timer");
   if (isEventToday) {
-    timerEl.classList.add('today-timer');
+    timerEl.classList.add("today-timer");
     timerEl.style.borderColor = timer.color;
   }
   timerEl.style.fontFamily = displayFont;
 
   // Make sure it's '1 day' and not '1 days'
-  let daysString = (daysRemaining === 1 || daysRemaining === -1) ?
-    translations[language].day :
-    translations[language].days;
+  let daysString =
+    daysRemaining === 1 || daysRemaining === -1
+      ? translations[language].day
+      : translations[language].days;
 
   timerEl.innerHTML = `
-    <h2 class="${isEventToday ? 'today' : 'days-remaining'}">${isEventToday
+    <h2 class="${isEventToday ? "today" : "days-remaining"}">${isEventToday
       ? translations[language].today
-      : daysRemaining + '<span class="days-label">' + daysString + '</span>'
+      : daysRemaining + '<span class="days-label">' + daysString + "</span>"
     }</h2>
     <p class="due-date" style="color: ${timer.color};">${timer.name}</p>
     <button class="edit-btn">${formatDate(timer.date)}</button>
   `;
 
-  const editBtn = timerEl.querySelector('.edit-btn');
-  editBtn.addEventListener('click', () => {
+  const editBtn = timerEl.querySelector(".edit-btn");
+  editBtn.addEventListener("click", () => {
     showModal(true, index);
     modalTitle.textContent = translations[language].editTimer;
     eventNameInput.value = timer.name;
     eventDateInput.value = new Date(timer.date).toISOString().slice(0, 10);
     eventColorInput.value = timer.color;
-    handleFormSubmit = () => editTimer(index);
+    showOnMainScreenCheckbox.checked = timer.showOnMainScreen;
+    handleFormSubmit = () => editTimer(index, showOnMainScreenCheckbox.checked);
   });
 
   timersContainer.appendChild(timerEl);
@@ -405,22 +413,22 @@ function createTimerElement(timer, index) {
 function formatDate(date) {
   const options = {
     long: {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     },
     short: {
-      weekday: 'short',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+      weekday: "short",
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     },
     full: {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
     },
   };
   return new Date(date).toLocaleDateString(language, options[dateFormat]);
@@ -429,10 +437,10 @@ function formatDate(date) {
 function updateUI() {
   const today = new Date();
   const options = {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   };
   dateEl.textContent = today.toLocaleDateString(language, options);
   modalTitle.textContent = translations[language].newTimer;
@@ -442,13 +450,13 @@ function updateUI() {
     translations[language].eventDate;
   document.querySelectorAll('label[for="color"]')[0].textContent =
     translations[language].color;
-  document.getElementById('submit-timer-btn').textContent =
+  document.getElementById("submit-timer-btn").textContent =
     translations[language].save;
-  document.getElementById('remove-timer-btn').textContent =
+  document.getElementById("remove-timer-btn").textContent =
     translations[language].remove;
-  document.getElementById('modal-title').textContent =
+  document.getElementById("modal-title").textContent =
     translations[language].settings;
-  document.getElementById('save-settings-btn').textContent =
+  document.getElementById("save-settings-btn").textContent =
     translations[language].save;
   document.querySelectorAll('label[for="date-format"]')[0].textContent =
     translations[language].dateFormat;
@@ -457,15 +465,15 @@ function updateUI() {
   document.querySelectorAll('label[for="language"]')[0].textContent =
     translations[language].language;
   document
-    .getElementById('settings-form')
+    .getElementById("settings-form")
     .querySelectorAll('option[value="en"]')[0].textContent = "English";
   document
-    .getElementById('settings-form')
+    .getElementById("settings-form")
     .querySelectorAll('option[value="ja"]')[0].textContent = "日本語";
   document
-    .getElementById('settings-form')
+    .getElementById("settings-form")
     .querySelectorAll('option[value="es"]')[0].textContent = "Español";
   document
-    .getElementById('settings-form')
+    .getElementById("settings-form")
     .querySelectorAll('option[value="zh"]')[0].textContent = "中文";
 }
