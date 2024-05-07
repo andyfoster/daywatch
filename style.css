@@ -164,11 +164,6 @@ body {
   transition: background-color 0.3s ease;
 }
 
-.timer:hover .due-date {
-  font-size: 3em;
-  transition: font-size 0.2s;
-}
-
 .timer:hover .days-remaining {
   font-size: 6em;
   transition: font-size 0.2s;
