@@ -11,9 +11,32 @@
       <h1 id="date" title="Double click to hide/show timers">Today</h1>
 
       <button id="add-timer-btn">+ Timer</button>
-      <button id="settings-btn">⚙</button>
       <div id="timers-container"></div>
     </div>
+
+    <!-- Side Panel for Event List -->
+    <div id="sidebar-container">
+      <div id="events-side-panel" class="side-panel">
+        <div class="events-header-bar">
+          <h2>Events</h2>
+          <button class="new-timer-btn" id="new-timer-btn-sidebar">
+            New Timer
+          </button>
+        </div>
+        <ul id="events-list">
+          <!-- Event items will be added here dynamically -->
+        </ul>
+        <button id="settings-btn">⚙</button>
+        <!-- button to call downloadTimers() -->
+        <button id="download-timers-btn">⬇</button>
+      </div>
+      <div id="toggle-panel" class="toggle-panel">
+        <span id="toggle-arrow">></span>
+      </div>
+    </div>
+
+    <!-- Blur out background -->
+    <div id="overlay"></div>
 
     <div id="timer-modal" class="modal">
       <div class="modal-content">
@@ -32,6 +55,16 @@
             <label for="color">Color:</label>
             <input type="color" name="event-color" id="event-color" />
           </div>
+          <div class="input-group">
+            <label for="show-on-main-screen">Show:</label>
+            <input
+              type="checkbox"
+              id="show-on-main-screen"
+              name="show-on-main-screen"
+              class="large-checkbox"
+            />
+          </div>
+
           <br />
           <button type="submit" id="submit-timer-btn">Save</button>
           <button type="button" id="remove-timer-btn" style="display: none">
