@@ -1,101 +1,146 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>New Tab</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="DayWatch - A simple and elegant countdown timer for your important dates" />
+    <title>DayWatch</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="dark-mode.css" />
-    <meta charset="UTF-8" />
   </head>
   <body>
     <div class="container">
-      <h1 id="date" title="Double click to hide/show timers">Today</h1>
-
-      <button id="add-timer-btn">+ Timer</button>
-      <div id="timers-container"></div>
+      <h1 id="date" title="Double click to hide/show timers" aria-label="Current date. Double click to toggle timer visibility">Today</h1>
+      <button id="add-timer-btn" aria-label="Add new timer">+ Timer</button>
+      <div id="timers-container" role="list" aria-label="List of timers"></div>
     </div>
 
     <!-- Side Panel for Event List -->
     <div id="sidebar-container">
-      <div id="events-side-panel" class="side-panel">
+      <div id="events-side-panel" class="side-panel" role="complementary" aria-label="Events sidebar">
         <div class="events-header-bar">
           <h2>Events</h2>
-          <button class="new-timer-btn" id="new-timer-btn-sidebar">
+          <button class="new-timer-btn" id="new-timer-btn-sidebar" aria-label="Create new timer">
             New Timer
           </button>
         </div>
-        <ul id="events-list">
+        <ul id="events-list" role="list" aria-label="Complete list of events">
           <!-- Event items will be added here dynamically -->
         </ul>
-        <button id="settings-btn">⚙</button>
-        <!-- button to call downloadTimers() -->
-        <button id="download-timers-btn">⬇</button>
+        <button id="settings-btn" aria-label="Open settings">⚙</button>
+        <button id="download-timers-btn" aria-label="Download timers">⬇</button>
       </div>
-      <div id="toggle-panel" class="toggle-panel">
-        <span id="toggle-arrow">></span>
+      <div id="toggle-panel" class="toggle-panel" role="button" aria-label="Toggle sidebar" tabindex="0">
+        <span id="toggle-arrow" aria-hidden="true">></span>
       </div>
     </div>
 
-    <!-- Blur out background -->
-    <div id="overlay"></div>
+    <!-- Overlay for sidebar -->
+    <div id="overlay" role="presentation"></div>
 
-    <div id="timer-modal" class="modal">
+    <!-- Timer Modal -->
+    <div id="timer-modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
       <div class="modal-content">
-        <span class="close">&times;</span>
+        <button class="close" aria-label="Close modal">&times;</button>
         <h2 id="modal-title">New Timer</h2>
         <form id="timer-form">
           <div class="input-group">
             <label for="event-name">Event Name:</label>
-            <input type="text" id="event-name" name="event-name" required />
+            <input
+              type="text"
+              id="event-name"
+              name="event-name"
+              required
+              aria-required="true"
+            />
           </div>
           <div class="input-group">
             <label for="event-date">Event Date:</label>
-            <input type="date" id="event-date" name="event-date" required />
+            <input
+              type="date"
+              id="event-date"
+              name="event-date"
+              required
+              aria-required="true"
+            />
           </div>
           <div class="input-group">
-            <label for="color">Color:</label>
-            <input type="color" name="event-color" id="event-color" />
+            <label for="event-color">Color:</label>
+            <input
+              type="color"
+              name="event-color"
+              id="event-color"
+              aria-label="Choose event color"
+            />
           </div>
           <div class="input-group">
-            <label for="show-on-main-screen">Show:</label>
+            <label for="show-on-main-screen">Show on main screen:</label>
             <input
               type="checkbox"
               id="show-on-main-screen"
               name="show-on-main-screen"
               class="large-checkbox"
+              aria-label="Show timer on main screen"
+              checked
             />
           </div>
 
-          <br />
-          <button type="submit" id="submit-timer-btn">Save</button>
-          <button type="button" id="remove-timer-btn" style="display: none">
-            Remove
-          </button>
+          <div class="button-group">
+            <button type="submit" id="submit-timer-btn">Save</button>
+            <button
+              type="button"
+              id="remove-timer-btn"
+              class="danger-button"
+              style="display: none"
+              aria-label="Remove timer"
+            >
+              Remove
+            </button>
+          </div>
         </form>
       </div>
     </div>
 
-    <div id="settings-modal" class="modal">
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal" role="dialog" aria-labelledby="settings-title" aria-hidden="true">
       <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2 id="modal-title">Settings</h2>
+        <button class="close" aria-label="Close settings">&times;</button>
+        <h2 id="settings-title">Settings</h2>
         <form id="settings-form">
           <div class="input-group">
-            <label for="date-format">Date Format:</label>
-            <select id="date-format-select" name="date-format">
+            <label for="date-format-select">Date Format:</label>
+            <select
+              id="date-format-select"
+              name="date-format"
+              aria-label="Select date format"
+            >
               <!-- Options will be populated dynamically -->
             </select>
           </div>
           <div class="input-group">
             <label for="display-font">Font:</label>
-            <select id="display-font" name="display-font">
+            <select
+              id="display-font"
+              name="display-font"
+              aria-label="Select display font"
+            >
               <option value="Roboto Condensed">Roboto Condensed</option>
               <option value="Arial">Arial</option>
-              <!-- Add more display font options here -->
+              <option value="Helvetica">Helvetica</option>
+              <option value="Times New Roman">Times New Roman</option>
+              <option value="Courier New">Courier New</option>
             </select>
           </div>
           <div class="input-group">
             <label for="language">Language:</label>
-            <select id="language" name="language">
+            <select
+              id="language"
+              name="language"
+              aria-label="Select language"
+            >
               <option value="en">English</option>
               <option value="ja">日本語</option>
               <option value="es">Español</option>
@@ -103,18 +148,11 @@
               <option value="fa">فارسی</option>
             </select>
           </div>
-          <br />
           <button type="submit" id="save-settings-btn">Save</button>
         </form>
       </div>
     </div>
 
-    <script src="translations.js"></script>
-    <script src="script.js"></script>
-    <script>
-      let displayFont =
-        localStorage.getItem('displayFont') || 'Roboto Condensed';
-      let language = localStorage.getItem('language') || 'en';
-    </script>
+    <script type="module" src="script.js"></script>
   </body>
 </html>

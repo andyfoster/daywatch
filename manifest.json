@@ -1,7 +1,7 @@
 {
   "name": "DayWatch: New Tab Countdown Tracker",
   "short_name": "DayWatch",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "Keep track of days until an event on your new tab page.",
   "manifest_version": 3,
   "action": {
@@ -16,6 +16,20 @@
     "192": "icons/icon192.png",
     "512": "icons/icon512.png"
   },
+  "permissions": [
+    "storage"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com"
+  },
+  "web_accessible_resources": [{
+    "resources": [
+      "modules/*.js",
+      "icons/*",
+      "*.css"
+    ],
+    "matches": ["<all_urls>"]
+  }],
   "chrome_url_overrides": {
     "newtab": "index.html"
   }
