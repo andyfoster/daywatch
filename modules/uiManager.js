@@ -297,10 +297,10 @@ export class UIManager {
       const eventNameSpan = document.createElement("span");
       eventNameSpan.textContent = `${timer.name} - ${Math.ceil((new Date(timer.date) - new Date()) / (1000 * 60 * 60 * 24))} days`;
 
-      if (timer.showOnMainScreen) {
-        const checkmark = document.createTextNode("✔ ");
-        li.appendChild(checkmark);
-      }
+      // if (timer.showOnMainScreen) {
+      //   const checkmark = document.createTextNode("✔ ");
+      //   li.appendChild(checkmark);
+      // }
 
       li.appendChild(eventNameSpan);
       li.addEventListener("click", () => this.showModal(true, index));

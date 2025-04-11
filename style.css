@@ -568,7 +568,7 @@ h1#date {
 
 /* Bold items that are shown on the main screen */
 #events-list .shown-on-main {
-  font-weight: bold; /* Make text bold for items shown on the main screen */
+  /* font-weight: bold; Make text bold for items shown on the main screen */
   text-decoration: underline;
 }
 
@@ -620,6 +620,7 @@ h1#date {
   /* background-color: currentColor; Fill block for shown items */
   /* margin-right: 5px; */
   vertical-align: middle;
+  padding-left: 30px;
 }
 
 .border-gradient {
