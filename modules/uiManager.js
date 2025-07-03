@@ -17,6 +17,7 @@ export class UIManager {
       timerForm: document.getElementById("timer-form"),
       eventNameInput: document.getElementById("event-name"),
       eventDateInput: document.getElementById("event-date"),
+      eventTimeInput: document.getElementById("event-time"),
       eventColorInput: document.getElementById("event-color"),
       closeBtn: document.querySelector(".close"),
       dateEl: document.getElementById("date"),
@@ -75,17 +76,19 @@ export class UIManager {
     event.preventDefault();
     try {
       const showOnMainScreen = document.getElementById("show-on-main-screen").checked;
+      const time = this.elements.eventTimeInput.value || null;
       const formData = {
         name: this.elements.eventNameInput.value,
         date: this.elements.eventDateInput.value,
         color: this.elements.eventColorInput.value,
-        showOnMainScreen
+        showOnMainScreen,
+        time
       };
 
       if (this.editIndex !== undefined) {
-        await this.timerManager.editTimer(this.editIndex, formData.name, formData.date, formData.color, formData.showOnMainScreen);
+        await this.timerManager.editTimer(this.editIndex, formData.name, formData.date, formData.color, formData.showOnMainScreen, formData.time);
       } else {
-        await this.timerManager.addTimer(formData.name, formData.date, formData.color, formData.showOnMainScreen);
+        await this.timerManager.addTimer(formData.name, formData.date, formData.color, formData.showOnMainScreen, formData.time);
       }
 
       this.hideModal();
@@ -127,6 +130,7 @@ export class UIManager {
       const timer = this.timerManager.getTimers()[index];
       this.elements.eventNameInput.value = timer.name;
       this.elements.eventDateInput.value = new Date(timer.date).toISOString().slice(0, 10);
+      this.elements.eventTimeInput.value = timer.time || '';
       this.elements.eventColorInput.value = timer.color;
       document.getElementById("show-on-main-screen").checked = timer.showOnMainScreen ?? true;
 
@@ -272,7 +276,11 @@ export class UIManager {
     // Create edit button
     const editBtn = document.createElement("button");
     editBtn.className = "edit-btn";
-    editBtn.textContent = this.settingsManager.formatDate(timer.date);
+    let dateText = this.settingsManager.formatDate(timer.date);
+    if (timer.time) {
+      dateText += ` ${timer.time}`;
+    }
+    editBtn.textContent = dateText;
     editBtn.addEventListener("click", () => this.showModal(true, index));
 
     // Append elements
@@ -295,7 +303,11 @@ export class UIManager {
       li.classList.add(timer.showOnMainScreen ? "shown-on-main" : "not-shown-on-main");
 
       const eventNameSpan = document.createElement("span");
-      eventNameSpan.textContent = `${timer.name} - ${Math.ceil((new Date(timer.date) - new Date()) / (1000 * 60 * 60 * 24))} days`;
+      let eventText = `${timer.name} - ${Math.ceil((new Date(timer.date) - new Date()) / (1000 * 60 * 60 * 24))} days`;
+      if (timer.time) {
+        eventText += ` (${timer.time})`;
+      }
+      eventNameSpan.textContent = eventText;
 
       // if (timer.showOnMainScreen) {
       //   const checkmark = document.createTextNode("✔ ");
@@ -326,6 +338,7 @@ export class UIManager {
   resetForm() {
     this.elements.eventNameInput.value = "";
     this.elements.eventDateInput.value = "";
+    this.elements.eventTimeInput.value = "";
     this.elements.eventColorInput.value = "#000000";
     document.getElementById("show-on-main-screen").checked = true;
   }

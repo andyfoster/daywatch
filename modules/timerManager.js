@@ -3,7 +3,7 @@ export class TimerManager {
     this.timers = JSON.parse(localStorage.getItem("timers")) || [];
   }
 
-  addTimer(name, date, color, showOnMainScreen = true) {
+  addTimer(name, date, color, showOnMainScreen = true, time = null) {
     // Input validation
     if (!name?.trim() || !date || !color) {
       throw new Error("Invalid timer data");
@@ -13,7 +13,8 @@ export class TimerManager {
       name: this.sanitizeInput(name.trim()),
       date: new Date(date).getTime(),
       color: this.sanitizeColor(color),
-      showOnMainScreen
+      showOnMainScreen,
+      time
     };
 
     this.timers.push(timer);
@@ -21,7 +22,7 @@ export class TimerManager {
     return timer;
   }
 
-  editTimer(index, name, date, color, showOnMainScreen) {
+  editTimer(index, name, date, color, showOnMainScreen, time = null) {
     if (index < 0 || index >= this.timers.length) {
       throw new Error("Invalid timer index");
     }
@@ -37,7 +38,8 @@ export class TimerManager {
       name: this.sanitizeInput(name.trim()),
       date: new Date(date).getTime(),
       color: this.sanitizeColor(color),
-      showOnMainScreen
+      showOnMainScreen,
+      time: time !== undefined ? time : existingTimer.time
     };
 
     this.saveTimers();
@@ -64,7 +66,7 @@ export class TimerManager {
 
   exportTimers() {
     return this.timers.map(timer =>
-      `${timer.name}; ${new Date(timer.date).toISOString().slice(0, 10)}; ${timer.color}; ${timer.showOnMainScreen}`
+      `${timer.name}; ${new Date(timer.date).toISOString().slice(0, 10)}; ${timer.color}; ${timer.showOnMainScreen}; ${timer.time || ''}`
     ).join('\n');
   }
 
@@ -73,13 +75,14 @@ export class TimerManager {
     const newTimers = [];
 
     for (const line of lines) {
-      const [name, date, color, showOnMainScreen] = line.split("; ");
+      const [name, date, color, showOnMainScreen, time] = line.split("; ");
       if (name && date) {
         newTimers.push({
           name: this.sanitizeInput(name),
           date: new Date(date).getTime(),
           color: this.sanitizeColor(color),
-          showOnMainScreen: showOnMainScreen === 'true'
+          showOnMainScreen: showOnMainScreen === 'true',
+          time: time || null
         });
       }
     }
