@@ -315,7 +315,6 @@ body {
 }
 
 #add-timer-btn:hover {
-  color: black;
   background: rgb(236 236 236 / 30%);
   border-radius: 50px;
 }
@@ -499,7 +498,6 @@ h1#date {
 }
 
 #toggle-arrow:hover {
-  color: black;
   background: rgb(236 236 236 / 30%);
   border-radius: 50px;
 }
