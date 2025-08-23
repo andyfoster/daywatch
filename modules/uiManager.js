@@ -19,6 +19,8 @@ export class UIManager {
       eventDateInput: document.getElementById("event-date"),
       eventTimeInput: document.getElementById("event-time"),
       eventColorInput: document.getElementById("event-color"),
+      eventLocationInput: document.getElementById("event-location"),
+      eventLinkInput: document.getElementById("event-link"),
       closeBtn: document.querySelector(".close"),
       dateEl: document.getElementById("date"),
       removeBtn: document.getElementById("remove-timer-btn"),
@@ -77,18 +79,22 @@ export class UIManager {
     try {
       const showOnMainScreen = document.getElementById("show-on-main-screen").checked;
       const time = this.elements.eventTimeInput.value || null;
+      const location = this.elements.eventLocationInput.value || null;
+      const link = this.elements.eventLinkInput.value || null;
       const formData = {
         name: this.elements.eventNameInput.value,
         date: this.elements.eventDateInput.value,
         color: this.elements.eventColorInput.value,
         showOnMainScreen,
-        time
+        time,
+        location,
+        link
       };
 
       if (this.editIndex !== undefined) {
-        await this.timerManager.editTimer(this.editIndex, formData.name, formData.date, formData.color, formData.showOnMainScreen, formData.time);
+        await this.timerManager.editTimer(this.editIndex, formData.name, formData.date, formData.color, formData.showOnMainScreen, formData.time, formData.location, formData.link);
       } else {
-        await this.timerManager.addTimer(formData.name, formData.date, formData.color, formData.showOnMainScreen, formData.time);
+        await this.timerManager.addTimer(formData.name, formData.date, formData.color, formData.showOnMainScreen, formData.time, formData.location, formData.link);
       }
 
       this.hideModal();
@@ -132,6 +138,8 @@ export class UIManager {
       this.elements.eventDateInput.value = new Date(timer.date).toISOString().slice(0, 10);
       this.elements.eventTimeInput.value = timer.time || '';
       this.elements.eventColorInput.value = timer.color;
+      this.elements.eventLocationInput.value = timer.location || '';
+      this.elements.eventLinkInput.value = timer.link || '';
       document.getElementById("show-on-main-screen").checked = timer.showOnMainScreen ?? true;
 
       this.elements.removeBtn.onclick = () => {
@@ -273,6 +281,27 @@ export class UIManager {
     nameEl.style.color = timer.color;
     nameEl.textContent = timer.name;
 
+    // Create location element if available
+    let locationEl = null;
+    if (timer.location) {
+      locationEl = document.createElement("p");
+      locationEl.className = "timer-location";
+      locationEl.style.color = timer.color;
+
+      if (timer.link) {
+        // Create link if URL is provided
+        const linkEl = document.createElement("a");
+        linkEl.href = timer.link;
+        linkEl.textContent = timer.location;
+        linkEl.target = "_blank";
+        linkEl.rel = "noopener noreferrer";
+        locationEl.appendChild(linkEl);
+      } else {
+        // Just show location text
+        locationEl.textContent = timer.location;
+      }
+    }
+
     // Create edit button
     const editBtn = document.createElement("button");
     editBtn.className = "edit-btn";
@@ -286,6 +315,9 @@ export class UIManager {
     // Append elements
     timerEl.appendChild(headerEl);
     timerEl.appendChild(nameEl);
+    if (locationEl) {
+      timerEl.appendChild(locationEl);
+    }
     timerEl.appendChild(editBtn);
 
     this.elements.timersContainer.appendChild(timerEl);
@@ -308,6 +340,29 @@ export class UIManager {
         eventText += ` (${timer.time})`;
       }
       eventNameSpan.textContent = eventText;
+
+      // Add location if available
+      if (timer.location) {
+        const locationSpan = document.createElement("span");
+        locationSpan.className = "sidebar-location";
+
+        if (timer.link) {
+          // Create link if URL is provided
+          const linkEl = document.createElement("a");
+          linkEl.href = timer.link;
+          linkEl.textContent = timer.location;
+          linkEl.target = "_blank";
+          linkEl.rel = "noopener noreferrer";
+          locationSpan.appendChild(linkEl);
+        } else {
+          // Just show location text
+          locationSpan.textContent = timer.location;
+        }
+
+        // Add a line break and the location
+        li.appendChild(document.createElement("br"));
+        li.appendChild(locationSpan);
+      }
 
       // if (timer.showOnMainScreen) {
       //   const checkmark = document.createTextNode("✔ ");
@@ -340,6 +395,8 @@ export class UIManager {
     this.elements.eventDateInput.value = "";
     this.elements.eventTimeInput.value = "";
     this.elements.eventColorInput.value = "#000000";
+    this.elements.eventLocationInput.value = "";
+    this.elements.eventLinkInput.value = "";
     document.getElementById("show-on-main-screen").checked = true;
   }
 

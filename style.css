@@ -172,6 +172,24 @@ body {
   transition: background-color 0.3s ease;
 }
 
+/* Location styling in timer */
+.timer-location {
+  font-size: 1.2rem;
+  margin: 5px 0;
+  padding: 0;
+  color: #666;
+}
+
+.timer-location a {
+  color: inherit;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.timer-location a:hover {
+  color: #0078d7;
+}
+
 .timer:hover .days-remaining {
   font-size: 6em;
   transition: font-size 0.2s;
@@ -611,6 +629,23 @@ h1#date {
 #events-list li span {
   display: inline-block;
   vertical-align: middle;
+}
+
+/* Location styling in sidebar */
+.sidebar-location {
+  display: block;
+  font-size: 0.9em;
+  margin-left: 30px;
+  color: #666;
+}
+
+.sidebar-location a {
+  color: #0078d7;
+  text-decoration: underline;
+}
+
+.sidebar-location a:hover {
+  text-decoration: none;
 }
 
 #events-list li:not(.shown-on-main):before {

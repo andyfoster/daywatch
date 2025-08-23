@@ -3,7 +3,7 @@ export class TimerManager {
     this.timers = JSON.parse(localStorage.getItem("timers")) || [];
   }
 
-  addTimer(name, date, color, showOnMainScreen = true, time = null) {
+  addTimer(name, date, color, showOnMainScreen = true, time = null, location = null, link = null) {
     // Input validation
     if (!name?.trim() || !date || !color) {
       throw new Error("Invalid timer data");
@@ -14,7 +14,9 @@ export class TimerManager {
       date: new Date(date).getTime(),
       color: this.sanitizeColor(color),
       showOnMainScreen,
-      time
+      time,
+      location: location ? this.sanitizeInput(location.trim()) : null,
+      link: link ? this.sanitizeInput(link.trim()) : null
     };
 
     this.timers.push(timer);
@@ -22,7 +24,7 @@ export class TimerManager {
     return timer;
   }
 
-  editTimer(index, name, date, color, showOnMainScreen, time = null) {
+  editTimer(index, name, date, color, showOnMainScreen, time = null, location = null, link = null) {
     if (index < 0 || index >= this.timers.length) {
       throw new Error("Invalid timer index");
     }
@@ -39,7 +41,9 @@ export class TimerManager {
       date: new Date(date).getTime(),
       color: this.sanitizeColor(color),
       showOnMainScreen,
-      time: time !== undefined ? time : existingTimer.time
+      time: time !== undefined ? time : existingTimer.time,
+      location: location !== undefined ? (location ? this.sanitizeInput(location.trim()) : null) : existingTimer.location,
+      link: link !== undefined ? (link ? this.sanitizeInput(link.trim()) : null) : existingTimer.link
     };
 
     this.saveTimers();
@@ -66,7 +70,7 @@ export class TimerManager {
 
   exportTimers() {
     return this.timers.map(timer =>
-      `${timer.name}; ${new Date(timer.date).toISOString().slice(0, 10)}; ${timer.color}; ${timer.showOnMainScreen}; ${timer.time || ''}`
+      `${timer.name}; ${new Date(timer.date).toISOString().slice(0, 10)}; ${timer.color}; ${timer.showOnMainScreen}; ${timer.time || ''}; ${timer.location || ''}; ${timer.link || ''}`
     ).join('\n');
   }
 
@@ -75,14 +79,16 @@ export class TimerManager {
     const newTimers = [];
 
     for (const line of lines) {
-      const [name, date, color, showOnMainScreen, time] = line.split("; ");
+      const [name, date, color, showOnMainScreen, time, location, link] = line.split("; ");
       if (name && date) {
         newTimers.push({
           name: this.sanitizeInput(name),
           date: new Date(date).getTime(),
           color: this.sanitizeColor(color),
           showOnMainScreen: showOnMainScreen === 'true',
-          time: time || null
+          time: time || null,
+          location: location || null,
+          link: link || null
         });
       }
     }
