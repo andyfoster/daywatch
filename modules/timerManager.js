@@ -64,7 +64,22 @@ export class TimerManager {
   }
 
   sortTimers() {
-    this.timers.sort((a, b) => a.date - b.date);
+    this.timers.sort((a, b) => {
+      // First sort by date
+      const dateDiff = a.date - b.date;
+      if (dateDiff !== 0) {
+        return dateDiff;
+      }
+
+      // If dates are the same, sort by time
+      // Events without time come after events with time
+      if (a.time && !b.time) return -1;
+      if (!a.time && b.time) return 1;
+      if (!a.time && !b.time) return 0;
+
+      // Both have times, sort by time
+      return a.time.localeCompare(b.time);
+    });
     this.saveTimers();
   }
 

@@ -29,7 +29,6 @@ class DayWatch {
       window.addEventListener('error', this.handleError.bind(this));
       window.addEventListener('unhandledrejection', this.handlePromiseError.bind(this));
 
-      // Log initialization
       console.log('DayWatch initialized successfully');
     } catch (error) {
       console.error('Initialization error:', error);
