@@ -1,0 +1,29 @@
+{
+  "name": "daywatch",
+  "version": "1.0.0",
+  "description": "A Chrome extension for countdown timers on new tab page",
+  "main": "script.js",
+  "type": "module",
+  "scripts": {
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest --watch"
+  },
+  "keywords": [
+    "chrome-extension",
+    "countdown",
+    "timer",
+    "new-tab"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@vitest/ui": "^2.0.5",
+    "@vitest/coverage-v8": "^2.0.5",
+    "happy-dom": "^15.7.4",
+    "typescript": "^5.6.2",
+    "vitest": "^2.0.5"
+  }
+}
