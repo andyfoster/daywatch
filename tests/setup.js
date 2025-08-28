@@ -41,6 +41,9 @@ global.console = {
   error: vi.fn()
 };
 
+// Mock alert function
+global.alert = vi.fn();
+
 // Reset all mocks before each test
 beforeEach(() => {
   vi.clearAllMocks();

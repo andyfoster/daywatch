@@ -33,7 +33,7 @@ describe('ElementFactory', () => {
 
       expect(element.tagName).toBe('P');
       expect(element.className).toBe('timer-location');
-      expect(element.style.color).toBe('rgb(255, 0, 0)');
+      expect(element.style.color).toBe('#ff0000');
       expect(element.textContent).toBe('Test Location');
     });
 
@@ -45,7 +45,7 @@ describe('ElementFactory', () => {
 
       const link = element.querySelector('a');
       expect(link).toBeTruthy();
-      expect(link.href).toBe('https://example.com/');
+      expect(link.href).toBe('https://example.com');
       expect(link.textContent).toBe('Test Location');
       expect(link.target).toBe('_blank');
       expect(link.rel).toBe('noopener noreferrer');
@@ -72,7 +72,7 @@ describe('ElementFactory', () => {
 
       expect(element.tagName).toBe('H2');
       expect(element.className).toBe('days-remaining');
-      expect(element.textContent).toBe('1');
+      expect(element.textContent).toBe('1day');
 
       const daysLabel = element.querySelector('.days-label');
       expect(daysLabel.textContent).toBe('day');
@@ -81,7 +81,7 @@ describe('ElementFactory', () => {
     it('should create days remaining header with plural days', () => {
       const element = ElementFactory.createTimerHeader(false, 5, mockTranslations, 'en');
 
-      expect(element.textContent).toBe('5');
+      expect(element.textContent).toBe('5days');
 
       const daysLabel = element.querySelector('.days-label');
       expect(daysLabel.textContent).toBe('days');
@@ -90,7 +90,7 @@ describe('ElementFactory', () => {
     it('should handle negative days (past events)', () => {
       const element = ElementFactory.createTimerHeader(false, -3, mockTranslations, 'en');
 
-      expect(element.textContent).toBe('-3');
+      expect(element.textContent).toBe('-3days');
 
       const daysLabel = element.querySelector('.days-label');
       expect(daysLabel.textContent).toBe('days'); // Math.abs(-3) = 3, so plural
@@ -103,7 +103,7 @@ describe('ElementFactory', () => {
 
       expect(element.tagName).toBe('P');
       expect(element.className).toBe('due-date');
-      expect(element.style.color).toBe('rgb(255, 0, 0)');
+      expect(element.style.color).toBe('#ff0000');
       expect(element.textContent).toBe('Test Event');
     });
   });

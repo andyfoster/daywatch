@@ -70,7 +70,7 @@ describe('TimerManager', () => {
 
     it('should preserve existing values when undefined passed', () => {
       const originalTimer = timerManager.getTimers()[0];
-      const editedTimer = timerManager.editTimer(0, 'New Name', '2024-12-26', '#00ff00', false);
+      const editedTimer = timerManager.editTimer(0, 'New Name', '2024-12-26', '#00ff00', false, undefined, undefined, undefined);
 
       expect(editedTimer.time).toBe(originalTimer.time);
       expect(editedTimer.location).toBe(originalTimer.location);

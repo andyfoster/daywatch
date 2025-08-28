@@ -17,15 +17,17 @@ vi.mock('../modules/sidebarManager.js', () => ({
   }))
 }));
 
+const mockElementFactory = {
+  createLocationElement: vi.fn(),
+  createTimerHeader: vi.fn(),
+  createTimerName: vi.fn(),
+  createEditButton: vi.fn(),
+  createSidebarEventText: vi.fn(),
+  createDownloadLink: vi.fn()
+};
+
 vi.mock('../modules/elementFactory.js', () => ({
-  ElementFactory: {
-    createLocationElement: vi.fn(),
-    createTimerHeader: vi.fn(),
-    createTimerName: vi.fn(),
-    createEditButton: vi.fn(),
-    createSidebarEventText: vi.fn(),
-    createDownloadLink: vi.fn()
-  }
+  ElementFactory: mockElementFactory
 }));
 
 describe('UIManager', () => {
@@ -238,12 +240,10 @@ describe('UIManager', () => {
 
   describe('downloadTimers', () => {
     it('should trigger download with exported data', () => {
-      const { ElementFactory } = require('../modules/elementFactory.js');
-
       uiManager.downloadTimers();
 
       expect(mockTimerManager.exportTimers).toHaveBeenCalled();
-      expect(ElementFactory.createDownloadLink).toHaveBeenCalledWith('timers.txt', 'test export data');
+      expect(mockElementFactory.createDownloadLink).toHaveBeenCalledWith('timers.txt', 'test export data');
     });
   });
 
