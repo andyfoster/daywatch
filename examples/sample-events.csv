@@ -1,0 +1,13 @@
+Name,Date,Color,Show on Main,Time,Location,Link
+Christmas Day,2024-12-25,#ff0000,true,09:00,Home,
+New Year's Eve,2024-12-31,#ffd700,true,23:00,Times Square,
+Birthday Party,2025-01-15,#ff69b4,true,18:00,Restaurant,
+Work Conference,2025-02-10,#0066cc,true,09:00,Convention Center,https://conference.example.com
+Vacation Start,2025-03-20,#00cc66,true,08:00,Airport,
+Wedding Anniversary,2025-04-12,#ff1493,true,19:00,Fancy Restaurant,
+Project Deadline,2025-05-01,#ff4500,true,17:00,Office,
+Summer Vacation,2025-06-15,#ffff00,true,10:00,Beach Resort,
+Back to School,2025-08-25,#8b4513,true,08:00,School,
+Halloween,2025-10-31,#ff8c00,true,18:00,Neighborhood,
+Thanksgiving,2025-11-27,#daa520,true,15:00,Family Home,
+Christmas Eve,2025-12-24,#228b22,true,18:00,Church,

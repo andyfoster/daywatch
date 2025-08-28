@@ -145,25 +145,89 @@ describe('TimerManager', () => {
   });
 
   describe('importTimers', () => {
-    it('should import timers from text', () => {
+    it('should import timers from text format', () => {
       const importText = 'Event 1; 2024-12-25; #ff0000; true; 12:00; Location 1; https://example.com\nEvent 2; 2024-12-26; #00ff00; false; ; ; ';
 
-      timerManager.importTimers(importText);
+      const result = timerManager.importTimers(importText);
       const timers = timerManager.getTimers();
 
+      expect(result.success).toBe(true);
+      expect(result.imported).toBe(2);
       expect(timers).toHaveLength(2);
       expect(timers[0].name).toBe('Event 1');
       expect(timers[1].name).toBe('Event 2');
     });
 
+    it('should import timers from CSV format', () => {
+      const csvText = 'Birthday Party,2024-12-25,#ff0000,true,18:00,Home,\nMeeting,2024-12-30,#0000ff,true,09:00,Office,https://zoom.us';
+
+      const result = timerManager.importTimers(csvText, { format: 'csv' });
+      const timers = timerManager.getTimers();
+
+      expect(result.success).toBe(true);
+      expect(result.imported).toBe(2);
+      expect(timers[0].name).toBe('Birthday Party');
+      expect(timers[1].name).toBe('Meeting');
+      expect(timers[1].link).toBe('https://zoom.us');
+    });
+
+    it('should import timers from JSON format', () => {
+      const jsonText = JSON.stringify([
+        { name: 'JSON Event 1', date: '2024-12-25', color: '#ff0000', showOnMainScreen: true },
+        { name: 'JSON Event 2', date: '2024-12-26', color: '#00ff00', time: '15:30' }
+      ]);
+
+      const result = timerManager.importTimers(jsonText, { format: 'json' });
+      const timers = timerManager.getTimers();
+
+      expect(result.success).toBe(true);
+      expect(result.imported).toBe(2);
+      expect(timers[0].name).toBe('JSON Event 1');
+      expect(timers[1].time).toBe('15:30');
+    });
+
+    it('should detect and import CSV format automatically', () => {
+      // Test auto-detection with a clear CSV format
+      const csvText = 'Birthday Party,2024-12-25,#ff0000,true,18:00,Home,';
+
+      const result = timerManager.importTimers(csvText); // Auto-detect should work
+      expect(result.success).toBe(true);
+      expect(result.imported).toBe(1);
+      expect(timerManager.getTimers()[0].name).toBe('Birthday Party');
+    });
+
+    it('should append to existing timers when mode is append', () => {
+      timerManager.addTimer('Existing', '2024-12-20', '#000000');
+      const importText = 'New Event; 2024-12-25; #ff0000; true; ; ; ';
+
+      const result = timerManager.importTimers(importText, { mode: 'append' });
+      const timers = timerManager.getTimers();
+
+      expect(result.success).toBe(true);
+      expect(result.imported).toBe(1);
+      expect(timers).toHaveLength(2);
+      expect(timers[0].name).toBe('Existing');
+      expect(timers[1].name).toBe('New Event');
+    });
+
     it('should skip invalid lines during import', () => {
       const importText = 'Valid Event; 2024-12-25; #ff0000; true; ; ; \nInvalid Line\n; ; ; ; ; ; ';
 
-      timerManager.importTimers(importText);
+      const result = timerManager.importTimers(importText);
       const timers = timerManager.getTimers();
 
+      expect(result.success).toBe(true);
+      expect(result.imported).toBe(1);
       expect(timers).toHaveLength(1);
       expect(timers[0].name).toBe('Valid Event');
+    });
+
+    it('should throw error when no valid timers found', () => {
+      const invalidText = 'Invalid Line\nAnother Invalid Line';
+
+      expect(() => {
+        timerManager.importTimers(invalidText);
+      }).toThrow('Import failed: No valid timers found in import data');
     });
   });
 

@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Product Launch",
+    "date": "2024-12-30",
+    "color": "#007bff",
+    "showOnMainScreen": true,
+    "time": "10:00",
+    "location": "Conference Room A",
+    "link": "https://company.com/launch"
+  },
+  {
+    "name": "Team Meeting",
+    "date": "2025-01-05",
+    "color": "#28a745",
+    "showOnMainScreen": true,
+    "time": "14:00",
+    "location": "Office",
+    "link": "https://zoom.us/meeting"
+  },
+  {
+    "name": "Client Presentation",
+    "date": "2025-01-12",
+    "color": "#dc3545",
+    "showOnMainScreen": true,
+    "time": "11:00",
+    "location": "Client Office",
+    "link": null
+  },
+  {
+    "name": "Code Review",
+    "date": "2025-01-18",
+    "color": "#6f42c1",
+    "showOnMainScreen": false,
+    "time": "15:30",
+    "location": "Development Lab",
+    "link": "https://github.com/project/review"
+  },
+  {
+    "name": "Quarterly Review",
+    "date": "2025-03-31",
+    "color": "#fd7e14",
+    "showOnMainScreen": true,
+    "time": "09:00",
+    "location": "Boardroom",
+    "link": null
+  }
+]

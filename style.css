@@ -151,6 +151,168 @@ body {
   text-decoration: none;
 }
 
+/* Import Modal Styles */
+.import-tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.import-tab {
+  flex: 1;
+  padding: 10px 15px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.import-tab.active {
+  border-bottom-color: #007bff;
+  color: #007bff;
+  font-weight: 500;
+}
+
+.import-section {
+  display: none;
+}
+
+.import-section.active {
+  display: block;
+}
+
+.file-drop-zone {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.file-drop-zone:hover,
+.file-drop-zone.dragover {
+  border-color: #007bff;
+  background-color: #f8f9fa;
+}
+
+.drop-zone-content p {
+  margin: 0 0 15px 0;
+  color: #666;
+  font-size: 16px;
+}
+
+.supported-formats {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.supported-formats p {
+  margin: 0 0 10px 0;
+  font-weight: 500;
+}
+
+.supported-formats ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.supported-formats li {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.format-selector {
+  margin-top: 15px;
+}
+
+.import-options {
+  margin: 20px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.import-preview {
+  margin: 20px 0;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.import-preview h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+}
+
+#preview-content {
+  max-height: 200px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.preview-timer {
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border-left: 4px solid;
+  background: #f8f9fa;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+#preview-summary {
+  margin: 0;
+  font-weight: 500;
+  color: #007bff;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.secondary-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.secondary-btn:hover {
+  background: #5a6268;
+}
+
+.primary-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.primary-btn:hover:not(:disabled) {
+  background: #0056b3;
+}
+
+.primary-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
 .container {
   display: flex;
   justify-content: center;
@@ -380,6 +542,7 @@ body {
 }
 
 .sidebar-footer #settings-btn,
+.sidebar-footer #import-timers-btn,
 .sidebar-footer #download-timers-btn {
   position: static;
   width: auto;
@@ -391,6 +554,7 @@ body {
 }
 
 .sidebar-footer #settings-btn:hover,
+.sidebar-footer #import-timers-btn:hover,
 .sidebar-footer #download-timers-btn:hover {
   background-color: rgba(0, 0, 0, 0.1);
   color: #333;

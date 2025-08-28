@@ -32,6 +32,7 @@
         </ul>
         <div class="sidebar-footer">
           <button id="settings-btn" aria-label="Open settings">⚙</button>
+          <button id="import-timers-btn" aria-label="Import timers">⬆</button>
           <button id="download-timers-btn" aria-label="Download timers">⬇</button>
         </div>
       </div>
@@ -131,6 +132,78 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div id="import-modal" class="modal" role="dialog" aria-labelledby="import-title" aria-hidden="true">
+      <div class="modal-content">
+        <button class="close" aria-label="Close import">&times;</button>
+        <h2 id="import-title">Import Timers</h2>
+
+        <div class="import-tabs">
+          <button class="import-tab active" data-tab="file">Upload File</button>
+          <button class="import-tab" data-tab="text">Paste Text</button>
+        </div>
+
+        <div id="file-import" class="import-section active">
+          <div class="file-drop-zone" id="file-drop-zone">
+            <div class="drop-zone-content">
+              <p>📁 Drop your file here or click to browse</p>
+              <input type="file" id="file-input" accept=".txt,.csv,.json" style="display: none;">
+              <button type="button" id="browse-btn" class="secondary-btn">Browse Files</button>
+            </div>
+          </div>
+          <div class="supported-formats">
+            <p><strong>Supported formats:</strong></p>
+            <ul>
+              <li><strong>CSV:</strong> Name, Date, Color, Show on Main, Time, Location, Link</li>
+              <li><strong>JSON:</strong> Array of timer objects</li>
+              <li><strong>Text:</strong> Semicolon-separated values (DayWatch format)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div id="text-import" class="import-section">
+          <div class="input-group">
+            <label for="import-text">Paste your timer data:</label>
+            <textarea
+              id="import-text"
+              rows="8"
+              placeholder="Paste CSV, JSON, or text data here...&#10;&#10;Example CSV:&#10;Birthday Party, 2024-12-25, #ff0000, true, 18:00, Home, &#10;Meeting, 2024-12-30, #0000ff, true, 09:00, Office, https://zoom.us/meeting"
+            ></textarea>
+          </div>
+          <div class="format-selector">
+            <label for="import-format">Format:</label>
+            <select id="import-format">
+              <option value="auto">Auto-detect</option>
+              <option value="csv">CSV</option>
+              <option value="json">JSON</option>
+              <option value="text">Text (DayWatch format)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="import-options">
+          <div class="input-group">
+            <label for="import-mode">Import mode:</label>
+            <select id="import-mode">
+              <option value="replace">Replace all timers</option>
+              <option value="append">Add to existing timers</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="import-preview" class="import-preview" style="display: none;">
+          <h3>Preview</h3>
+          <div id="preview-content"></div>
+          <p id="preview-summary"></p>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" id="preview-import-btn" class="secondary-btn">Preview</button>
+          <button type="button" id="confirm-import-btn" class="primary-btn" disabled>Import</button>
+        </div>
       </div>
     </div>
 

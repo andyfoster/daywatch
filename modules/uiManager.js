@@ -61,6 +61,10 @@ export class UIManager {
 
     // Download timers
     document.getElementById("download-timers-btn").addEventListener("click", () => this.downloadTimers());
+
+    // Import timers
+    document.getElementById("import-timers-btn").addEventListener("click", () => this.showImportModal());
+    document.querySelector("#import-modal .close").addEventListener("click", () => this.modalManager.hideModal("import-modal"));
   }
 
   async handleTimerFormSubmit(event) {
@@ -178,6 +182,320 @@ export class UIManager {
     const filename = "timers.txt";
     const text = this.timerManager.exportTimers();
     ElementFactory.createDownloadLink(filename, text);
+  }
+
+  showImportModal() {
+    this.modalManager.showModal("import-modal", {
+      setup: () => {
+        this.initializeImportModal();
+      }
+    });
+  }
+
+  initializeImportModal() {
+    // Reset modal state
+    this.resetImportModal();
+
+    // Only set up event listeners if not already done
+    if (!this.importModalInitialized) {
+      this.setupImportEventListeners();
+      this.importModalInitialized = true;
+    }
+  }
+
+  setupImportEventListeners() {
+    // Set up tab switching
+    const tabs = document.querySelectorAll('.import-tab');
+    const sections = document.querySelectorAll('.import-section');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetTab = tab.dataset.tab;
+
+        // Update active tab
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Update active section
+        sections.forEach(s => s.classList.remove('active'));
+        document.getElementById(`${targetTab}-import`).classList.add('active');
+      });
+    });
+
+    // Set up file upload
+    this.setupFileUpload();
+
+    // Set up text import
+    this.setupTextImport();
+
+    // Set up preview and import buttons
+    document.getElementById('preview-import-btn').addEventListener('click', () => this.previewImport());
+    document.getElementById('confirm-import-btn').addEventListener('click', () => this.confirmImport());
+  }
+
+  resetImportModal() {
+    // Reset tabs
+    document.querySelectorAll('.import-tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelector('.import-tab[data-tab="file"]').classList.add('active');
+
+    // Reset sections
+    document.querySelectorAll('.import-section').forEach(section => section.classList.remove('active'));
+    document.getElementById('file-import').classList.add('active');
+
+    // Reset form elements
+    document.getElementById('file-input').value = '';
+    document.getElementById('import-text').value = '';
+    document.getElementById('import-format').value = 'auto';
+    document.getElementById('import-mode').value = 'replace';
+
+    // Reset preview
+    document.getElementById('import-preview').style.display = 'none';
+    document.getElementById('confirm-import-btn').disabled = true;
+
+    this.importData = null;
+  }
+
+  setupFileUpload() {
+    const fileInput = document.getElementById('file-input');
+    const browseBtn = document.getElementById('browse-btn');
+    const dropZone = document.getElementById('file-drop-zone');
+
+    // Browse button click
+    browseBtn.addEventListener('click', () => fileInput.click());
+
+    // File input change
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        this.handleFileUpload(e.target.files[0]);
+      }
+    });
+
+    // Drag and drop
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+
+      if (e.dataTransfer.files.length > 0) {
+        this.handleFileUpload(e.dataTransfer.files[0]);
+      }
+    });
+  }
+
+  setupTextImport() {
+    const textArea = document.getElementById('import-text');
+    const formatSelect = document.getElementById('import-format');
+
+    textArea.addEventListener('input', () => {
+      // Auto-detect format when text changes
+      if (formatSelect.value === 'auto' && textArea.value.trim()) {
+        const detectedFormat = this.timerManager.detectImportFormat(textArea.value);
+        // Update format display (but keep auto selected)
+        this.updateFormatHint(detectedFormat);
+      }
+    });
+  }
+
+  async handleFileUpload(file) {
+    try {
+      const text = await this.readFileAsText(file);
+
+      // Switch to text tab and populate
+      document.querySelector('.import-tab[data-tab="text"]').click();
+      document.getElementById('import-text').value = text;
+
+      // Auto-detect format
+      const detectedFormat = this.timerManager.detectImportFormat(text);
+      document.getElementById('import-format').value = detectedFormat;
+      this.updateFormatHint(detectedFormat);
+
+      this.showNotification(`File "${file.name}" loaded successfully`, 'success');
+    } catch (error) {
+      this.showError(`Failed to read file: ${error.message}`);
+    }
+  }
+
+  readFileAsText(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.readAsText(file);
+    });
+  }
+
+  updateFormatHint(format) {
+    const formatSelect = document.getElementById('import-format');
+    const currentOption = formatSelect.querySelector(`option[value="${format}"]`);
+    if (currentOption) {
+      // Add a hint to show detected format
+      const autoOption = formatSelect.querySelector('option[value="auto"]');
+      autoOption.textContent = `Auto-detect (${format.toUpperCase()} detected)`;
+    }
+  }
+
+  previewImport() {
+    try {
+      const text = document.getElementById('import-text').value.trim();
+      if (!text) {
+        this.showError('Please enter or upload some data to import');
+        return;
+      }
+
+      const format = document.getElementById('import-format').value;
+      const mode = document.getElementById('import-mode').value;
+
+      // Parse the import data without actually importing
+      const tempManager = Object.create(this.timerManager);
+      tempManager.timers = []; // Start with empty array for preview
+
+      const result = tempManager.importTimers(text, { format, mode: 'append' });
+
+      if (result.success) {
+        this.importData = { text, format, mode };
+        this.showImportPreview(tempManager.timers, result);
+        document.getElementById('confirm-import-btn').disabled = false;
+      }
+    } catch (error) {
+      this.showError(error.message);
+      document.getElementById('import-preview').style.display = 'none';
+      document.getElementById('confirm-import-btn').disabled = true;
+    }
+  }
+
+  showImportPreview(timers, result) {
+    const previewDiv = document.getElementById('import-preview');
+    const contentDiv = document.getElementById('preview-content');
+    const summaryP = document.getElementById('preview-summary');
+
+    // Clear previous content
+    contentDiv.innerHTML = '';
+
+    // Show preview of first few timers
+    const previewCount = Math.min(timers.length, 5);
+    for (let i = 0; i < previewCount; i++) {
+      const timer = timers[i];
+      const timerDiv = document.createElement('div');
+      timerDiv.className = 'preview-timer';
+      timerDiv.style.borderLeftColor = timer.color;
+
+      const date = new Date(timer.date).toLocaleDateString();
+      const timeStr = timer.time ? ` at ${timer.time}` : '';
+      const locationStr = timer.location ? ` (${timer.location})` : '';
+
+      timerDiv.innerHTML = `
+        <strong>${timer.name}</strong><br>
+        <small>${date}${timeStr}${locationStr}</small>
+      `;
+
+      contentDiv.appendChild(timerDiv);
+    }
+
+    // Show "and X more..." if there are more timers
+    if (timers.length > previewCount) {
+      const moreDiv = document.createElement('div');
+      moreDiv.className = 'preview-more';
+      moreDiv.textContent = `... and ${timers.length - previewCount} more timers`;
+      moreDiv.style.textAlign = 'center';
+      moreDiv.style.color = '#666';
+      moreDiv.style.fontStyle = 'italic';
+      moreDiv.style.padding = '10px';
+      contentDiv.appendChild(moreDiv);
+    }
+
+    // Update summary
+    const mode = document.getElementById('import-mode').value;
+    const currentCount = this.timerManager.getTimers().length;
+    const newTotal = mode === 'replace' ? result.imported : currentCount + result.imported;
+
+    summaryP.textContent = `${result.imported} timer(s) will be imported. ` +
+      `Total after import: ${newTotal} timer(s).`;
+
+    // Show preview
+    previewDiv.style.display = 'block';
+  }
+
+  async confirmImport() {
+    if (!this.importData) {
+      this.showError('No import data available. Please preview first.');
+      return;
+    }
+
+    try {
+      const { text, format, mode } = this.importData;
+      const result = this.timerManager.importTimers(text, { format, mode });
+
+      if (result.success) {
+        this.modalManager.hideModal("import-modal");
+        this.renderTimers();
+        this.showNotification(
+          `Successfully imported ${result.imported} timer(s). Total: ${result.total}`,
+          'success'
+        );
+      }
+    } catch (error) {
+      this.showError(error.message);
+    }
+  }
+
+  showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      border-radius: 6px;
+      color: white;
+      font-weight: 500;
+      z-index: 10001;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    `;
+
+    // Set background color based on type
+    switch (type) {
+      case 'success':
+        notification.style.backgroundColor = '#28a745';
+        break;
+      case 'error':
+        notification.style.backgroundColor = '#dc3545';
+        break;
+      case 'warning':
+        notification.style.backgroundColor = '#ffc107';
+        notification.style.color = '#212529';
+        break;
+      default:
+        notification.style.backgroundColor = '#17a2b8';
+    }
+
+    document.body.appendChild(notification);
+
+    // Animate in
+    setTimeout(() => {
+      notification.style.transform = 'translateX(0)';
+    }, 100);
+
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+      notification.style.transform = 'translateX(100%)';
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
+        }
+      }, 300);
+    }, 4000);
   }
 
   renderTimers() {
