@@ -24,7 +24,7 @@ export class TimerManager {
     return timer;
   }
 
-  editTimer(index, name, date, color, showOnMainScreen, time = null, location = null, link = null) {
+  editTimer(index, name, date, color, showOnMainScreen, time, location, link) {
     if (index < 0 || index >= this.timers.length) {
       throw new Error("Invalid timer index");
     }
