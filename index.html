@@ -34,6 +34,7 @@
           <button id="settings-btn" aria-label="Open settings">⚙</button>
           <button id="import-timers-btn" aria-label="Import timers">⬆</button>
           <button id="download-timers-btn" aria-label="Download timers">⬇</button>
+          <button id="mass-delete-btn" aria-label="Mass delete timers">🗑️</button>
         </div>
       </div>
       <div id="toggle-panel" class="toggle-panel" role="button" aria-label="Toggle sidebar" tabindex="0">
@@ -207,6 +208,39 @@
       </div>
     </div>
 
+    <!-- Mass Delete Modal -->
+    <div id="mass-delete-modal" class="modal" role="dialog" aria-labelledby="mass-delete-title" aria-hidden="true">
+      <div class="modal-content">
+        <button class="close" aria-label="Close mass delete">&times;</button>
+        <h2 id="mass-delete-title">Mass Delete Timers</h2>
+
+        <div class="mass-delete-options">
+          <div class="input-group">
+            <label>
+              <input type="checkbox" id="select-all-timers"> Select All
+            </label>
+          </div>
+
+          <div class="timer-selection-list" id="timer-selection-list">
+            <!-- Timer checkboxes will be populated dynamically -->
+          </div>
+
+          <div class="quick-filters">
+            <h3>Quick Filters:</h3>
+            <button type="button" class="filter-btn" data-filter="past">Select Past Events</button>
+            <button type="button" class="filter-btn" data-filter="future">Select Future Events</button>
+            <button type="button" class="filter-btn" data-filter="hidden">Select Hidden Timers</button>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <span id="selected-count">0 timers selected</span>
+          <button type="button" id="cancel-mass-delete-btn" class="secondary-btn">Cancel</button>
+          <button type="button" id="confirm-mass-delete-btn" class="danger-btn" disabled>Delete Selected</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Settings Modal -->
     <div id="settings-modal" class="modal" role="dialog" aria-labelledby="settings-title" aria-hidden="true">
       <div class="modal-content">
@@ -250,6 +284,12 @@
               <option value="zh">中文</option>
               <option value="fa">فارسی</option>
             </select>
+          </div>
+          <div class="input-group">
+            <label for="background-selection">Background:</label>
+            <div id="background-selection" class="background-grid">
+              <!-- Background options will be populated dynamically -->
+            </div>
           </div>
           <button type="submit" id="save-settings-btn">Save</button>
         </form>

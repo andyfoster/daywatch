@@ -20,6 +20,9 @@ class DayWatch {
       // Sort timers on load
       this.timerManager.sortTimers();
 
+      // Apply background image
+      this.settingsManager.applyBackgroundImage();
+
       // Render initial UI
       this.uiManager.renderTimers();
       this.uiManager.updateUI();

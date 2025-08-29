@@ -59,10 +59,14 @@ describe('UIManager', () => {
       <button id="settings-btn"></button>
       <button id="import-timers-btn"></button>
       <button id="download-timers-btn"></button>
+      <button id="mass-delete-btn"></button>
       <div id="timer-modal" class="modal">
         <span class="close">&times;</span>
       </div>
       <div id="import-modal" class="modal">
+        <span class="close">&times;</span>
+      </div>
+      <div id="mass-delete-modal" class="modal">
         <span class="close">&times;</span>
       </div>
       <div id="settings-modal" class="modal">

@@ -58,6 +58,45 @@ describe('ElementFactory', () => {
     });
   });
 
+  describe('createLinkElement', () => {
+    it('should return null when timer has no link', () => {
+      const timerWithoutLink = { ...mockTimer, link: null };
+      const element = ElementFactory.createLinkElement(timerWithoutLink);
+
+      expect(element).toBe(null);
+    });
+
+    it('should return null when timer has both location and link', () => {
+      const element = ElementFactory.createLinkElement(mockTimer);
+
+      expect(element).toBe(null); // Should not show link icon when location exists
+    });
+
+    it('should create link element when link exists but no location', () => {
+      const timerWithLinkOnly = { ...mockTimer, location: null };
+      const element = ElementFactory.createLinkElement(timerWithLinkOnly);
+
+      expect(element.tagName).toBe('P');
+      expect(element.className).toBe('timer-link');
+      expect(element.style.color).toBe('#ff0000');
+
+      const link = element.querySelector('a');
+      expect(link).toBeTruthy();
+      expect(link.href).toBe('https://example.com');
+      expect(link.innerHTML).toBe('🔗');
+      expect(link.target).toBe('_blank');
+      expect(link.rel).toBe('noopener noreferrer');
+      expect(link.title).toBe('https://example.com');
+    });
+
+    it('should use custom className when provided', () => {
+      const timerWithLinkOnly = { ...mockTimer, location: null };
+      const element = ElementFactory.createLinkElement(timerWithLinkOnly, 'custom-link-class');
+
+      expect(element.className).toBe('custom-link-class');
+    });
+  });
+
   describe('createTimerHeader', () => {
     it('should create today header', () => {
       const element = ElementFactory.createTimerHeader(true, 0, mockTranslations, 'en');

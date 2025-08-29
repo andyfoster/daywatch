@@ -20,6 +20,26 @@ export class ElementFactory {
     return locationEl;
   }
 
+  static createLinkElement(timer, className = "timer-link") {
+    if (!timer.link || timer.location) return null; // Only show if link exists but no location
+
+    const linkEl = document.createElement("p");
+    linkEl.className = className;
+    linkEl.style.color = timer.color;
+
+    const anchorEl = document.createElement("a");
+    anchorEl.href = timer.link;
+    anchorEl.innerHTML = "🔗"; // Link icon
+    anchorEl.target = "_blank";
+    anchorEl.rel = "noopener noreferrer";
+    anchorEl.title = timer.link; // Show URL on hover
+    anchorEl.style.textDecoration = "none";
+    anchorEl.style.fontSize = "1.2em";
+
+    linkEl.appendChild(anchorEl);
+    return linkEl;
+  }
+
   static createTimerHeader(isEventToday, daysRemaining, translations, language) {
     const headerEl = document.createElement("h2");
     headerEl.className = isEventToday ? "today" : "days-remaining";

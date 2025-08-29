@@ -65,6 +65,10 @@ export class UIManager {
     // Import timers
     document.getElementById("import-timers-btn").addEventListener("click", () => this.showImportModal());
     document.querySelector("#import-modal .close").addEventListener("click", () => this.modalManager.hideModal("import-modal"));
+
+    // Mass delete timers
+    document.getElementById("mass-delete-btn").addEventListener("click", () => this.showMassDeleteModal());
+    document.querySelector("#mass-delete-modal .close").addEventListener("click", () => this.modalManager.hideModal("mass-delete-modal"));
   }
 
   async handleTimerFormSubmit(event) {
@@ -150,6 +154,8 @@ export class UIManager {
     this.modalManager.showModal("settings-modal", {
       setup: () => {
         this.populateDateFormatOptions();
+        this.populateBackgroundOptions();
+        this.populateCurrentSettings();
       }
     });
   }
@@ -531,6 +537,7 @@ export class UIManager {
     const headerEl = ElementFactory.createTimerHeader(isEventToday, daysRemaining, this.translations, settings.language);
     const nameEl = ElementFactory.createTimerName(timer);
     const locationEl = ElementFactory.createLocationElement(timer);
+    const linkEl = ElementFactory.createLinkElement(timer);
     const editBtn = ElementFactory.createEditButton(timer, index, this.showTimerModal.bind(this), this.settingsManager);
 
     // Append elements
@@ -538,6 +545,9 @@ export class UIManager {
     timerEl.appendChild(nameEl);
     if (locationEl) {
       timerEl.appendChild(locationEl);
+    }
+    if (linkEl) {
+      timerEl.appendChild(linkEl);
     }
     timerEl.appendChild(editBtn);
 
@@ -584,6 +594,13 @@ export class UIManager {
     if (locationEl) {
       li.appendChild(document.createElement("br"));
       li.appendChild(locationEl);
+    }
+
+    // Add link icon if available (but no location)
+    const linkEl = ElementFactory.createLinkElement(timer, "sidebar-link");
+    if (linkEl) {
+      li.appendChild(document.createTextNode(" "));
+      li.appendChild(linkEl);
     }
 
     // Add click handler
@@ -656,5 +673,244 @@ export class UIManager {
       optionEl.text = option.label;
       this.elements.dateFormatSelect.add(optionEl);
     });
+  }
+
+  populateBackgroundOptions() {
+    const container = document.getElementById('background-selection');
+    container.innerHTML = '';
+
+    const backgrounds = this.settingsManager.getBackgroundOptions();
+    const currentBackground = this.settingsManager.getCurrentBackgroundImage();
+
+    backgrounds.forEach(bg => {
+      const option = document.createElement('div');
+      option.className = 'background-option';
+      option.dataset.backgroundUrl = bg.url;
+
+      if (bg.url === currentBackground) {
+        option.classList.add('selected');
+      }
+
+      const img = document.createElement('img');
+      img.src = bg.thumbnail;
+      img.alt = bg.name;
+      img.loading = 'lazy';
+
+      const name = document.createElement('div');
+      name.className = 'background-name';
+      name.textContent = bg.name;
+
+      option.appendChild(img);
+      option.appendChild(name);
+
+      option.addEventListener('click', () => {
+        // Remove selected class from all options
+        container.querySelectorAll('.background-option').forEach(opt => {
+          opt.classList.remove('selected');
+        });
+
+        // Add selected class to clicked option
+        option.classList.add('selected');
+
+        // Update background immediately
+        this.settingsManager.updateBackgroundImage(bg.url);
+      });
+
+      container.appendChild(option);
+    });
+  }
+
+  populateCurrentSettings() {
+    const settings = this.settingsManager.getCurrentSettings();
+    document.getElementById("date-format-select").value = settings.dateFormat;
+    document.getElementById("display-font").value = settings.displayFont;
+    document.getElementById("language").value = settings.language;
+  }
+
+  // Mass Delete functionality
+  showMassDeleteModal() {
+    this.modalManager.showModal("mass-delete-modal", {
+      setup: () => {
+        this.populateTimerSelectionList();
+        this.setupMassDeleteEventListeners();
+      }
+    });
+  }
+
+  populateTimerSelectionList() {
+    const container = document.getElementById('timer-selection-list');
+    container.innerHTML = '';
+
+    const timers = this.timerManager.getTimers();
+    const now = new Date();
+
+    if (timers.length === 0) {
+      container.innerHTML = '<p>No timers to delete.</p>';
+      return;
+    }
+
+    timers.forEach((timer, index) => {
+      const item = document.createElement('div');
+      item.className = 'timer-checkbox-item';
+
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.id = `timer-${index}`;
+      checkbox.dataset.index = index;
+
+      const info = document.createElement('div');
+      info.className = 'timer-checkbox-info';
+
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'timer-checkbox-name';
+      nameSpan.textContent = timer.name;
+      nameSpan.style.color = timer.color;
+
+      const dateSpan = document.createElement('span');
+      dateSpan.className = 'timer-checkbox-date';
+      dateSpan.textContent = new Date(timer.date).toLocaleDateString();
+
+      const statusSpan = document.createElement('span');
+      statusSpan.className = 'timer-checkbox-status';
+
+      const targetDate = new Date(timer.date);
+      const diffTime = targetDate - now;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays < 0) {
+        statusSpan.textContent = 'Past';
+        statusSpan.classList.add('past');
+      } else if (diffDays === 0) {
+        statusSpan.textContent = 'Today';
+        statusSpan.classList.add('today');
+      } else {
+        statusSpan.textContent = 'Future';
+        statusSpan.classList.add('future');
+      }
+
+      if (!timer.showOnMainScreen) {
+        statusSpan.textContent += ' (Hidden)';
+      }
+
+      info.appendChild(nameSpan);
+      info.appendChild(dateSpan);
+      info.appendChild(statusSpan);
+
+      item.appendChild(checkbox);
+      item.appendChild(info);
+
+      container.appendChild(item);
+    });
+  }
+
+  setupMassDeleteEventListeners() {
+    const selectAllCheckbox = document.getElementById('select-all-timers');
+    const timerCheckboxes = document.querySelectorAll('#timer-selection-list input[type="checkbox"]');
+    const confirmBtn = document.getElementById('confirm-mass-delete-btn');
+    const cancelBtn = document.getElementById('cancel-mass-delete-btn');
+    const selectedCountSpan = document.getElementById('selected-count');
+
+    // Select all functionality
+    selectAllCheckbox.addEventListener('change', () => {
+      timerCheckboxes.forEach(checkbox => {
+        checkbox.checked = selectAllCheckbox.checked;
+      });
+      this.updateSelectedCount();
+    });
+
+    // Individual checkbox change
+    timerCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        this.updateSelectedCount();
+
+        // Update select all checkbox state
+        const checkedCount = document.querySelectorAll('#timer-selection-list input[type="checkbox"]:checked').length;
+        selectAllCheckbox.checked = checkedCount === timerCheckboxes.length;
+        selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < timerCheckboxes.length;
+      });
+    });
+
+    // Quick filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.dataset.filter;
+        this.applyQuickFilter(filter);
+      });
+    });
+
+    // Confirm delete
+    confirmBtn.addEventListener('click', () => {
+      this.confirmMassDelete();
+    });
+
+    // Cancel
+    cancelBtn.addEventListener('click', () => {
+      this.modalManager.hideModal("mass-delete-modal");
+    });
+
+    // Initial count update
+    this.updateSelectedCount();
+  }
+
+  updateSelectedCount() {
+    const checkedBoxes = document.querySelectorAll('#timer-selection-list input[type="checkbox"]:checked');
+    const count = checkedBoxes.length;
+    const selectedCountSpan = document.getElementById('selected-count');
+    const confirmBtn = document.getElementById('confirm-mass-delete-btn');
+
+    selectedCountSpan.textContent = `${count} timer${count !== 1 ? 's' : ''} selected`;
+    confirmBtn.disabled = count === 0;
+  }
+
+  applyQuickFilter(filter) {
+    const checkboxes = document.querySelectorAll('#timer-selection-list input[type="checkbox"]');
+    const timers = this.timerManager.getTimers();
+    const now = new Date();
+
+    checkboxes.forEach((checkbox, index) => {
+      const timer = timers[index];
+      const targetDate = new Date(timer.date);
+      const diffDays = Math.ceil((targetDate - now) / (1000 * 60 * 60 * 24));
+
+      let shouldSelect = false;
+
+      switch (filter) {
+        case 'past':
+          shouldSelect = diffDays < 0;
+          break;
+        case 'future':
+          shouldSelect = diffDays > 0;
+          break;
+        case 'hidden':
+          shouldSelect = !timer.showOnMainScreen;
+          break;
+      }
+
+      checkbox.checked = shouldSelect;
+    });
+
+    this.updateSelectedCount();
+  }
+
+  confirmMassDelete() {
+    const checkedBoxes = document.querySelectorAll('#timer-selection-list input[type="checkbox"]:checked');
+    const indices = Array.from(checkedBoxes).map(cb => parseInt(cb.dataset.index));
+
+    if (indices.length === 0) return;
+
+    const confirmMessage = `Are you sure you want to delete ${indices.length} timer${indices.length !== 1 ? 's' : ''}? This action cannot be undone.`;
+
+    if (confirm(confirmMessage)) {
+      // Sort indices in descending order to avoid index shifting issues
+      indices.sort((a, b) => b - a);
+
+      indices.forEach(index => {
+        this.timerManager.removeTimer(index);
+      });
+
+      this.modalManager.hideModal("mass-delete-modal");
+      this.renderTimers();
+      this.showNotification(`Successfully deleted ${indices.length} timer${indices.length !== 1 ? 's' : ''}`, 'success');
+    }
   }
 }
