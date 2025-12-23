@@ -2,9 +2,7 @@
   font-family: "Roboto Condensed";
   font-style: normal;
   font-weight: 400;
-  src:
-    local("Roboto Condensed"),
-    local("RobotoCondensed-Regular"),
+  src: local("Roboto Condensed"), local("RobotoCondensed-Regular"),
     url(https://fonts.gstatic.com/s/robotocondensed/v16/ieVl2ZhZI2eCN5jzbjEETS9weq8-19K7CA.ttf)
       format("truetype");
 }
@@ -12,9 +10,7 @@
   font-family: "Roboto Condensed Light";
   font-style: normal;
   font-weight: 300;
-  src:
-    local("Roboto Condensed Light"),
-    local("RobotoCondensed-Light"),
+  src: local("Roboto Condensed Light"), local("RobotoCondensed-Light"),
     url(https://fonts.gstatic.com/s/robotocondensed/v16/ieVi2ZhZI2eCN5jzbjEETS9weq8-59WxDCs5cvI.ttf)
       format("truetype");
 }
@@ -88,6 +84,7 @@ body {
   background: #cecece;
 }
 
+/* Modern Modal System */
 .modal {
   display: none;
   position: fixed;
@@ -97,17 +94,18 @@ body {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease-out;
 }
 
-/* CSS-based modal visibility */
 .modal.modal-visible {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 20px;
 }
 
-/* Overlay visibility */
 #overlay {
   display: none;
   position: fixed;
@@ -117,38 +115,111 @@ body {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 9999;
+  backdrop-filter: blur(2px);
 }
 
 #overlay.overlay-visible {
   display: block;
 }
 
+/* Modern Modal Content */
 .modal-content {
-  background-color: #fefefe;
-  margin: 20px;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 90%;
-  max-width: 500px;
-  border-radius: 8px;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  margin: 0;
+  padding: 0;
+  border: none;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 8px 32px rgba(0, 0, 0, 0.2);
   position: relative;
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
 }
 
+/* Modal Header */
+.modal-content h2 {
+  margin: 0;
+  padding: 32px 64px 24px 32px; /* Extra right padding for close button */
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+  border-bottom: 1px solid #e9ecef;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  position: relative;
+  min-height: 60px; /* Ensure consistent header height */
+  display: flex;
+  align-items: center;
+}
+
+/* Modal Body */
+.modal-content form,
+.modal-content > div:not(.modal-actions):not(.modal-header) {
+  padding: 32px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* Modern Close Button */
 .close {
-  color: #aaaaaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  margin-right: 5px;
-  margin-top: 3px;
+  position: absolute !important;
+  top: 24px;
+  right: 24px;
+  color: #6c757d;
+  font-size: 20px;
+  font-weight: 400;
   cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #e9ecef;
+  backdrop-filter: blur(4px);
 }
 
 .close:hover,
 .close:focus {
-  color: #000;
-  text-decoration: none;
+  color: #495057;
+  background-color: #ffffff;
+  border-color: #dee2e6;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Modal Header Container */
+.modal-header {
+  position: relative;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-bottom: 1px solid #e9ecef;
+  padding: 0;
+  margin: 0;
+}
+
+/* Modal Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* Import Modal Styles */
@@ -358,6 +429,151 @@ body {
   padding: 4px 8px;
   font-size: 12px;
   text-align: center;
+}
+
+/* Background tabs */
+.background-tabs {
+  display: flex;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+.background-tab {
+  flex: 1;
+  padding: 10px 15px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.background-tab.active {
+  border-bottom-color: #007bff;
+  color: #007bff;
+  font-weight: 500;
+}
+
+.background-tab:hover:not(.active) {
+  background: #f8f9fa;
+}
+
+.background-section {
+  display: none;
+}
+
+.background-section.active {
+  display: block;
+}
+
+/* Unsplash search styles */
+.unsplash-search-controls {
+  margin-bottom: 20px;
+}
+
+.search-input-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+#unsplash-search-input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.search-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.search-btn:hover {
+  background: #0056b3;
+}
+
+.search-suggestions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.suggestion-label {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+}
+
+.suggestion-btn {
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  padding: 4px 12px;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.suggestion-btn:hover {
+  background: #e9ecef;
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.search-placeholder {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+}
+
+.search-placeholder p {
+  margin: 10px 0;
+}
+
+.search-hint {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.loading-indicator {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.loading-indicator p {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* Unsplash attribution */
+.unsplash-attribution {
+  font-size: 11px;
+  color: #666;
+  text-align: center;
+  margin-top: 10px;
+  padding: 8px;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+
+.unsplash-attribution a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.unsplash-attribution a:hover {
+  text-decoration: underline;
 }
 
 /* Mass Delete Modal Styles */
@@ -615,57 +831,138 @@ body {
   font-size: 3em;
 }
 
-.modal-content label {
-  width: 20%;
-  display: inline-block;
-  margin: 20px;
-  font-size: 1.2rem;
-  font-weight: bold;
+/* Modern Form Styling */
+.input-group {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.input-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 8px;
+  transition: color 0.2s ease;
 }
 
 .modal-content input,
-.modal-content select {
-  width: 60%;
-  padding: 12px 12px;
-  font-size: 1.8em;
-  margin: 8px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+.modal-content select,
+.modal-content textarea {
+  width: 100%;
+  padding: 16px 20px;
+  font-size: 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
   box-sizing: border-box;
-  font-family: "Roboto Condensed";
+  font-family: "Roboto Condensed", sans-serif;
+  background-color: #ffffff;
+  transition: all 0.2s ease;
+  outline: none;
 }
 
+.modal-content input:focus,
+.modal-content select:focus,
+.modal-content textarea:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.modal-content input::placeholder {
+  color: #adb5bd;
+  font-style: italic;
+}
+
+/* Special styling for specific input types */
 .modal-content input[type="color"] {
-  margin-top: 0px;
-  margin-bottom: 20px;
+  width: 80px;
+  height: 50px;
+  padding: 4px;
   cursor: pointer;
-  width: 44px;
-  padding: 1px 2px;
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
 }
 
-.modal-content button {
-  color: white;
-  border: none;
-  cursor: pointer;
-  padding: 12px 20px;
-  border-radius: 4px;
-  font-size: 1.2rem;
-  font-weight: bold;
+.modal-content input[type="color"]:focus {
+  border-color: #007bff;
 }
 
-.modal-content button[type="submit"] {
-  background-color: #4caf50;
-  margin-left: 12px;
-}
-.modal-content button[type="button"] {
-  background-color: red;
-  float: right;
+.modal-content input[type="checkbox"] {
+  width: auto;
   margin-right: 12px;
+  transform: scale(1.2);
 }
 
-.modal-content button[type="submit"]:hover {
-  background-color: #45a049;
+/* Modern Button Styling */
+.modal-content button,
+.button-group button {
+  font-family: "Roboto Condensed", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: none;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-content button[type="submit"],
+.primary-btn {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+.modal-content button[type="submit"]:hover,
+.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+}
+
+.modal-content button[type="button"],
+.danger-button {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+}
+
+.modal-content button[type="button"]:hover,
+.danger-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+}
+
+/* Button Groups and Modal Actions */
+.button-group,
+.modal-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 32px;
+  padding: 24px 32px;
+  border-top: 1px solid #e9ecef;
+  background: #f8f9fa;
+  border-radius: 0 0 16px 16px;
+}
+
+/* Ensure modal actions don't get extra padding from form rules */
+.modal-content .modal-actions {
+  padding: 24px 32px;
+  margin: 0;
+}
+
+/* Checkbox styling */
+.large-checkbox {
+  width: 20px !important;
+  height: 20px !important;
+  margin-right: 12px !important;
+  accent-color: #007bff;
 }
 
 #add-timer-btn,
@@ -1100,14 +1397,7 @@ h1#date {
   display: inline-block;
   color: white;
 
-  background: #acacac -webkit-gradient(
-      linear,
-      100% 0,
-      0 0,
-      from(#743ad5),
-      color-stop(0.5, #d53a9d),
-      to(#743ad5)
-    );
+  background: #acacac -webkit-gradient(linear, 100% 0, 0 0, from(#743ad5), color-stop(0.5, #d53a9d), to(#743ad5));
 
   background-position: -4rem top; /*50px*/
   background-repeat: no-repeat;

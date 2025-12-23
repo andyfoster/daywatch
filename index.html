@@ -48,40 +48,41 @@
     <!-- Timer Modal -->
     <div id="timer-modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
       <div class="modal-content">
-        <button class="close" aria-label="Close modal">&times;</button>
-        <h2 id="modal-title">New Timer</h2>
+        <div class="modal-header">
+          <h2 id="modal-title">New Timer</h2>
+          <button class="close" aria-label="Close modal">&times;</button>
+        </div>
         <form id="timer-form">
           <div class="input-group">
-            <label for="event-name">Event Name:</label>
             <input
               type="text"
               id="event-name"
               name="event-name"
               required
-              aria-required="true"
+              placeholder="Event name (e.g., Birthday Party, Meeting)"
+              aria-label="Event name"
             />
           </div>
           <div class="input-group">
-            <label for="event-date">Event Date:</label>
             <input
               type="date"
               id="event-date"
               name="event-date"
               required
-              aria-required="true"
+              aria-label="Event date"
             />
           </div>
           <div class="input-group">
-            <label for="event-time">Display Time (optional):</label>
             <input
               type="time"
               id="event-time"
               name="event-time"
+              placeholder="Optional time"
               aria-label="Optional display time"
             />
           </div>
           <div class="input-group">
-            <label for="event-color">Color:</label>
+            <label for="event-color">Choose Color</label>
             <input
               type="color"
               name="event-color"
@@ -90,38 +91,38 @@
             />
           </div>
           <div class="input-group">
-            <label for="event-location">Location (optional):</label>
             <input
               type="text"
               id="event-location"
               name="event-location"
+              placeholder="Location (optional)"
               aria-label="Optional event location"
             />
           </div>
           <div class="input-group">
-            <label for="event-link">Link (optional):</label>
             <input
               type="url"
               id="event-link"
               name="event-link"
+              placeholder="Link (optional) - https://example.com"
               aria-label="Optional event link"
-              placeholder="https://"
             />
           </div>
           <div class="input-group">
-            <label for="show-on-main-screen">Show on main screen:</label>
-            <input
-              type="checkbox"
-              id="show-on-main-screen"
-              name="show-on-main-screen"
-              class="large-checkbox"
-              aria-label="Show timer on main screen"
-              checked
-            />
+            <label for="show-on-main-screen">
+              <input
+                type="checkbox"
+                id="show-on-main-screen"
+                name="show-on-main-screen"
+                class="large-checkbox"
+                aria-label="Show timer on main screen"
+                checked
+              />
+              Show on main screen
+            </label>
           </div>
 
-          <div class="button-group">
-            <button type="submit" id="submit-timer-btn">Save</button>
+          <div class="modal-actions">
             <button
               type="button"
               id="remove-timer-btn"
@@ -131,6 +132,7 @@
             >
               Remove
             </button>
+            <button type="submit" id="submit-timer-btn">Save</button>
           </div>
         </form>
       </div>
@@ -139,8 +141,10 @@
     <!-- Import Modal -->
     <div id="import-modal" class="modal" role="dialog" aria-labelledby="import-title" aria-hidden="true">
       <div class="modal-content">
-        <button class="close" aria-label="Close import">&times;</button>
-        <h2 id="import-title">Import Timers</h2>
+        <div class="modal-header">
+          <h2 id="import-title">Import Timers</h2>
+          <button class="close" aria-label="Close import">&times;</button>
+        </div>
 
         <div class="import-tabs">
           <button class="import-tab active" data-tab="file">Upload File</button>
@@ -167,7 +171,6 @@
 
         <div id="text-import" class="import-section">
           <div class="input-group">
-            <label for="import-text">Paste your timer data:</label>
             <textarea
               id="import-text"
               rows="8"
@@ -175,7 +178,7 @@
             ></textarea>
           </div>
           <div class="format-selector">
-            <label for="import-format">Format:</label>
+            <label for="import-format">Data Format</label>
             <select id="import-format">
               <option value="auto">Auto-detect</option>
               <option value="csv">CSV</option>
@@ -187,7 +190,7 @@
 
         <div class="import-options">
           <div class="input-group">
-            <label for="import-mode">Import mode:</label>
+            <label for="import-mode">Import Mode</label>
             <select id="import-mode">
               <option value="replace">Replace all timers</option>
               <option value="append">Add to existing timers</option>
@@ -211,8 +214,10 @@
     <!-- Mass Delete Modal -->
     <div id="mass-delete-modal" class="modal" role="dialog" aria-labelledby="mass-delete-title" aria-hidden="true">
       <div class="modal-content">
-        <button class="close" aria-label="Close mass delete">&times;</button>
-        <h2 id="mass-delete-title">Mass Delete Timers</h2>
+        <div class="modal-header">
+          <h2 id="mass-delete-title">Mass Delete Timers</h2>
+          <button class="close" aria-label="Close mass delete">&times;</button>
+        </div>
 
         <div class="mass-delete-options">
           <div class="input-group">
@@ -244,11 +249,13 @@
     <!-- Settings Modal -->
     <div id="settings-modal" class="modal" role="dialog" aria-labelledby="settings-title" aria-hidden="true">
       <div class="modal-content">
-        <button class="close" aria-label="Close settings">&times;</button>
-        <h2 id="settings-title">Settings</h2>
+        <div class="modal-header">
+          <h2 id="settings-title">Settings</h2>
+          <button class="close" aria-label="Close settings">&times;</button>
+        </div>
         <form id="settings-form">
           <div class="input-group">
-            <label for="date-format-select">Date Format:</label>
+            <label for="date-format-select">Date Format</label>
             <select
               id="date-format-select"
               name="date-format"
@@ -258,7 +265,7 @@
             </select>
           </div>
           <div class="input-group">
-            <label for="display-font">Font:</label>
+            <label for="display-font">Display Font</label>
             <select
               id="display-font"
               name="display-font"
@@ -272,7 +279,7 @@
             </select>
           </div>
           <div class="input-group">
-            <label for="language">Language:</label>
+            <label for="language">Language</label>
             <select
               id="language"
               name="language"
@@ -286,12 +293,53 @@
             </select>
           </div>
           <div class="input-group">
-            <label for="background-selection">Background:</label>
-            <div id="background-selection" class="background-grid">
-              <!-- Background options will be populated dynamically -->
+            <label for="background-selection">Background</label>
+
+            <!-- Background tabs -->
+            <div class="background-tabs">
+              <button type="button" class="background-tab active" data-tab="presets">Presets</button>
+              <button type="button" class="background-tab" data-tab="search">Browse Unsplash</button>
+            </div>
+
+            <!-- Preset backgrounds -->
+            <div id="preset-backgrounds" class="background-section active">
+              <div id="background-selection" class="background-grid">
+                <!-- Background options will be populated dynamically -->
+              </div>
+            </div>
+
+            <!-- Unsplash search -->
+            <div id="unsplash-search" class="background-section">
+              <div class="unsplash-search-controls">
+                <div class="search-input-group">
+                  <input type="text" id="unsplash-search-input" placeholder="Search for backgrounds (e.g., nature, city, abstract)">
+                  <button type="button" id="unsplash-search-btn" class="search-btn">Search</button>
+                </div>
+                <div class="search-suggestions">
+                  <span class="suggestion-label">Popular:</span>
+                  <button type="button" class="suggestion-btn" data-query="nature">Nature</button>
+                  <button type="button" class="suggestion-btn" data-query="city">City</button>
+                  <button type="button" class="suggestion-btn" data-query="abstract">Abstract</button>
+                  <button type="button" class="suggestion-btn" data-query="space">Space</button>
+                  <button type="button" class="suggestion-btn" data-query="minimal">Minimal</button>
+                </div>
+              </div>
+
+              <div id="unsplash-results" class="background-grid">
+                <div class="search-placeholder">
+                  <p>🔍 Search Unsplash for beautiful backgrounds</p>
+                  <p class="search-hint">Try searching for "nature", "city", "abstract", or any other theme</p>
+                </div>
+              </div>
+
+              <div id="unsplash-loading" class="loading-indicator" style="display: none;">
+                <p>🔄 Searching Unsplash...</p>
+              </div>
             </div>
           </div>
-          <button type="submit" id="save-settings-btn">Save</button>
+          <div class="modal-actions">
+            <button type="submit" id="save-settings-btn">Save</button>
+          </div>
         </form>
       </div>
     </div>

@@ -156,6 +156,8 @@ export class UIManager {
         this.populateDateFormatOptions();
         this.populateBackgroundOptions();
         this.populateCurrentSettings();
+        this.setupBackgroundTabs();
+        this.setupUnsplashSearch();
       }
     });
   }
@@ -727,6 +729,154 @@ export class UIManager {
     document.getElementById("language").value = settings.language;
   }
 
+  // Background tabs functionality
+  setupBackgroundTabs() {
+    const tabs = document.querySelectorAll('.background-tab');
+    const sections = document.querySelectorAll('.background-section');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetTab = tab.dataset.tab;
+
+        // Update tab states
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Update section visibility
+        sections.forEach(section => {
+          section.classList.remove('active');
+        });
+        document.getElementById(`${targetTab === 'presets' ? 'preset-backgrounds' : 'unsplash-search'}`).classList.add('active');
+      });
+    });
+  }
+
+  // Unsplash search functionality
+  setupUnsplashSearch() {
+    const searchInput = document.getElementById('unsplash-search-input');
+    const searchBtn = document.getElementById('unsplash-search-btn');
+    const suggestionBtns = document.querySelectorAll('.suggestion-btn');
+
+    // Search button click
+    searchBtn.addEventListener('click', () => {
+      const query = searchInput.value.trim();
+      if (query) {
+        this.searchUnsplashBackgrounds(query);
+      }
+    });
+
+    // Enter key in search input
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        const query = searchInput.value.trim();
+        if (query) {
+          this.searchUnsplashBackgrounds(query);
+        }
+      }
+    });
+
+    // Suggestion buttons
+    suggestionBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const query = btn.dataset.query;
+        searchInput.value = query;
+        this.searchUnsplashBackgrounds(query);
+      });
+    });
+  }
+
+  async searchUnsplashBackgrounds(query) {
+    const resultsContainer = document.getElementById('unsplash-results');
+    const loadingIndicator = document.getElementById('unsplash-loading');
+
+    try {
+      // Show loading
+      loadingIndicator.style.display = 'block';
+      resultsContainer.innerHTML = '';
+
+      // Search Unsplash
+      const searchResults = await this.settingsManager.searchUnsplashBackgrounds(query);
+
+      // Hide loading
+      loadingIndicator.style.display = 'none';
+
+      // Display results
+      this.displayUnsplashResults(searchResults.results);
+
+    } catch (error) {
+      loadingIndicator.style.display = 'none';
+      this.showError(`Failed to search backgrounds: ${error.message}`);
+
+      // Show fallback message
+      resultsContainer.innerHTML = `
+        <div class="search-placeholder">
+          <p>❌ Search failed</p>
+          <p class="search-hint">Please try again or use the preset backgrounds</p>
+        </div>
+      `;
+    }
+  }
+
+  displayUnsplashResults(results) {
+    const container = document.getElementById('unsplash-results');
+
+    if (results.length === 0) {
+      container.innerHTML = `
+        <div class="search-placeholder">
+          <p>🔍 No results found</p>
+          <p class="search-hint">Try a different search term</p>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = '';
+
+    results.forEach(photo => {
+      const option = document.createElement('div');
+      option.className = 'background-option';
+      option.dataset.backgroundUrl = photo.url;
+
+      const img = document.createElement('img');
+      img.src = photo.thumbnail;
+      img.alt = photo.name;
+      img.loading = 'lazy';
+
+      const name = document.createElement('div');
+      name.className = 'background-name';
+      name.textContent = photo.name;
+
+      option.appendChild(img);
+      option.appendChild(name);
+
+      option.addEventListener('click', () => {
+        // Remove selected class from all background options (both preset and search)
+        document.querySelectorAll('.background-option').forEach(opt => {
+          opt.classList.remove('selected');
+        });
+
+        // Add selected class to clicked option
+        option.classList.add('selected');
+
+        // Update background immediately
+        this.settingsManager.updateBackgroundImage(photo.url);
+
+        // Show success notification
+        this.showNotification(`Background updated to "${photo.name}"`, 'success');
+      });
+
+      container.appendChild(option);
+    });
+
+    // Add Unsplash attribution
+    const attribution = document.createElement('div');
+    attribution.className = 'unsplash-attribution';
+    attribution.innerHTML = `
+      Photos from <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a>
+    `;
+    container.appendChild(attribution);
+  }
+
   // Mass Delete functionality
   showMassDeleteModal() {
     this.modalManager.showModal("mass-delete-modal", {
@@ -808,7 +958,6 @@ export class UIManager {
     const timerCheckboxes = document.querySelectorAll('#timer-selection-list input[type="checkbox"]');
     const confirmBtn = document.getElementById('confirm-mass-delete-btn');
     const cancelBtn = document.getElementById('cancel-mass-delete-btn');
-    const selectedCountSpan = document.getElementById('selected-count');
 
     // Select all functionality
     selectAllCheckbox.addEventListener('change', () => {
