@@ -13,7 +13,9 @@ export const translations = {
     font: "Font:",
     language: "Language:",
     day: "day",
-    days: "days"
+    days: "days",
+    showWeekdays: "Show weekdays under timers",
+    weekend: "Weekend"
   },
   ja: {
     today: "今日",
@@ -29,7 +31,9 @@ export const translations = {
     font: "フォント:",
     language: "言語:",
     day: "日",
-    days: "日"
+    days: "日",
+    showWeekdays: "Show weekdays under timers",
+    weekend: "Weekend"
   },
   es: {
     today: "Hoy",
@@ -45,7 +49,9 @@ export const translations = {
     font: "Fuente:",
     language: "Idioma:",
     day: "día",
-    days: "días"
+    days: "días",
+    showWeekdays: "Show weekdays under timers",
+    weekend: "Weekend"
   },
   zh: {
     today: "今天",
@@ -61,7 +67,9 @@ export const translations = {
     font: "字体:",
     language: "语言:",
     day: "天",
-    days: "天"
+    days: "天",
+    showWeekdays: "Show weekdays under timers",
+    weekend: "Weekend"
   },
   fa: {
     today: "امروز",
@@ -77,6 +85,8 @@ export const translations = {
     font: "فونت:",
     language: "زبان:",
     day: "روز",
-    days: "روز"
+    days: "روز",
+    showWeekdays: "Show weekdays under timers",
+    weekend: "Weekend"
   }
 };

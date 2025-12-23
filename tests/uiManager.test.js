@@ -22,6 +22,7 @@ vi.mock('../modules/elementFactory.js', () => ({
     createLocationElement: vi.fn(),
     createTimerHeader: vi.fn(),
     createTimerName: vi.fn(),
+    createWeekdayStrip: vi.fn(),
     createEditButton: vi.fn(),
     createSidebarEventText: vi.fn(),
     createDownloadLink: vi.fn()
@@ -51,6 +52,7 @@ describe('UIManager', () => {
         <select id="date-format-select"></select>
         <select id="display-font"></select>
         <select id="language"></select>
+        <input id="show-weekdays-under-timer" type="checkbox">
       </form>
       <h2 id="modal-title"></h2>
       <button id="remove-timer-btn"></button>

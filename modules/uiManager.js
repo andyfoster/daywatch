@@ -35,6 +35,7 @@ export class UIManager {
       dateFormatSelect: document.getElementById("date-format-select"),
       displayFontSelect: document.getElementById("display-font"),
       languageSelect: document.getElementById("language"),
+      showWeekdaysCheckbox: document.getElementById("show-weekdays-under-timer"),
       // Other elements
       modalTitle: document.getElementById("modal-title"),
       removeBtn: document.getElementById("remove-timer-btn")
@@ -98,7 +99,10 @@ export class UIManager {
       const newSettings = {
         dateFormat: this.elements.dateFormatSelect.value,
         displayFont: this.elements.displayFontSelect.value,
-        language: this.elements.languageSelect.value
+        language: this.elements.languageSelect.value,
+        showWeekdaysUnderTimer: this.elements.showWeekdaysCheckbox ?
+          this.elements.showWeekdaysCheckbox.checked :
+          false
       };
 
       await this.settingsManager.updateSettings(newSettings);
@@ -538,6 +542,9 @@ export class UIManager {
     // Create and append elements using ElementFactory
     const headerEl = ElementFactory.createTimerHeader(isEventToday, daysRemaining, this.translations, settings.language);
     const nameEl = ElementFactory.createTimerName(timer);
+    const weekdayStrip = settings.showWeekdaysUnderTimer ?
+      ElementFactory.createWeekdayStrip(timer, this.translations, settings.language) :
+      null;
     const locationEl = ElementFactory.createLocationElement(timer);
     const linkEl = ElementFactory.createLinkElement(timer);
     const editBtn = ElementFactory.createEditButton(timer, index, this.showTimerModal.bind(this), this.settingsManager);
@@ -545,6 +552,9 @@ export class UIManager {
     // Append elements
     timerEl.appendChild(headerEl);
     timerEl.appendChild(nameEl);
+    if (weekdayStrip) {
+      timerEl.appendChild(weekdayStrip);
+    }
     if (locationEl) {
       timerEl.appendChild(locationEl);
     }
@@ -654,7 +664,8 @@ export class UIManager {
       'save-settings-btn': this.translations[settings.language].save,
       'date-format-label': this.translations[settings.language].dateFormat,
       'display-font-label': this.translations[settings.language].font,
-      'language-label': this.translations[settings.language].language
+      'language-label': this.translations[settings.language].language,
+      'show-weekdays-label': this.translations[settings.language].showWeekdays
     };
 
     Object.entries(elements).forEach(([id, text]) => {
@@ -727,6 +738,10 @@ export class UIManager {
     document.getElementById("date-format-select").value = settings.dateFormat;
     document.getElementById("display-font").value = settings.displayFont;
     document.getElementById("language").value = settings.language;
+    const weekdaysCheckbox = document.getElementById("show-weekdays-under-timer");
+    if (weekdaysCheckbox) {
+      weekdaysCheckbox.checked = Boolean(settings.showWeekdaysUnderTimer);
+    }
   }
 
   // Background tabs functionality

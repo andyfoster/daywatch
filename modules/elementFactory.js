@@ -60,6 +60,43 @@ export class ElementFactory {
     return headerEl;
   }
 
+  static createWeekdayStrip(timer, translations, language) {
+    const container = document.createElement("div");
+    container.className = "weekday-strip";
+    container.setAttribute("aria-label", "Event weekday");
+
+    const weekdayLabels = ["M", "T", "W", "T", "F"];
+    const fullNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+    const eventDay = new Date(timer.date).getDay(); // 0 (Sun) - 6 (Sat)
+
+    weekdayLabels.forEach((label, index) => {
+      const dayEl = document.createElement("span");
+      dayEl.className = "weekday-pill";
+      dayEl.textContent = label;
+      dayEl.title = fullNames[index];
+      dayEl.style.borderColor = timer.color;
+
+      if (eventDay === index + 1) {
+        dayEl.classList.add("active");
+        dayEl.setAttribute("aria-current", "date");
+        dayEl.style.backgroundColor = timer.color;
+        dayEl.style.color = "#fff";
+      }
+
+      container.appendChild(dayEl);
+    });
+
+    if (eventDay === 0 || eventDay === 6) {
+      const weekendNote = document.createElement("span");
+      weekendNote.className = "weekday-weekend";
+      weekendNote.textContent = translations?.[language]?.weekend || "Weekend";
+      weekendNote.style.color = timer.color;
+      container.appendChild(weekendNote);
+    }
+
+    return container;
+  }
+
   static createTimerName(timer) {
     const nameEl = document.createElement("p");
     nameEl.className = "due-date";

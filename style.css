@@ -739,6 +739,37 @@ body {
   transition: background-color 0.3s ease;
 }
 
+.weekday-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 6px 0 10px;
+  flex-wrap: wrap;
+}
+
+.weekday-pill {
+  border: 1px solid #d0d5dd;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.9rem;
+  color: #555;
+  background: rgba(255, 255, 255, 0.85);
+  transition: all 0.2s ease;
+}
+
+.weekday-pill.active {
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.weekday-weekend {
+  font-size: 0.9rem;
+  margin-left: 4px;
+  font-weight: 600;
+  color: #666;
+}
+
 /* Location styling in timer */
 .timer-location {
   font-size: 1.2rem;
@@ -892,6 +923,18 @@ body {
   width: auto;
   margin-right: 12px;
   transform: scale(1.2);
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.helper-text {
+  margin: 6px 0 0 0;
+  color: #6c757d;
+  font-size: 12px;
 }
 
 /* Modern Button Styling */
