@@ -1,6 +1,19 @@
 export class TimerManager {
   constructor() {
-    this.timers = JSON.parse(localStorage.getItem("timers")) || [];
+    const parsedTimers = JSON.parse(localStorage.getItem("timers")) || [];
+    const rawTimers = Array.isArray(parsedTimers) ? parsedTimers : [];
+
+    this.timers = rawTimers
+      .map(timer => this.normalizeTimer(timer))
+      .filter(Boolean);
+
+    const wasNormalized =
+      rawTimers.length !== this.timers.length ||
+      rawTimers.some((timer, index) => JSON.stringify(timer) !== JSON.stringify(this.timers[index]));
+
+    if (wasNormalized) {
+      this.saveTimers();
+    }
   }
 
   addTimer(name, date, color, showOnMainScreen = true, time = null, location = null, link = null) {
@@ -14,9 +27,9 @@ export class TimerManager {
       date: new Date(date).getTime(),
       color: this.sanitizeColor(color),
       showOnMainScreen,
-      time,
+      time: time ? this.sanitizeInput(time) : null,
       location: location ? this.sanitizeInput(location.trim()) : null,
-      link: link ? this.sanitizeInput(link.trim()) : null
+      link: link ? this.sanitizeLink(link.trim()) : null
     };
 
     this.timers.push(timer);
@@ -41,9 +54,9 @@ export class TimerManager {
       date: new Date(date).getTime(),
       color: this.sanitizeColor(color),
       showOnMainScreen,
-      time: time !== undefined ? time : existingTimer.time,
+      time: time !== undefined ? (time ? this.sanitizeInput(time) : null) : existingTimer.time,
       location: location !== undefined ? (location ? this.sanitizeInput(location.trim()) : null) : existingTimer.location,
-      link: link !== undefined ? (link ? this.sanitizeInput(link.trim()) : null) : existingTimer.link
+      link: link !== undefined ? (link ? this.sanitizeLink(link.trim()) : null) : existingTimer.link
     };
 
     this.saveTimers();
@@ -57,6 +70,35 @@ export class TimerManager {
 
     this.timers.splice(index, 1);
     this.saveTimers();
+  }
+
+  setTimerVisibility(index, showOnMainScreen) {
+    if (index < 0 || index >= this.timers.length) {
+      throw new Error("Invalid timer index");
+    }
+
+    this.timers[index] = {
+      ...this.timers[index],
+      showOnMainScreen: Boolean(showOnMainScreen)
+    };
+    this.saveTimers();
+    return this.timers[index];
+  }
+
+  setTimersVisibility(indices, showOnMainScreen) {
+    const validIndices = indices
+      .filter(index => Number.isInteger(index))
+      .filter(index => index >= 0 && index < this.timers.length);
+
+    validIndices.forEach(index => {
+      this.timers[index].showOnMainScreen = Boolean(showOnMainScreen);
+    });
+
+    if (validIndices.length > 0) {
+      this.saveTimers();
+    }
+
+    return validIndices.length;
   }
 
   getTimers() {
@@ -166,9 +208,9 @@ export class TimerManager {
       date: timer.date ? new Date(timer.date).getTime() : Date.now(),
       color: this.sanitizeColor(timer.color || '#000000'),
       showOnMainScreen: timer.showOnMainScreen !== false,
-      time: timer.time || null,
+      time: timer.time ? this.sanitizeInput(timer.time) : null,
       location: timer.location ? this.sanitizeInput(timer.location) : null,
-      link: timer.link ? this.sanitizeInput(timer.link) : null
+      link: timer.link ? this.sanitizeLink(timer.link) : null
     }));
   }
 
@@ -191,9 +233,9 @@ export class TimerManager {
             date: dateValue,
             color: this.sanitizeColor(values[2] || '#000000'),
             showOnMainScreen: values[3] !== 'false' && values[3] !== '0',
-            time: values[4] || null,
+            time: values[4] ? this.sanitizeInput(values[4]) : null,
             location: values[5] ? this.sanitizeInput(values[5]) : null,
-            link: values[6] ? this.sanitizeInput(values[6]) : null
+            link: values[6] ? this.sanitizeLink(values[6]) : null
           });
         }
       }
@@ -236,9 +278,9 @@ export class TimerManager {
           date: new Date(date).getTime(),
           color: this.sanitizeColor(color),
           showOnMainScreen: showOnMainScreen === 'true',
-          time: time || null,
-          location: location || null,
-          link: link || null
+          time: time ? this.sanitizeInput(time) : null,
+          location: location ? this.sanitizeInput(location) : null,
+          link: link ? this.sanitizeLink(link) : null
         });
       }
     }
@@ -261,13 +303,62 @@ export class TimerManager {
   }
 
   sanitizeInput(input) {
-    return input.replace(/[<>&"']/g, char => ({
-      '<': '&lt;',
-      '>': '&gt;',
-      '&': '&amp;',
-      '"': '&quot;',
-      "'": '&#39;'
-    }[char]));
+    if (input === null || input === undefined) {
+      return '';
+    }
+
+    return String(input)
+      .replace(/[\u0000-\u001F\u007F]/g, '')
+      .trim();
+  }
+
+  sanitizeLink(link) {
+    const sanitizedLink = this.sanitizeInput(link);
+
+    if (!sanitizedLink) {
+      return null;
+    }
+
+    const isSafeHttpUrl = /^https?:\/\/\S+$/i.test(sanitizedLink);
+    return isSafeHttpUrl ? sanitizedLink : null;
+  }
+
+  decodeLegacyEntities(input) {
+    if (typeof input !== 'string') {
+      return '';
+    }
+
+    return input.replace(/&(lt|gt|amp|quot|#39);/g, (match) => {
+      const map = {
+        '&lt;': '<',
+        '&gt;': '>',
+        '&amp;': '&',
+        '&quot;': '"',
+        '&#39;': "'"
+      };
+      return map[match] || match;
+    });
+  }
+
+  normalizeTimer(timer) {
+    if (!timer || typeof timer !== 'object') {
+      return null;
+    }
+
+    const decodedName = this.decodeLegacyEntities(timer.name || '');
+    const decodedTime = timer.time ? this.decodeLegacyEntities(timer.time) : null;
+    const decodedLocation = timer.location ? this.decodeLegacyEntities(timer.location) : null;
+    const decodedLink = timer.link ? this.decodeLegacyEntities(timer.link) : null;
+
+    return {
+      name: this.sanitizeInput(decodedName),
+      date: Number.isFinite(Number(timer.date)) ? Number(timer.date) : Date.now(),
+      color: this.sanitizeColor(timer.color || '#000000'),
+      showOnMainScreen: timer.showOnMainScreen !== false,
+      time: decodedTime ? this.sanitizeInput(decodedTime) : null,
+      location: decodedLocation ? this.sanitizeInput(decodedLocation) : null,
+      link: decodedLink ? this.sanitizeLink(decodedLink) : null
+    };
   }
 
   sanitizeColor(color) {

@@ -3,200 +3,72 @@ import { ModalManager } from '../modules/modalManager.js';
 
 describe('ModalManager', () => {
   let modalManager;
-  let mockOverlay;
-  let mockModal;
-  let mockSidePanel;
+  let firstModal;
+  let secondModal;
 
   beforeEach(() => {
-    // Setup DOM elements
     document.body.innerHTML = `
-      <div id="overlay"></div>
-      <div id="test-modal" class="modal">
-        <input type="text" id="test-input">
-        <button id="test-button">Test</button>
+      <div id="test-modal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog"><div class="modal-content"></div></div>
       </div>
-      <div id="events-side-panel"></div>
+      <div id="second-modal" class="modal fade" tabindex="-1">
+        <div class="modal-dialog"><div class="modal-content"></div></div>
+      </div>
     `;
 
-    mockOverlay = document.getElementById('overlay');
-    mockModal = document.getElementById('test-modal');
-    mockSidePanel = document.getElementById('events-side-panel');
-
+    firstModal = document.getElementById('test-modal');
+    secondModal = document.getElementById('second-modal');
     modalManager = new ModalManager();
   });
 
-  describe('constructor', () => {
-    it('should initialize with correct properties', () => {
-      expect(modalManager.activeModal).toBe(null);
-      expect(modalManager.overlay).toBe(mockOverlay);
-    });
+  it('shows a modal and tracks it as active', () => {
+    modalManager.showModal('test-modal');
 
-    it('should setup overlay click handler', () => {
-      const clickEvent = new Event('click');
-      mockOverlay.dispatchEvent(clickEvent);
-      // Should not throw error
-    });
+    expect(firstModal.classList.contains('show')).toBe(true);
+    expect(modalManager.getActiveModal()).toBe(firstModal);
+    expect(modalManager.isModalVisible()).toBe(true);
   });
 
-  describe('showModal', () => {
-    it('should show modal with correct classes', () => {
-      modalManager.showModal('test-modal');
+  it('runs setup callback before showing', () => {
+    const setup = vi.fn();
+    modalManager.showModal('test-modal', { setup });
 
-      expect(mockModal.classList.contains('modal-visible')).toBe(true);
-      expect(mockOverlay.classList.contains('overlay-visible')).toBe(true);
-      expect(modalManager.activeModal).toBe(mockModal);
-    });
-
-    it('should focus first input element', () => {
-      const focusSpy = vi.spyOn(document.getElementById('test-input'), 'focus');
-
-      modalManager.showModal('test-modal');
-
-      expect(focusSpy).toHaveBeenCalled();
-    });
-
-    it('should run setup function if provided', () => {
-      const setupSpy = vi.fn();
-
-      modalManager.showModal('test-modal', { setup: setupSpy });
-
-      expect(setupSpy).toHaveBeenCalledWith(mockModal);
-    });
-
-    it('should hide previous modal before showing new one', () => {
-      // Show first modal
-      modalManager.showModal('test-modal');
-      expect(modalManager.activeModal).toBe(mockModal);
-
-      // Add second modal
-      document.body.innerHTML += '<div id="second-modal" class="modal"></div>';
-      const secondModal = document.getElementById('second-modal');
-
-      // Show second modal
-      modalManager.showModal('second-modal');
-
-      expect(mockModal.classList.contains('modal-visible')).toBe(false);
-      expect(secondModal.classList.contains('modal-visible')).toBe(true);
-      expect(modalManager.activeModal).toBe(secondModal);
-    });
-
-    it('should log error for non-existent modal', () => {
-      const consoleSpy = vi.spyOn(console, 'error');
-
-      modalManager.showModal('non-existent-modal');
-
-      expect(consoleSpy).toHaveBeenCalledWith('Modal with id "non-existent-modal" not found');
-    });
+    expect(setup).toHaveBeenCalledWith(firstModal);
   });
 
-  describe('hideActiveModal', () => {
-    beforeEach(() => {
-      modalManager.showModal('test-modal');
-    });
+  it('hides the previously active modal before showing another', () => {
+    modalManager.showModal('test-modal');
+    modalManager.showModal('second-modal');
 
-    it('should hide active modal', () => {
-      modalManager.hideActiveModal();
-
-      expect(mockModal.classList.contains('modal-visible')).toBe(false);
-      expect(modalManager.activeModal).toBe(null);
-    });
-
-    it('should hide overlay when no sidebar is visible', () => {
-      modalManager.hideActiveModal();
-
-      expect(mockOverlay.classList.contains('overlay-visible')).toBe(false);
-    });
-
-    it('should keep overlay visible when sidebar is visible', () => {
-      mockSidePanel.classList.add('visible');
-
-      modalManager.hideActiveModal();
-
-      expect(mockOverlay.classList.contains('overlay-visible')).toBe(true);
-    });
-
-    it('should do nothing if no active modal', () => {
-      modalManager.hideActiveModal(); // Hide first time
-      modalManager.hideActiveModal(); // Should not throw error
-
-      expect(modalManager.activeModal).toBe(null);
-    });
+    expect(firstModal.classList.contains('show')).toBe(false);
+    expect(secondModal.classList.contains('show')).toBe(true);
+    expect(modalManager.getActiveModal()).toBe(secondModal);
   });
 
-  describe('hideModal', () => {
-    beforeEach(() => {
-      modalManager.showModal('test-modal');
-    });
+  it('can hide specific modal by id', () => {
+    modalManager.showModal('test-modal');
+    modalManager.hideModal('test-modal');
 
-    it('should hide specific modal by id', () => {
-      modalManager.hideModal('test-modal');
-
-      expect(mockModal.classList.contains('modal-visible')).toBe(false);
-      expect(modalManager.activeModal).toBe(null);
-    });
-
-    it('should handle non-existent modal id gracefully', () => {
-      modalManager.hideModal('non-existent');
-
-      // Should not throw error and active modal should remain
-      expect(modalManager.activeModal).toBe(mockModal);
-    });
-
-    it('should only clear activeModal if hiding the active one', () => {
-      // Add second modal but don't make it active
-      document.body.innerHTML += '<div id="second-modal" class="modal"></div>';
-
-      modalManager.hideModal('second-modal');
-
-      // Active modal should still be the first one
-      expect(modalManager.activeModal).toBe(mockModal);
-    });
+    expect(firstModal.classList.contains('show')).toBe(false);
+    expect(modalManager.getActiveModal()).toBe(null);
   });
 
-  describe('isModalVisible', () => {
-    it('should return false when no modal is active', () => {
-      expect(modalManager.isModalVisible()).toBe(false);
-    });
+  it('can hide active modal', () => {
+    modalManager.showModal('test-modal');
+    modalManager.hideActiveModal();
 
-    it('should return true when modal is active', () => {
-      modalManager.showModal('test-modal');
-      expect(modalManager.isModalVisible()).toBe(true);
-    });
+    expect(firstModal.classList.contains('show')).toBe(false);
+    expect(modalManager.isModalVisible()).toBe(false);
   });
 
-  describe('getActiveModal', () => {
-    it('should return null when no modal is active', () => {
-      expect(modalManager.getActiveModal()).toBe(null);
-    });
-
-    it('should return active modal element', () => {
-      modalManager.showModal('test-modal');
-      expect(modalManager.getActiveModal()).toBe(mockModal);
-    });
+  it('returns false when no modal is visible', () => {
+    expect(modalManager.isModalVisible()).toBe(false);
   });
 
-  describe('overlay click handling', () => {
-    it('should hide modal when overlay is clicked', () => {
-      modalManager.showModal('test-modal');
+  it('logs error when modal id does not exist', () => {
+    const errorSpy = vi.spyOn(console, 'error');
+    modalManager.showModal('missing-modal');
 
-      const clickEvent = new Event('click');
-      mockOverlay.dispatchEvent(clickEvent);
-
-      expect(modalManager.activeModal).toBe(null);
-      expect(mockModal.classList.contains('modal-visible')).toBe(false);
-    });
-
-    it('should hide sidebar when overlay is clicked and sidebar is visible', () => {
-      mockSidePanel.classList.add('visible');
-
-      // Mock global sidebarManager
-      const mockSidebarManager = { hide: vi.fn() };
-      global.window.sidebarManager = mockSidebarManager;
-
-      const clickEvent = new Event('click');
-      mockOverlay.dispatchEvent(clickEvent);
-
-      expect(mockSidebarManager.hide).toHaveBeenCalled();
-    });
+    expect(errorSpy).toHaveBeenCalledWith('Modal with id "missing-modal" not found');
   });
 });

@@ -1,84 +1,89 @@
 export class ModalManager {
   constructor() {
     this.activeModal = null;
-    this.overlay = document.getElementById("overlay");
-    this.setupOverlayHandler();
+    this.modalInstances = new Map();
+    this.bootstrap = window.bootstrap;
+    this.setupModalListeners();
   }
 
-  setupOverlayHandler() {
-    this.overlay.addEventListener("click", () => {
-      // Hide active modal if one exists
-      if (this.activeModal) {
-        this.hideActiveModal();
-      }
-
-      // Also hide sidebar if it's open
-      const sidePanel = document.getElementById("events-side-panel");
-      if (sidePanel && sidePanel.classList.contains("visible")) {
-        // Trigger sidebar close through the sidebar manager
-        const sidebarManager = window.sidebarManager;
-        if (sidebarManager) {
-          sidebarManager.hide();
+  setupModalListeners() {
+    document.querySelectorAll(".modal").forEach((modalEl) => {
+      modalEl.addEventListener("hidden.bs.modal", () => {
+        if (this.activeModal === modalEl) {
+          this.activeModal = null;
         }
-      }
+      });
     });
+  }
+
+  getModalInstance(modalEl) {
+    if (this.modalInstances.has(modalEl)) {
+      return this.modalInstances.get(modalEl);
+    }
+
+    let instance;
+    if (this.bootstrap?.Modal) {
+      instance = new this.bootstrap.Modal(modalEl, {
+        backdrop: true,
+        keyboard: true,
+        focus: true
+      });
+    } else {
+      // Fallback for tests or if Bootstrap fails to load
+      instance = {
+        show: () => {
+          modalEl.classList.add("show");
+          modalEl.style.display = "block";
+        },
+        hide: () => {
+          modalEl.classList.remove("show");
+          modalEl.style.display = "none";
+        }
+      };
+    }
+
+    this.modalInstances.set(modalEl, instance);
+    return instance;
   }
 
   showModal(modalId, options = {}) {
     this.hideActiveModal();
 
-    const modal = document.getElementById(modalId);
-    if (!modal) {
+    const modalEl = document.getElementById(modalId);
+    if (!modalEl) {
       console.error(`Modal with id "${modalId}" not found`);
       return;
     }
 
-    // Apply any custom setup
     if (options.setup) {
-      options.setup(modal);
+      options.setup(modalEl);
     }
 
-    // Show modal and overlay
-    modal.classList.add("modal-visible");
-    this.overlay.classList.add("overlay-visible");
-    this.activeModal = modal;
-
-    // Set focus for accessibility
-    const firstInput = modal.querySelector('input, select, textarea, button');
-    if (firstInput) {
-      firstInput.focus();
-    }
+    this.getModalInstance(modalEl).show();
+    this.activeModal = modalEl;
   }
 
   hideActiveModal() {
     if (this.activeModal) {
-      this.activeModal.classList.remove("modal-visible");
+      this.getModalInstance(this.activeModal).hide();
       this.activeModal = null;
-    }
-
-    // Only hide overlay if no sidebar is visible
-    if (!document.getElementById("events-side-panel").classList.contains("visible")) {
-      this.overlay.classList.remove("overlay-visible");
     }
   }
 
   hideModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-      modal.classList.remove("modal-visible");
-      if (this.activeModal === modal) {
-        this.activeModal = null;
-      }
+    const modalEl = document.getElementById(modalId);
+    if (!modalEl) {
+      return;
     }
 
-    // Only hide overlay if no sidebar is visible and no active modal
-    if (!this.activeModal && !document.getElementById("events-side-panel").classList.contains("visible")) {
-      this.overlay.classList.remove("overlay-visible");
+    this.getModalInstance(modalEl).hide();
+    if (this.activeModal === modalEl) {
+      this.activeModal = null;
     }
   }
 
   isModalVisible() {
-    return this.activeModal !== null;
+    return document.querySelector(".modal.show") !== null;
   }
 
   getActiveModal() {

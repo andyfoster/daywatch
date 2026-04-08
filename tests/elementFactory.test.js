@@ -83,7 +83,7 @@ describe('ElementFactory', () => {
       const link = element.querySelector('a');
       expect(link).toBeTruthy();
       expect(link.href).toBe('https://example.com');
-      expect(link.innerHTML).toBe('🔗');
+      expect(link.textContent).toBe('Open link');
       expect(link.target).toBe('_blank');
       expect(link.rel).toBe('noopener noreferrer');
       expect(link.title).toBe('https://example.com');

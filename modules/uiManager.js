@@ -49,12 +49,10 @@ export class UIManager {
     // Timer-related events
     document.getElementById("add-timer-btn").addEventListener("click", () => this.showTimerModal());
     document.querySelector("#new-timer-btn-sidebar").addEventListener("click", () => this.showTimerModal());
-    document.querySelector("#timer-modal .close").addEventListener("click", () => this.modalManager.hideModal("timer-modal"));
     this.elements.timerForm.addEventListener("submit", (e) => this.handleTimerFormSubmit(e));
 
     // Settings-related events
     document.getElementById("settings-btn").addEventListener("click", () => this.showSettingsModal());
-    document.querySelector("#settings-modal .close").addEventListener("click", () => this.modalManager.hideModal("settings-modal"));
     this.elements.settingsForm.addEventListener("submit", (e) => this.handleSettingsFormSubmit(e));
 
     // Privacy shield toggle
@@ -65,11 +63,9 @@ export class UIManager {
 
     // Import timers
     document.getElementById("import-timers-btn").addEventListener("click", () => this.showImportModal());
-    document.querySelector("#import-modal .close").addEventListener("click", () => this.modalManager.hideModal("import-modal"));
 
     // Mass delete timers
     document.getElementById("mass-delete-btn").addEventListener("click", () => this.showMassDeleteModal());
-    document.querySelector("#mass-delete-modal .close").addEventListener("click", () => this.modalManager.hideModal("mass-delete-modal"));
   }
 
   async handleTimerFormSubmit(event) {
@@ -128,6 +124,10 @@ export class UIManager {
   }
 
   showTimerModal(isEdit = false, index) {
+    if (this.sidebarManager.isOpen()) {
+      this.sidebarManager.hide();
+    }
+
     this.editIndex = isEdit ? index : undefined;
 
     const settings = this.settingsManager.getCurrentSettings();
@@ -155,13 +155,19 @@ export class UIManager {
   }
 
   showSettingsModal() {
+    if (this.sidebarManager.isOpen()) {
+      this.sidebarManager.hide();
+    }
+
     this.modalManager.showModal("settings-modal", {
       setup: () => {
         this.populateDateFormatOptions();
         this.populateBackgroundOptions();
         this.populateCurrentSettings();
-        this.setupBackgroundTabs();
-        this.setupUnsplashSearch();
+        if (!this.unsplashSearchInitialized) {
+          this.setupUnsplashSearch();
+          this.unsplashSearchInitialized = true;
+        }
       }
     });
   }
@@ -197,6 +203,10 @@ export class UIManager {
   }
 
   showImportModal() {
+    if (this.sidebarManager.isOpen()) {
+      this.sidebarManager.hide();
+    }
+
     this.modalManager.showModal("import-modal", {
       setup: () => {
         this.initializeImportModal();
@@ -216,24 +226,6 @@ export class UIManager {
   }
 
   setupImportEventListeners() {
-    // Set up tab switching
-    const tabs = document.querySelectorAll('.import-tab');
-    const sections = document.querySelectorAll('.import-section');
-
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        const targetTab = tab.dataset.tab;
-
-        // Update active tab
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-
-        // Update active section
-        sections.forEach(s => s.classList.remove('active'));
-        document.getElementById(`${targetTab}-import`).classList.add('active');
-      });
-    });
-
     // Set up file upload
     this.setupFileUpload();
 
@@ -246,13 +238,11 @@ export class UIManager {
   }
 
   resetImportModal() {
-    // Reset tabs
-    document.querySelectorAll('.import-tab').forEach(tab => tab.classList.remove('active'));
-    document.querySelector('.import-tab[data-tab="file"]').classList.add('active');
-
-    // Reset sections
-    document.querySelectorAll('.import-section').forEach(section => section.classList.remove('active'));
-    document.getElementById('file-import').classList.add('active');
+    // Reset tab to Upload File
+    const fileTab = document.querySelector('.import-tab[data-bs-target="#file-import"]');
+    if (fileTab) {
+      this.showBootstrapTab(fileTab);
+    }
 
     // Reset form elements
     document.getElementById('file-input').value = '';
@@ -321,7 +311,10 @@ export class UIManager {
       const text = await this.readFileAsText(file);
 
       // Switch to text tab and populate
-      document.querySelector('.import-tab[data-tab="text"]').click();
+      const textTab = document.querySelector('.import-tab[data-bs-target="#text-import"]');
+      if (textTab) {
+        this.showBootstrapTab(textTab);
+      }
       document.getElementById('import-text').value = text;
 
       // Auto-detect format
@@ -342,6 +335,19 @@ export class UIManager {
       reader.onerror = () => reject(new Error('Failed to read file'));
       reader.readAsText(file);
     });
+  }
+
+  showBootstrapTab(tabButton) {
+    if (!tabButton) {
+      return;
+    }
+
+    if (window.bootstrap?.Tab) {
+      const instance = window.bootstrap.Tab.getOrCreateInstance(tabButton);
+      instance.show();
+    } else {
+      tabButton.click();
+    }
   }
 
   updateFormatHint(format) {
@@ -403,10 +409,15 @@ export class UIManager {
       const timeStr = timer.time ? ` at ${timer.time}` : '';
       const locationStr = timer.location ? ` (${timer.location})` : '';
 
-      timerDiv.innerHTML = `
-        <strong>${timer.name}</strong><br>
-        <small>${date}${timeStr}${locationStr}</small>
-      `;
+      const nameStrong = document.createElement('strong');
+      nameStrong.textContent = timer.name;
+
+      const detailsSmall = document.createElement('small');
+      detailsSmall.textContent = `${date}${timeStr}${locationStr}`;
+
+      timerDiv.appendChild(nameStrong);
+      timerDiv.appendChild(document.createElement('br'));
+      timerDiv.appendChild(detailsSmall);
 
       contentDiv.appendChild(timerDiv);
     }
@@ -744,28 +755,6 @@ export class UIManager {
     }
   }
 
-  // Background tabs functionality
-  setupBackgroundTabs() {
-    const tabs = document.querySelectorAll('.background-tab');
-    const sections = document.querySelectorAll('.background-section');
-
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        const targetTab = tab.dataset.tab;
-
-        // Update tab states
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-
-        // Update section visibility
-        sections.forEach(section => {
-          section.classList.remove('active');
-        });
-        document.getElementById(`${targetTab === 'presets' ? 'preset-backgrounds' : 'unsplash-search'}`).classList.add('active');
-      });
-    });
-  }
-
   // Unsplash search functionality
   setupUnsplashSearch() {
     const searchInput = document.getElementById('unsplash-search-input');
@@ -822,13 +811,11 @@ export class UIManager {
       loadingIndicator.style.display = 'none';
       this.showError(`Failed to search backgrounds: ${error.message}`);
 
-      // Show fallback message
-      resultsContainer.innerHTML = `
-        <div class="search-placeholder">
-          <p>❌ Search failed</p>
-          <p class="search-hint">Please try again or use the preset backgrounds</p>
-        </div>
-      `;
+      this.renderSearchPlaceholder(
+        resultsContainer,
+        'Search failed',
+        'Please try again or use the preset backgrounds'
+      );
     }
   }
 
@@ -836,12 +823,11 @@ export class UIManager {
     const container = document.getElementById('unsplash-results');
 
     if (results.length === 0) {
-      container.innerHTML = `
-        <div class="search-placeholder">
-          <p>🔍 No results found</p>
-          <p class="search-hint">Try a different search term</p>
-        </div>
-      `;
+      this.renderSearchPlaceholder(
+        container,
+        'No results found',
+        'Try a different search term'
+      );
       return;
     }
 
@@ -886,18 +872,51 @@ export class UIManager {
     // Add Unsplash attribution
     const attribution = document.createElement('div');
     attribution.className = 'unsplash-attribution';
-    attribution.innerHTML = `
-      Photos from <a href="https://unsplash.com" target="_blank" rel="noopener">Unsplash</a>
-    `;
+    attribution.appendChild(document.createTextNode('Photos from '));
+
+    const link = document.createElement('a');
+    link.href = 'https://unsplash.com';
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = 'Unsplash';
+
+    attribution.appendChild(link);
     container.appendChild(attribution);
   }
 
-  // Mass Delete functionality
+  renderSearchPlaceholder(container, title, hint) {
+    container.innerHTML = '';
+
+    const placeholder = document.createElement('div');
+    placeholder.className = 'search-placeholder';
+
+    const titleEl = document.createElement('p');
+    titleEl.textContent = title;
+
+    const hintEl = document.createElement('p');
+    hintEl.className = 'search-hint';
+    hintEl.textContent = hint;
+
+    placeholder.appendChild(titleEl);
+    placeholder.appendChild(hintEl);
+    container.appendChild(placeholder);
+  }
+
+  // Bulk actions functionality
   showMassDeleteModal() {
+    if (this.sidebarManager.isOpen()) {
+      this.sidebarManager.hide();
+    }
+
     this.modalManager.showModal("mass-delete-modal", {
       setup: () => {
         this.populateTimerSelectionList();
-        this.setupMassDeleteEventListeners();
+        if (!this.massActionsInitialized) {
+          this.setupMassDeleteEventListeners();
+          this.massActionsInitialized = true;
+        }
+        this.updateSelectAllState();
+        this.updateSelectedCount();
       }
     });
   }
@@ -910,7 +929,7 @@ export class UIManager {
     const now = new Date();
 
     if (timers.length === 0) {
-      container.innerHTML = '<p>No timers to delete.</p>';
+      container.innerHTML = '<p>No timers available.</p>';
       return;
     }
 
@@ -970,28 +989,30 @@ export class UIManager {
 
   setupMassDeleteEventListeners() {
     const selectAllCheckbox = document.getElementById('select-all-timers');
-    const timerCheckboxes = document.querySelectorAll('#timer-selection-list input[type="checkbox"]');
+    const timerSelectionList = document.getElementById('timer-selection-list');
     const confirmBtn = document.getElementById('confirm-mass-delete-btn');
+    const hideBtn = document.getElementById('confirm-mass-hide-btn');
     const cancelBtn = document.getElementById('cancel-mass-delete-btn');
+
+    if (!selectAllCheckbox || !timerSelectionList || !confirmBtn || !cancelBtn) {
+      return;
+    }
 
     // Select all functionality
     selectAllCheckbox.addEventListener('change', () => {
-      timerCheckboxes.forEach(checkbox => {
+      document.querySelectorAll('#timer-selection-list input[type="checkbox"]').forEach(checkbox => {
         checkbox.checked = selectAllCheckbox.checked;
       });
       this.updateSelectedCount();
+      this.updateSelectAllState();
     });
 
-    // Individual checkbox change
-    timerCheckboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', () => {
+    // Individual checkbox changes (event delegation for dynamic rows)
+    timerSelectionList.addEventListener('change', (event) => {
+      if (event.target.matches('input[type="checkbox"]')) {
         this.updateSelectedCount();
-
-        // Update select all checkbox state
-        const checkedCount = document.querySelectorAll('#timer-selection-list input[type="checkbox"]:checked').length;
-        selectAllCheckbox.checked = checkedCount === timerCheckboxes.length;
-        selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < timerCheckboxes.length;
-      });
+        this.updateSelectAllState();
+      }
     });
 
     // Quick filter buttons
@@ -1007,13 +1028,36 @@ export class UIManager {
       this.confirmMassDelete();
     });
 
+    // Confirm hide
+    if (hideBtn) {
+      hideBtn.addEventListener('click', () => {
+        this.confirmMassHide();
+      });
+    }
+
     // Cancel
     cancelBtn.addEventListener('click', () => {
       this.modalManager.hideModal("mass-delete-modal");
     });
+  }
 
-    // Initial count update
-    this.updateSelectedCount();
+  updateSelectAllState() {
+    const selectAllCheckbox = document.getElementById('select-all-timers');
+    const timerCheckboxes = document.querySelectorAll('#timer-selection-list input[type="checkbox"]');
+    const checkedCount = document.querySelectorAll('#timer-selection-list input[type="checkbox"]:checked').length;
+
+    if (!selectAllCheckbox) {
+      return;
+    }
+
+    if (timerCheckboxes.length === 0) {
+      selectAllCheckbox.checked = false;
+      selectAllCheckbox.indeterminate = false;
+      return;
+    }
+
+    selectAllCheckbox.checked = checkedCount === timerCheckboxes.length;
+    selectAllCheckbox.indeterminate = checkedCount > 0 && checkedCount < timerCheckboxes.length;
   }
 
   updateSelectedCount() {
@@ -1021,9 +1065,17 @@ export class UIManager {
     const count = checkedBoxes.length;
     const selectedCountSpan = document.getElementById('selected-count');
     const confirmBtn = document.getElementById('confirm-mass-delete-btn');
+    const hideBtn = document.getElementById('confirm-mass-hide-btn');
 
-    selectedCountSpan.textContent = `${count} timer${count !== 1 ? 's' : ''} selected`;
-    confirmBtn.disabled = count === 0;
+    if (selectedCountSpan) {
+      selectedCountSpan.textContent = `${count} timer${count !== 1 ? 's' : ''} selected`;
+    }
+    if (confirmBtn) {
+      confirmBtn.disabled = count === 0;
+    }
+    if (hideBtn) {
+      hideBtn.disabled = count === 0;
+    }
   }
 
   applyQuickFilter(filter) {
@@ -1053,12 +1105,29 @@ export class UIManager {
       checkbox.checked = shouldSelect;
     });
 
+    this.updateSelectAllState();
     this.updateSelectedCount();
   }
 
-  confirmMassDelete() {
+  getSelectedTimerIndices() {
     const checkedBoxes = document.querySelectorAll('#timer-selection-list input[type="checkbox"]:checked');
-    const indices = Array.from(checkedBoxes).map(cb => parseInt(cb.dataset.index));
+    return Array.from(checkedBoxes).map(cb => parseInt(cb.dataset.index, 10));
+  }
+
+  confirmMassHide() {
+    const indices = this.getSelectedTimerIndices();
+    if (indices.length === 0) {
+      return;
+    }
+
+    const updatedCount = this.timerManager.setTimersVisibility(indices, false);
+    this.modalManager.hideModal("mass-delete-modal");
+    this.renderTimers();
+    this.showNotification(`Successfully hid ${updatedCount} timer${updatedCount !== 1 ? 's' : ''}`, 'success');
+  }
+
+  confirmMassDelete() {
+    const indices = this.getSelectedTimerIndices();
 
     if (indices.length === 0) return;
 

@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="vendor/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="dark-mode.css" />
   </head>
@@ -31,10 +32,35 @@
           <!-- Event items will be added here dynamically -->
         </ul>
         <div class="sidebar-footer">
-          <button id="settings-btn" aria-label="Open settings">⚙</button>
-          <button id="import-timers-btn" aria-label="Import timers">⬆</button>
-          <button id="download-timers-btn" aria-label="Download timers">⬇</button>
-          <button id="mass-delete-btn" aria-label="Mass delete timers">🗑️</button>
+          <button id="settings-btn" aria-label="Open settings" title="Settings">
+            <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.7 1.7 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.82-.33 1.7 1.7 0 0 0-1 1.55V22a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1 1.7 1.7 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.33 1.82 1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1z"></path>
+            </svg>
+          </button>
+          <button id="import-timers-btn" aria-label="Import timers" title="Import">
+            <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 16V4"></path>
+              <path d="m7 9 5-5 5 5"></path>
+              <path d="M20 16v4H4v-4"></path>
+            </svg>
+          </button>
+          <button id="download-timers-btn" aria-label="Download timers" title="Download">
+            <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 4v12"></path>
+              <path d="m7 11 5 5 5-5"></path>
+              <path d="M20 20H4"></path>
+            </svg>
+          </button>
+          <button id="mass-delete-btn" aria-label="Mass delete timers" title="Delete">
+            <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3 6h18"></path>
+              <path d="M8 6V4h8v2"></path>
+              <path d="M19 6l-1 14H6L5 6"></path>
+              <path d="M10 11v6"></path>
+              <path d="M14 11v6"></path>
+            </svg>
+          </button>
         </div>
       </div>
       <div id="toggle-panel" class="toggle-panel" role="button" aria-label="Toggle sidebar" tabindex="0">
@@ -46,317 +72,348 @@
     <div id="overlay" role="presentation"></div>
 
     <!-- Timer Modal -->
-    <div id="timer-modal" class="modal" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2 id="modal-title">New Timer</h2>
-          <button class="close" aria-label="Close modal">&times;</button>
-        </div>
-        <form id="timer-form">
-          <div class="input-group">
-            <input
-              type="text"
-              id="event-name"
-              name="event-name"
-              required
-              placeholder="Event name (e.g., Birthday Party, Meeting)"
-              aria-label="Event name"
-            />
+    <div id="timer-modal" class="modal fade dw-modal" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title fs-4" id="modal-title">New Timer</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close modal"></button>
           </div>
-          <div class="input-group">
-            <input
-              type="date"
-              id="event-date"
-              name="event-date"
-              required
-              aria-label="Event date"
-            />
-          </div>
-          <div class="input-group">
-            <input
-              type="time"
-              id="event-time"
-              name="event-time"
-              placeholder="Optional time"
-              aria-label="Optional display time"
-            />
-          </div>
-          <div class="input-group">
-            <label for="event-color">Choose Color</label>
-            <input
-              type="color"
-              name="event-color"
-              id="event-color"
-              aria-label="Choose event color"
-            />
-          </div>
-          <div class="input-group">
-            <input
-              type="text"
-              id="event-location"
-              name="event-location"
-              placeholder="Location (optional)"
-              aria-label="Optional event location"
-            />
-          </div>
-          <div class="input-group">
-            <input
-              type="url"
-              id="event-link"
-              name="event-link"
-              placeholder="Link (optional) - https://example.com"
-              aria-label="Optional event link"
-            />
-          </div>
-          <div class="input-group">
-            <label for="show-on-main-screen">
-              <input
-                type="checkbox"
-                id="show-on-main-screen"
-                name="show-on-main-screen"
-                class="large-checkbox"
-                aria-label="Show timer on main screen"
-                checked
-              />
-              Show on main screen
-            </label>
-          </div>
+          <div class="modal-body">
+            <form id="timer-form">
+              <div class="mb-3">
+                <input
+                  type="text"
+                  id="event-name"
+                  name="event-name"
+                  class="form-control"
+                  required
+                  placeholder="Event name (e.g., Birthday Party, Meeting)"
+                  aria-label="Event name"
+                />
+              </div>
+              <div class="mb-3">
+                <input
+                  type="date"
+                  id="event-date"
+                  name="event-date"
+                  class="form-control"
+                  required
+                  aria-label="Event date"
+                />
+              </div>
+              <div class="mb-3">
+                <input
+                  type="time"
+                  id="event-time"
+                  name="event-time"
+                  class="form-control"
+                  placeholder="Optional time"
+                  aria-label="Optional display time"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="event-color" class="form-label">Choose Color</label>
+                <input
+                  type="color"
+                  name="event-color"
+                  id="event-color"
+                  class="form-control form-control-color"
+                  aria-label="Choose event color"
+                />
+              </div>
+              <div class="mb-3">
+                <input
+                  type="text"
+                  id="event-location"
+                  name="event-location"
+                  class="form-control"
+                  placeholder="Location (optional)"
+                  aria-label="Optional event location"
+                />
+              </div>
+              <div class="mb-3">
+                <input
+                  type="url"
+                  id="event-link"
+                  name="event-link"
+                  class="form-control"
+                  placeholder="Link (optional) - https://example.com"
+                  aria-label="Optional event link"
+                />
+              </div>
+              <div class="form-check mb-1">
+                <input
+                  type="checkbox"
+                  id="show-on-main-screen"
+                  name="show-on-main-screen"
+                  class="form-check-input large-checkbox"
+                  aria-label="Show timer on main screen"
+                  checked
+                />
+                <label class="form-check-label" for="show-on-main-screen">Show on main screen</label>
+              </div>
 
-          <div class="modal-actions">
-            <button
-              type="button"
-              id="remove-timer-btn"
-              class="danger-button"
-              style="display: none"
-              aria-label="Remove timer"
-            >
-              Remove
-            </button>
-            <button type="submit" id="submit-timer-btn">Save</button>
+              <div class="modal-actions">
+                <button
+                  type="button"
+                  id="remove-timer-btn"
+                  class="btn btn-danger"
+                  style="display: none"
+                  aria-label="Remove timer"
+                >
+                  Remove
+                </button>
+                <button type="submit" id="submit-timer-btn" class="btn btn-primary">Save</button>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </div>
 
     <!-- Import Modal -->
-    <div id="import-modal" class="modal" role="dialog" aria-labelledby="import-title" aria-hidden="true">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2 id="import-title">Import Timers</h2>
-          <button class="close" aria-label="Close import">&times;</button>
-        </div>
+    <div id="import-modal" class="modal fade dw-modal" tabindex="-1" aria-labelledby="import-title" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title fs-4" id="import-title">Import Timers</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close import"></button>
+          </div>
 
-        <div class="import-tabs">
-          <button class="import-tab active" data-tab="file">Upload File</button>
-          <button class="import-tab" data-tab="text">Paste Text</button>
-        </div>
+          <div class="modal-body">
+            <div class="import-tabs nav nav-tabs mb-3" role="tablist">
+              <button class="nav-link import-tab active" data-bs-toggle="tab" data-bs-target="#file-import" type="button" role="tab" aria-selected="true">Upload File</button>
+              <button class="nav-link import-tab" data-bs-toggle="tab" data-bs-target="#text-import" type="button" role="tab" aria-selected="false">Paste Text</button>
+            </div>
 
-        <div id="file-import" class="import-section active">
-          <div class="file-drop-zone" id="file-drop-zone">
-            <div class="drop-zone-content">
-              <p>📁 Drop your file here or click to browse</p>
-              <input type="file" id="file-input" accept=".txt,.csv,.json" style="display: none;">
-              <button type="button" id="browse-btn" class="secondary-btn">Browse Files</button>
+            <div class="tab-content">
+              <div id="file-import" class="import-section tab-pane fade show active" role="tabpanel">
+                <div class="file-drop-zone" id="file-drop-zone">
+                  <div class="drop-zone-content">
+                    <p>Drop your file here or click to browse</p>
+                    <input type="file" id="file-input" accept=".txt,.csv,.json" style="display: none;">
+                    <button type="button" id="browse-btn" class="btn btn-secondary">Browse Files</button>
+                  </div>
+                </div>
+                <div class="supported-formats">
+                  <p><strong>Supported formats:</strong></p>
+                  <ul>
+                    <li><strong>CSV:</strong> Name, Date, Color, Show on Main, Time, Location, Link</li>
+                    <li><strong>JSON:</strong> Array of timer objects</li>
+                    <li><strong>Text:</strong> Semicolon-separated values (DayWatch format)</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div id="text-import" class="import-section tab-pane fade" role="tabpanel">
+                <div class="mb-3">
+                  <textarea
+                    id="import-text"
+                    rows="8"
+                    class="form-control"
+                    placeholder="Paste CSV, JSON, or text data here...&#10;&#10;Example CSV:&#10;Birthday Party, 2024-12-25, #ff0000, true, 18:00, Home, &#10;Meeting, 2024-12-30, #0000ff, true, 09:00, Office, https://zoom.us/meeting"
+                  ></textarea>
+                </div>
+                <div class="format-selector">
+                  <label for="import-format" class="form-label">Data Format</label>
+                  <select id="import-format" class="form-select">
+                    <option value="auto">Auto-detect</option>
+                    <option value="csv">CSV</option>
+                    <option value="json">JSON</option>
+                    <option value="text">Text (DayWatch format)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="import-options">
+              <div class="mb-0">
+                <label for="import-mode" class="form-label">Import Mode</label>
+                <select id="import-mode" class="form-select">
+                  <option value="replace">Replace all timers</option>
+                  <option value="append">Add to existing timers</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="import-preview" class="import-preview" style="display: none;">
+              <h3>Preview</h3>
+              <div id="preview-content"></div>
+              <p id="preview-summary"></p>
+            </div>
+
+            <div class="modal-actions">
+              <button type="button" id="preview-import-btn" class="btn btn-secondary">Preview</button>
+              <button type="button" id="confirm-import-btn" class="btn btn-primary" disabled>Import</button>
             </div>
           </div>
-          <div class="supported-formats">
-            <p><strong>Supported formats:</strong></p>
-            <ul>
-              <li><strong>CSV:</strong> Name, Date, Color, Show on Main, Time, Location, Link</li>
-              <li><strong>JSON:</strong> Array of timer objects</li>
-              <li><strong>Text:</strong> Semicolon-separated values (DayWatch format)</li>
-            </ul>
-          </div>
-        </div>
-
-        <div id="text-import" class="import-section">
-          <div class="input-group">
-            <textarea
-              id="import-text"
-              rows="8"
-              placeholder="Paste CSV, JSON, or text data here...&#10;&#10;Example CSV:&#10;Birthday Party, 2024-12-25, #ff0000, true, 18:00, Home, &#10;Meeting, 2024-12-30, #0000ff, true, 09:00, Office, https://zoom.us/meeting"
-            ></textarea>
-          </div>
-          <div class="format-selector">
-            <label for="import-format">Data Format</label>
-            <select id="import-format">
-              <option value="auto">Auto-detect</option>
-              <option value="csv">CSV</option>
-              <option value="json">JSON</option>
-              <option value="text">Text (DayWatch format)</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="import-options">
-          <div class="input-group">
-            <label for="import-mode">Import Mode</label>
-            <select id="import-mode">
-              <option value="replace">Replace all timers</option>
-              <option value="append">Add to existing timers</option>
-            </select>
-          </div>
-        </div>
-
-        <div id="import-preview" class="import-preview" style="display: none;">
-          <h3>Preview</h3>
-          <div id="preview-content"></div>
-          <p id="preview-summary"></p>
-        </div>
-
-        <div class="modal-actions">
-          <button type="button" id="preview-import-btn" class="secondary-btn">Preview</button>
-          <button type="button" id="confirm-import-btn" class="primary-btn" disabled>Import</button>
         </div>
       </div>
     </div>
 
-    <!-- Mass Delete Modal -->
-    <div id="mass-delete-modal" class="modal" role="dialog" aria-labelledby="mass-delete-title" aria-hidden="true">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2 id="mass-delete-title">Mass Delete Timers</h2>
-          <button class="close" aria-label="Close mass delete">&times;</button>
-        </div>
-
-        <div class="mass-delete-options">
-          <div class="input-group">
-            <label>
-              <input type="checkbox" id="select-all-timers"> Select All
-            </label>
+    <!-- Bulk Actions Modal -->
+    <div id="mass-delete-modal" class="modal fade dw-modal" tabindex="-1" aria-labelledby="mass-delete-title" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title fs-4" id="mass-delete-title">Bulk Timer Actions</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close bulk actions"></button>
           </div>
 
-          <div class="timer-selection-list" id="timer-selection-list">
-            <!-- Timer checkboxes will be populated dynamically -->
-          </div>
+          <div class="modal-body">
+            <div class="mass-delete-options">
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="select-all-timers">
+                <label class="form-check-label" for="select-all-timers">Select All</label>
+              </div>
 
-          <div class="quick-filters">
-            <h3>Quick Filters:</h3>
-            <button type="button" class="filter-btn" data-filter="past">Select Past Events</button>
-            <button type="button" class="filter-btn" data-filter="future">Select Future Events</button>
-            <button type="button" class="filter-btn" data-filter="hidden">Select Hidden Timers</button>
-          </div>
-        </div>
+              <div class="timer-selection-list" id="timer-selection-list">
+                <!-- Timer checkboxes will be populated dynamically -->
+              </div>
 
-        <div class="modal-actions">
-          <span id="selected-count">0 timers selected</span>
-          <button type="button" id="cancel-mass-delete-btn" class="secondary-btn">Cancel</button>
-          <button type="button" id="confirm-mass-delete-btn" class="danger-btn" disabled>Delete Selected</button>
+              <div class="quick-filters">
+                <h3>Quick Filters:</h3>
+                <button type="button" class="filter-btn btn btn-outline-secondary btn-sm" data-filter="past">Select Past Events</button>
+                <button type="button" class="filter-btn btn btn-outline-secondary btn-sm" data-filter="future">Select Future Events</button>
+                <button type="button" class="filter-btn btn btn-outline-secondary btn-sm" data-filter="hidden">Select Hidden Timers</button>
+              </div>
+            </div>
+
+            <div class="modal-actions">
+              <span id="selected-count">0 timers selected</span>
+              <button type="button" id="cancel-mass-delete-btn" class="btn btn-secondary">Cancel</button>
+              <button type="button" id="confirm-mass-hide-btn" class="btn btn-outline-primary" disabled>Hide Selected</button>
+              <button type="button" id="confirm-mass-delete-btn" class="btn btn-danger" disabled>Delete Selected</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Settings Modal -->
-    <div id="settings-modal" class="modal" role="dialog" aria-labelledby="settings-title" aria-hidden="true">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2 id="settings-title">Settings</h2>
-          <button class="close" aria-label="Close settings">&times;</button>
+    <div id="settings-modal" class="modal fade dw-modal" tabindex="-1" aria-labelledby="settings-title" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title fs-4" id="settings-title">Settings</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close settings"></button>
+          </div>
+          <div class="modal-body">
+            <form id="settings-form">
+              <div class="mb-3">
+                <label for="date-format-select" class="form-label">Date Format</label>
+                <select
+                  id="date-format-select"
+                  name="date-format"
+                  class="form-select"
+                  aria-label="Select date format"
+                >
+                  <!-- Options will be populated dynamically -->
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="display-font" class="form-label">Display Font</label>
+                <select
+                  id="display-font"
+                  name="display-font"
+                  class="form-select"
+                  aria-label="Select display font"
+                >
+                  <option value="Roboto Condensed">Roboto Condensed</option>
+                  <option value="Arial">Arial</option>
+                  <option value="Helvetica">Helvetica</option>
+                  <option value="Times New Roman">Times New Roman</option>
+                  <option value="Courier New">Courier New</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="language" class="form-label">Language</label>
+                <select
+                  id="language"
+                  name="language"
+                  class="form-select"
+                  aria-label="Select language"
+                >
+                  <option value="en">English</option>
+                  <option value="ja">日本語</option>
+                  <option value="es">Español</option>
+                  <option value="zh">中文</option>
+                  <option value="fa">فارسی</option>
+                </select>
+              </div>
+              <div class="mb-3 checkbox-group">
+                <div class="form-check">
+                  <input
+                    type="checkbox"
+                    id="show-weekdays-under-timer"
+                    name="show-weekdays-under-timer"
+                    class="form-check-input large-checkbox"
+                    aria-label="Show weekdays under timers (Mon–Fri)"
+                  />
+                  <label class="form-check-label" for="show-weekdays-under-timer">
+                    <span id="show-weekdays-label">Show weekdays under timers (Mon–Fri)</span>
+                  </label>
+                </div>
+                <p class="helper-text">Highlights the timer's weekday; weekend events show a weekend note.</p>
+              </div>
+              <div class="mb-3">
+                <label for="background-selection" class="form-label">Background</label>
+
+                <!-- Background tabs -->
+                <div class="background-tabs nav nav-tabs mb-3" role="tablist">
+                  <button type="button" class="background-tab nav-link active" data-bs-toggle="tab" data-bs-target="#preset-backgrounds" role="tab" aria-selected="true">Presets</button>
+                  <button type="button" class="background-tab nav-link" data-bs-toggle="tab" data-bs-target="#unsplash-search" role="tab" aria-selected="false">Browse Unsplash</button>
+                </div>
+
+                <div class="tab-content">
+                  <!-- Preset backgrounds -->
+                  <div id="preset-backgrounds" class="background-section tab-pane fade show active" role="tabpanel">
+                    <div id="background-selection" class="background-grid">
+                      <!-- Background options will be populated dynamically -->
+                    </div>
+                  </div>
+
+                  <!-- Unsplash search -->
+                  <div id="unsplash-search" class="background-section tab-pane fade" role="tabpanel">
+                    <div class="unsplash-search-controls">
+                      <div class="search-input-group">
+                        <input type="text" id="unsplash-search-input" class="form-control" placeholder="Search for backgrounds (e.g., nature, city, abstract)">
+                        <button type="button" id="unsplash-search-btn" class="search-btn btn btn-primary">Search</button>
+                      </div>
+                      <div class="search-suggestions">
+                        <span class="suggestion-label">Popular:</span>
+                        <button type="button" class="suggestion-btn btn btn-outline-secondary btn-sm" data-query="nature">Nature</button>
+                        <button type="button" class="suggestion-btn btn btn-outline-secondary btn-sm" data-query="city">City</button>
+                        <button type="button" class="suggestion-btn btn btn-outline-secondary btn-sm" data-query="abstract">Abstract</button>
+                        <button type="button" class="suggestion-btn btn btn-outline-secondary btn-sm" data-query="space">Space</button>
+                        <button type="button" class="suggestion-btn btn btn-outline-secondary btn-sm" data-query="minimal">Minimal</button>
+                      </div>
+                    </div>
+
+                    <div id="unsplash-results" class="background-grid">
+                      <div class="search-placeholder">
+                        <p>Search Unsplash for beautiful backgrounds</p>
+                        <p class="search-hint">Try searching for "nature", "city", "abstract", or any other theme</p>
+                      </div>
+                    </div>
+
+                    <div id="unsplash-loading" class="loading-indicator" style="display: none;">
+                      <p>Searching Unsplash...</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-actions">
+                <button type="submit" id="save-settings-btn" class="btn btn-primary">Save</button>
+              </div>
+            </form>
+          </div>
         </div>
-        <form id="settings-form">
-          <div class="input-group">
-            <label for="date-format-select">Date Format</label>
-            <select
-              id="date-format-select"
-              name="date-format"
-              aria-label="Select date format"
-            >
-              <!-- Options will be populated dynamically -->
-            </select>
-          </div>
-          <div class="input-group">
-            <label for="display-font">Display Font</label>
-            <select
-              id="display-font"
-              name="display-font"
-              aria-label="Select display font"
-            >
-              <option value="Roboto Condensed">Roboto Condensed</option>
-              <option value="Arial">Arial</option>
-              <option value="Helvetica">Helvetica</option>
-              <option value="Times New Roman">Times New Roman</option>
-              <option value="Courier New">Courier New</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <label for="language">Language</label>
-            <select
-              id="language"
-              name="language"
-              aria-label="Select language"
-            >
-              <option value="en">English</option>
-              <option value="ja">日本語</option>
-              <option value="es">Español</option>
-              <option value="zh">中文</option>
-              <option value="fa">فارسی</option>
-            </select>
-          </div>
-          <div class="input-group checkbox-group">
-            <label for="show-weekdays-under-timer">
-              <input
-                type="checkbox"
-                id="show-weekdays-under-timer"
-                name="show-weekdays-under-timer"
-                class="large-checkbox"
-                aria-label="Show weekdays under timers (Mon–Fri)"
-              />
-              <span id="show-weekdays-label">Show weekdays under timers (Mon–Fri)</span>
-            </label>
-            <p class="helper-text">Highlights the timer's weekday; weekend events show a weekend note.</p>
-          </div>
-          <div class="input-group">
-            <label for="background-selection">Background</label>
-
-            <!-- Background tabs -->
-            <div class="background-tabs">
-              <button type="button" class="background-tab active" data-tab="presets">Presets</button>
-              <button type="button" class="background-tab" data-tab="search">Browse Unsplash</button>
-            </div>
-
-            <!-- Preset backgrounds -->
-            <div id="preset-backgrounds" class="background-section active">
-              <div id="background-selection" class="background-grid">
-                <!-- Background options will be populated dynamically -->
-              </div>
-            </div>
-
-            <!-- Unsplash search -->
-            <div id="unsplash-search" class="background-section">
-              <div class="unsplash-search-controls">
-                <div class="search-input-group">
-                  <input type="text" id="unsplash-search-input" placeholder="Search for backgrounds (e.g., nature, city, abstract)">
-                  <button type="button" id="unsplash-search-btn" class="search-btn">Search</button>
-                </div>
-                <div class="search-suggestions">
-                  <span class="suggestion-label">Popular:</span>
-                  <button type="button" class="suggestion-btn" data-query="nature">Nature</button>
-                  <button type="button" class="suggestion-btn" data-query="city">City</button>
-                  <button type="button" class="suggestion-btn" data-query="abstract">Abstract</button>
-                  <button type="button" class="suggestion-btn" data-query="space">Space</button>
-                  <button type="button" class="suggestion-btn" data-query="minimal">Minimal</button>
-                </div>
-              </div>
-
-              <div id="unsplash-results" class="background-grid">
-                <div class="search-placeholder">
-                  <p>🔍 Search Unsplash for beautiful backgrounds</p>
-                  <p class="search-hint">Try searching for "nature", "city", "abstract", or any other theme</p>
-                </div>
-              </div>
-
-              <div id="unsplash-loading" class="loading-indicator" style="display: none;">
-                <p>🔄 Searching Unsplash...</p>
-              </div>
-            </div>
-          </div>
-          <div class="modal-actions">
-            <button type="submit" id="save-settings-btn">Save</button>
-          </div>
-        </form>
       </div>
     </div>
 
+    <script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
     <script type="module" src="script.js"></script>
   </body>
 </html>

@@ -14,6 +14,14 @@ export class SidebarManager {
   setupEventListeners() {
     const togglePanel = document.getElementById("toggle-panel");
     togglePanel.addEventListener("click", () => this.toggle());
+
+    if (this.elements.overlay) {
+      this.elements.overlay.addEventListener("click", () => {
+        if (this.isVisible) {
+          this.hide();
+        }
+      });
+    }
   }
 
   toggle() {

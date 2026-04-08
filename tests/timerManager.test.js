@@ -33,7 +33,7 @@ describe('TimerManager', () => {
 
     it('should sanitize input data', () => {
       const timer = timerManager.addTimer('<script>alert("xss")</script>', '2024-12-25', '#ff0000');
-      expect(timer.name).toBe('&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;');
+      expect(timer.name).toBe('<script>alert("xss")</script>');
     });
 
     it('should handle optional parameters', () => {
@@ -95,6 +95,31 @@ describe('TimerManager', () => {
     it('should throw error for invalid index', () => {
       expect(() => timerManager.removeTimer(-1)).toThrow('Invalid timer index');
       expect(() => timerManager.removeTimer(999)).toThrow('Invalid timer index');
+    });
+  });
+
+  describe('visibility updates', () => {
+    beforeEach(() => {
+      timerManager.addTimer('Timer 1', '2024-12-25', '#ff0000', true);
+      timerManager.addTimer('Timer 2', '2024-12-26', '#00ff00', true);
+      timerManager.addTimer('Timer 3', '2024-12-27', '#0000ff', true);
+    });
+
+    it('should update a single timer visibility', () => {
+      const updated = timerManager.setTimerVisibility(1, false);
+
+      expect(updated.showOnMainScreen).toBe(false);
+      expect(timerManager.getTimers()[1].showOnMainScreen).toBe(false);
+    });
+
+    it('should bulk update timer visibility', () => {
+      const count = timerManager.setTimersVisibility([0, 2], false);
+      const timers = timerManager.getTimers();
+
+      expect(count).toBe(2);
+      expect(timers[0].showOnMainScreen).toBe(false);
+      expect(timers[1].showOnMainScreen).toBe(true);
+      expect(timers[2].showOnMainScreen).toBe(false);
     });
   });
 
@@ -232,10 +257,14 @@ describe('TimerManager', () => {
   });
 
   describe('sanitizeInput', () => {
-    it('should sanitize HTML characters', () => {
-      expect(timerManager.sanitizeInput('<script>')).toBe('&lt;script&gt;');
-      expect(timerManager.sanitizeInput('Test & "quotes"')).toBe('Test &amp; &quot;quotes&quot;');
-      expect(timerManager.sanitizeInput("Test 'single' quotes")).toBe('Test &#39;single&#39; quotes');
+    it('should trim input while preserving punctuation characters', () => {
+      expect(timerManager.sanitizeInput('  <script>  ')).toBe('<script>');
+      expect(timerManager.sanitizeInput('Test & "quotes"')).toBe('Test & "quotes"');
+      expect(timerManager.sanitizeInput("Test 'single' quotes")).toBe("Test 'single' quotes");
+    });
+
+    it('should remove control characters', () => {
+      expect(timerManager.sanitizeInput('Hello\u0000World')).toBe('HelloWorld');
     });
   });
 

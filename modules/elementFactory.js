@@ -29,12 +29,10 @@ export class ElementFactory {
 
     const anchorEl = document.createElement("a");
     anchorEl.href = timer.link;
-    anchorEl.innerHTML = "🔗"; // Link icon
+    anchorEl.textContent = "Open link";
     anchorEl.target = "_blank";
     anchorEl.rel = "noopener noreferrer";
     anchorEl.title = timer.link; // Show URL on hover
-    anchorEl.style.textDecoration = "none";
-    anchorEl.style.fontSize = "1.2em";
 
     linkEl.appendChild(anchorEl);
     return linkEl;
