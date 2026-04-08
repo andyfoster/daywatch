@@ -1,3 +1,7 @@
+:root {
+  --timer-scale: 1;
+}
+
 @font-face {
   font-family: "Roboto Condensed";
   font-style: normal;
@@ -28,11 +32,11 @@ body {
   background-color: rgba(255, 255, 255, 0.8);
   border: 1px solid #ddd;
   border-radius: 10px;
-  padding: clamp(12px, 1.4vw, 20px);
+  padding: calc(clamp(12px, 1.4vw, 20px) * var(--timer-scale));
   margin: 0;
   text-align: center;
   width: 100%;
-  max-width: 320px;
+  max-width: calc(320px * var(--timer-scale));
   display: flex;
   flex-direction: column;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
@@ -40,7 +44,7 @@ body {
   justify-content: space-between;
   align-items: center;
   position: relative;
-  min-height: clamp(145px, 22vh, 200px);
+  min-height: calc(clamp(145px, 22vh, 200px) * var(--timer-scale));
   height: auto;
   box-sizing: border-box;
   transition: background-color 0.3s ease;
@@ -51,8 +55,8 @@ body {
 }
 
 .timer.small {
-  max-width: 240px;
-  min-height: 130px;
+  max-width: calc(240px * var(--timer-scale));
+  min-height: calc(130px * var(--timer-scale));
 }
 
 .edit-btn,
@@ -641,8 +645,8 @@ body {
 
 #timers-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(min(calc(220px * var(--timer-scale)), 100%), 1fr));
+  gap: calc(14px * var(--timer-scale));
   width: min(1400px, calc(100vw - 90px));
   max-height: calc(100vh - 180px);
   overflow-y: auto;
@@ -653,7 +657,7 @@ body {
 }
 
 .days-remaining {
-  font-size: clamp(2.1rem, 4.2vw, 4rem);
+  font-size: calc(clamp(2.1rem, 4.2vw, 4rem) * var(--timer-scale));
   margin: 0;
   padding: 0;
   font-weight: bold;
@@ -671,7 +675,7 @@ body {
 }
 
 .due-date {
-  font-size: clamp(1.2rem, 1.7vw, 2rem);
+  font-size: calc(clamp(1.2rem, 1.7vw, 2rem) * var(--timer-scale));
   margin: 0;
   padding: 0;
   transition: background-color 0.3s ease;
@@ -681,16 +685,16 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin: 6px 0 10px;
+  gap: calc(8px * var(--timer-scale));
+  margin: calc(6px * var(--timer-scale)) 0 calc(10px * var(--timer-scale));
   flex-wrap: wrap;
 }
 
 .weekday-pill {
   border: 1px solid #d0d5dd;
   border-radius: 999px;
-  padding: 4px 10px;
-  font-size: 0.9rem;
+  padding: calc(4px * var(--timer-scale)) calc(10px * var(--timer-scale));
+  font-size: calc(0.9rem * var(--timer-scale));
   color: #555;
   background: rgba(255, 255, 255, 0.85);
   transition: all 0.2s ease;
@@ -710,8 +714,8 @@ body {
 
 /* Location styling in timer */
 .timer-location {
-  font-size: 1.2rem;
-  margin: 5px 0;
+  font-size: calc(1.2rem * var(--timer-scale));
+  margin: calc(5px * var(--timer-scale)) 0;
   padding: 0;
   color: #666;
 }
@@ -728,8 +732,8 @@ body {
 
 /* Link icon styling in timer */
 .timer-link {
-  font-size: 1.2rem;
-  margin: 5px 0;
+  font-size: calc(1.2rem * var(--timer-scale));
+  margin: calc(5px * var(--timer-scale)) 0;
   padding: 0;
   color: #666;
   display: inline-block;
@@ -738,7 +742,7 @@ body {
 .timer-link a {
   color: inherit;
   text-decoration: underline;
-  font-size: 0.95rem;
+  font-size: calc(0.95rem * var(--timer-scale));
   font-weight: 600;
   transition: all 0.2s ease;
 }
@@ -751,11 +755,11 @@ body {
 .sidebar-link {
   display: inline;
   margin: 0;
-  font-size: 1rem;
+  font-size: calc(1rem * var(--timer-scale));
 }
 
 .timer:hover .days-remaining {
-  font-size: 6em;
+  font-size: calc(6em * var(--timer-scale));
   transition: font-size 0.2s;
 }
 
@@ -875,6 +879,18 @@ body {
   margin: 6px 0 0 0;
   color: #6c757d;
   font-size: 12px;
+}
+
+.timer-size-control .form-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+#timer-size-value {
+  color: #0d6efd;
+  font-weight: 600;
 }
 
 /* Button Groups and Modal Actions */
@@ -1037,7 +1053,7 @@ body {
   }
 
   #timers-container {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(calc(160px * var(--timer-scale)), 100%), 1fr));
     width: 100%;
     max-height: calc(100vh - 170px);
     padding: 8px;
@@ -1046,7 +1062,7 @@ body {
 
   .timer {
     max-width: none;
-    min-height: 130px;
+    min-height: calc(130px * var(--timer-scale));
   }
   .timer.small {
     max-width: none;

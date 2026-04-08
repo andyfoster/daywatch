@@ -35,6 +35,8 @@ export class UIManager {
       dateFormatSelect: document.getElementById("date-format-select"),
       displayFontSelect: document.getElementById("display-font"),
       languageSelect: document.getElementById("language"),
+      timerSizeRange: document.getElementById("timer-size-range"),
+      timerSizeValue: document.getElementById("timer-size-value"),
       showWeekdaysCheckbox: document.getElementById("show-weekdays-under-timer"),
       // Other elements
       modalTitle: document.getElementById("modal-title"),
@@ -43,6 +45,7 @@ export class UIManager {
 
     this.initializeEventListeners();
     this.setupPrivacyShield();
+    this.applyTimerScale(this.settingsManager.getCurrentSettings().timerScale);
   }
 
   initializeEventListeners() {
@@ -54,6 +57,7 @@ export class UIManager {
     // Settings-related events
     document.getElementById("settings-btn").addEventListener("click", () => this.showSettingsModal());
     this.elements.settingsForm.addEventListener("submit", (e) => this.handleSettingsFormSubmit(e));
+    this.setupTimerSizePreview();
 
     // Privacy shield toggle
     this.elements.dateEl.addEventListener("dblclick", () => this.togglePrivacyShield());
@@ -96,6 +100,7 @@ export class UIManager {
         dateFormat: this.elements.dateFormatSelect.value,
         displayFont: this.elements.displayFontSelect.value,
         language: this.elements.languageSelect.value,
+        timerScale: this.getTimerScaleValue(),
         showWeekdaysUnderTimer: this.elements.showWeekdaysCheckbox ?
           this.elements.showWeekdaysCheckbox.checked :
           false
@@ -103,9 +108,9 @@ export class UIManager {
 
       await this.settingsManager.updateSettings(newSettings);
       this.modalManager.hideModal("settings-modal");
+      this.applyTimerScale(newSettings.timerScale);
       this.renderTimers();
       this.updateUI();
-      location.reload();
     } catch (error) {
       this.showError(error.message);
     }
@@ -657,6 +662,42 @@ export class UIManager {
     this.editIndex = undefined;
   }
 
+  setupTimerSizePreview() {
+    if (!this.elements.timerSizeRange) {
+      return;
+    }
+
+    this.elements.timerSizeRange.addEventListener("input", () => {
+      const scale = this.getTimerScaleValue();
+      this.applyTimerScale(scale);
+      this.updateTimerSizeDisplay(scale);
+    });
+  }
+
+  getTimerScaleValue() {
+    if (!this.elements.timerSizeRange) {
+      return this.settingsManager.getCurrentSettings().timerScale || 100;
+    }
+
+    const parsedScale = Number(this.elements.timerSizeRange.value);
+    if (!Number.isFinite(parsedScale)) {
+      return 100;
+    }
+
+    return Math.min(140, Math.max(70, parsedScale));
+  }
+
+  updateTimerSizeDisplay(scale) {
+    if (this.elements.timerSizeValue) {
+      this.elements.timerSizeValue.textContent = `${Math.round(scale)}%`;
+    }
+  }
+
+  applyTimerScale(scaleValue) {
+    const normalizedScale = Math.min(140, Math.max(70, Number(scaleValue) || 100));
+    document.documentElement.style.setProperty("--timer-scale", (normalizedScale / 100).toFixed(2));
+  }
+
   showError(message) {
     console.error(message);
     alert(message);
@@ -749,6 +790,11 @@ export class UIManager {
     document.getElementById("date-format-select").value = settings.dateFormat;
     document.getElementById("display-font").value = settings.displayFont;
     document.getElementById("language").value = settings.language;
+    if (this.elements.timerSizeRange) {
+      this.elements.timerSizeRange.value = settings.timerScale || 100;
+      this.updateTimerSizeDisplay(settings.timerScale || 100);
+      this.applyTimerScale(settings.timerScale || 100);
+    }
     const weekdaysCheckbox = document.getElementById("show-weekdays-under-timer");
     if (weekdaysCheckbox) {
       weekdaysCheckbox.checked = Boolean(settings.showWeekdaysUnderTimer);

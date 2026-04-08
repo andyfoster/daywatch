@@ -1,11 +1,16 @@
 export class SettingsManager {
   constructor() {
+    const storedTimerScale = Number(localStorage.getItem("timerScale"));
+
     this.settings = {
       dateFormat: localStorage.getItem("dateFormat") || "long",
       displayFont: localStorage.getItem("displayFont") || "Roboto Condensed",
       language: localStorage.getItem("language") || "en",
       hideTimers: localStorage.getItem("hideTimers") === "true",
       showWeekdaysUnderTimer: localStorage.getItem("showWeekdaysUnderTimer") === "true",
+      timerScale: Number.isFinite(storedTimerScale) && storedTimerScale >= 70 && storedTimerScale <= 140
+        ? storedTimerScale
+        : 100,
       backgroundImage: localStorage.getItem("backgroundImage") || "https://images.unsplash.com/photo-1748178765097-1c012c848596?q=80&w=1828&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     };
 
@@ -40,6 +45,14 @@ export class SettingsManager {
     const validDateFormats = ['long', 'short', 'full'];
     if (newSettings.dateFormat && !validDateFormats.includes(newSettings.dateFormat)) {
       throw new Error('Invalid date format');
+    }
+
+    if (newSettings.timerScale !== undefined) {
+      const scale = Number(newSettings.timerScale);
+      if (!Number.isFinite(scale) || scale < 70 || scale > 140) {
+        throw new Error('Invalid timer scale');
+      }
+      newSettings.timerScale = scale;
     }
 
     // Update only valid settings

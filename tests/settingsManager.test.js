@@ -38,7 +38,23 @@ describe('SettingsManager', () => {
       expect(settings.displayFont).toBe('Roboto Condensed');
       expect(settings.language).toBe('en');
       expect(settings.hideTimers).toBe(false);
+      expect(settings.timerScale).toBe(100);
       expect(settings.backgroundImage).toContain('unsplash.com');
+    });
+  });
+
+  describe('timer scale setting', () => {
+    it('should persist valid timer scale', () => {
+      settingsManager.updateSettings({ timerScale: 125 });
+
+      expect(settingsManager.getCurrentSettings().timerScale).toBe(125);
+      expect(localStorageMock.setItem).toHaveBeenCalledWith('timerScale', '125');
+    });
+
+    it('should reject invalid timer scale', () => {
+      expect(() => {
+        settingsManager.updateSettings({ timerScale: 20 });
+      }).toThrow('Invalid timer scale');
     });
   });
 
