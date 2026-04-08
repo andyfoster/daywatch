@@ -10,7 +10,9 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest --watch",
-    "validate": "node scripts/validate-project.js"
+    "validate": "node scripts/validate-project.js",
+    "package:chrome": "node scripts/package-chrome-extension.js",
+    "package:chrome:verify": "npm run test:run && npm run package:chrome"
   },
   "keywords": [
     "chrome-extension",
