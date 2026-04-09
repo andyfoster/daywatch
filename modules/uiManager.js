@@ -613,14 +613,34 @@ export class UIManager {
     li.setAttribute("data-date", new Date(timer.date).toLocaleDateString());
     li.classList.add(timer.showOnMainScreen ? "shown-on-main" : "not-shown-on-main");
 
+    const row = document.createElement("div");
+    row.className = "sidebar-event-row";
+
+    const visibilityCheckbox = document.createElement("input");
+    visibilityCheckbox.type = "checkbox";
+    visibilityCheckbox.className = "sidebar-visibility-checkbox form-check-input";
+    visibilityCheckbox.checked = Boolean(timer.showOnMainScreen);
+    visibilityCheckbox.setAttribute("aria-label", `Show ${timer.name} on main screen`);
+
+    visibilityCheckbox.addEventListener("click", (event) => {
+      event.stopPropagation();
+    });
+
+    visibilityCheckbox.addEventListener("change", (event) => {
+      event.stopPropagation();
+      this.timerManager.setTimerVisibility(index, visibilityCheckbox.checked);
+      this.renderTimers();
+    });
+
     // Create event text
-    const eventNameSpan = ElementFactory.createSidebarEventText(timer);
-    li.appendChild(eventNameSpan);
+    const eventDetails = ElementFactory.createSidebarEventText(timer);
+    row.appendChild(visibilityCheckbox);
+    row.appendChild(eventDetails);
+    li.appendChild(row);
 
     // Add location if available
     const locationEl = ElementFactory.createLocationElement(timer, "sidebar-location");
     if (locationEl) {
-      li.appendChild(document.createElement("br"));
       li.appendChild(locationEl);
     }
 
@@ -632,7 +652,13 @@ export class UIManager {
     }
 
     // Add click handler
-    li.addEventListener("click", () => this.showTimerModal(true, index));
+    li.addEventListener("click", (event) => {
+      if (event.target.closest("a") || event.target.closest(".sidebar-visibility-checkbox")) {
+        return;
+      }
+
+      this.showTimerModal(true, index);
+    });
 
     return li;
   }

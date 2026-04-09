@@ -63,6 +63,7 @@
           </button>
         </div>
       </div>
+      <div id="sidebar-resize-handle" role="separator" aria-label="Resize sidebar" aria-orientation="vertical" tabindex="0"></div>
       <div id="toggle-panel" class="toggle-panel" role="button" aria-label="Toggle sidebar" tabindex="0">
         <span id="toggle-arrow" aria-hidden="true">></span>
       </div>
@@ -81,73 +82,86 @@
           </div>
           <div class="modal-body">
             <form id="timer-form">
-              <div class="mb-3">
-                <input
-                  type="text"
-                  id="event-name"
-                  name="event-name"
-                  class="form-control"
-                  required
-                  placeholder="Event name (e.g., Birthday Party, Meeting)"
-                  aria-label="Event name"
-                />
+              <div class="row g-3">
+                <div class="col-12">
+                  <label for="event-name" class="form-label" id="event-name-label">Event Name</label>
+                  <input
+                    type="text"
+                    id="event-name"
+                    name="event-name"
+                    class="form-control"
+                    required
+                    placeholder="e.g. Birthday Party, Meeting"
+                    aria-label="Event name"
+                  />
+                </div>
+
+                <div class="col-md-7">
+                  <label for="event-date" class="form-label" id="event-date-label">Event Date</label>
+                  <input
+                    type="date"
+                    id="event-date"
+                    name="event-date"
+                    class="form-control"
+                    required
+                    aria-label="Event date"
+                  />
+                </div>
+
+                <div class="col-md-5">
+                  <label for="event-time" class="form-label">Time (Optional)</label>
+                  <input
+                    type="time"
+                    id="event-time"
+                    name="event-time"
+                    class="form-control"
+                    placeholder="Optional time"
+                    aria-label="Optional display time"
+                  />
+                </div>
+
+                <div class="col-md-6">
+                  <label for="event-color" class="form-label" id="color-label">Color</label>
+                  <input
+                    type="color"
+                    name="event-color"
+                    id="event-color"
+                    class="form-control form-control-color"
+                    aria-label="Choose event color"
+                  />
+                </div>
+
+                <div class="col-md-6">
+                  <label for="event-location" class="form-label">Location (Optional)</label>
+                  <input
+                    type="text"
+                    id="event-location"
+                    name="event-location"
+                    class="form-control"
+                    placeholder="Home, Office, etc."
+                    aria-label="Optional event location"
+                  />
+                </div>
+
+                <div class="col-12">
+                  <label for="event-link" class="form-label">Link (Optional)</label>
+                  <input
+                    type="url"
+                    id="event-link"
+                    name="event-link"
+                    class="form-control"
+                    placeholder="https://example.com"
+                    aria-label="Optional event link"
+                  />
+                </div>
               </div>
-              <div class="mb-3">
-                <input
-                  type="date"
-                  id="event-date"
-                  name="event-date"
-                  class="form-control"
-                  required
-                  aria-label="Event date"
-                />
-              </div>
-              <div class="mb-3">
-                <input
-                  type="time"
-                  id="event-time"
-                  name="event-time"
-                  class="form-control"
-                  placeholder="Optional time"
-                  aria-label="Optional display time"
-                />
-              </div>
-              <div class="mb-3">
-                <label for="event-color" class="form-label">Choose Color</label>
-                <input
-                  type="color"
-                  name="event-color"
-                  id="event-color"
-                  class="form-control form-control-color"
-                  aria-label="Choose event color"
-                />
-              </div>
-              <div class="mb-3">
-                <input
-                  type="text"
-                  id="event-location"
-                  name="event-location"
-                  class="form-control"
-                  placeholder="Location (optional)"
-                  aria-label="Optional event location"
-                />
-              </div>
-              <div class="mb-3">
-                <input
-                  type="url"
-                  id="event-link"
-                  name="event-link"
-                  class="form-control"
-                  placeholder="Link (optional) - https://example.com"
-                  aria-label="Optional event link"
-                />
-              </div>
-              <div class="form-check mb-1">
+
+              <div class="form-check mb-1 timer-main-checkbox">
                 <input
                   type="checkbox"
                   id="show-on-main-screen"
                   name="show-on-main-screen"
-                  class="form-check-input large-checkbox"
+                  class="form-check-input"
                   aria-label="Show timer on main screen"
                   checked
                 />

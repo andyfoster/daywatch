@@ -198,14 +198,18 @@ describe('ElementFactory', () => {
       const timerWithoutTime = { ...mockTimer, time: null };
       const element = ElementFactory.createSidebarEventText(timerWithoutTime);
 
-      expect(element.tagName).toBe('SPAN');
-      expect(element.textContent).toBe('Test Event - 5 days');
+      expect(element.tagName).toBe('DIV');
+      expect(element.className).toBe('sidebar-event-details');
+      expect(element.querySelector('.sidebar-event-name').textContent).toBe('Test Event');
+      expect(element.querySelector('.sidebar-days-remaining').textContent).toBe('5 days left');
+      expect(element.querySelector('.sidebar-event-date').textContent).toBeTruthy();
+      expect(element.querySelector('.sidebar-event-time')).toBe(null);
     });
 
     it('should create sidebar event text with time', () => {
       const element = ElementFactory.createSidebarEventText(mockTimer);
 
-      expect(element.textContent).toBe('Test Event - 5 days (12:00)');
+      expect(element.querySelector('.sidebar-event-time').textContent).toBe('12:00');
     });
   });
 

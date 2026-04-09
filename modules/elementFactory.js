@@ -118,13 +118,50 @@ export class ElementFactory {
   }
 
   static createSidebarEventText(timer) {
+    const container = document.createElement("div");
+    container.className = "sidebar-event-details";
+
     const eventNameSpan = document.createElement("span");
-    let eventText = `${timer.name} - ${Math.ceil((new Date(timer.date) - new Date()) / (1000 * 60 * 60 * 24))} days`;
-    if (timer.time) {
-      eventText += ` (${timer.time})`;
+    eventNameSpan.className = "sidebar-event-name";
+    eventNameSpan.textContent = timer.name;
+
+    const metaRow = document.createElement("div");
+    metaRow.className = "sidebar-event-meta";
+
+    const dateSpan = document.createElement("span");
+    dateSpan.className = "sidebar-event-date";
+    dateSpan.textContent = new Date(timer.date).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    });
+
+    const daysSpan = document.createElement("span");
+    daysSpan.className = "sidebar-days-remaining";
+
+    const dayDifference = Math.ceil((new Date(timer.date) - new Date()) / (1000 * 60 * 60 * 24));
+    const absDays = Math.abs(dayDifference);
+
+    if (dayDifference < 0) {
+      daysSpan.textContent = `${absDays} ${absDays === 1 ? "day" : "days"} ago`;
+    } else if (dayDifference === 0) {
+      daysSpan.textContent = "Today";
+    } else {
+      daysSpan.textContent = `${dayDifference} ${dayDifference === 1 ? "day" : "days"} left`;
     }
-    eventNameSpan.textContent = eventText;
-    return eventNameSpan;
+
+    if (timer.time) {
+      const timeSpan = document.createElement("span");
+      timeSpan.className = "sidebar-event-time";
+      timeSpan.textContent = timer.time;
+      metaRow.appendChild(timeSpan);
+    }
+
+    container.appendChild(eventNameSpan);
+    metaRow.appendChild(dateSpan);
+    metaRow.appendChild(daysSpan);
+    container.appendChild(metaRow);
+    return container;
   }
 
   static createDownloadLink(filename, content) {
