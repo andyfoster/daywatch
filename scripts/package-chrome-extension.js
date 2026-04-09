@@ -29,6 +29,7 @@ const runtimeEntries = [
   "script.js",
   "style.css",
   "dark-mode.css",
+  "images",
   "icons",
   "modules",
   "vendor"
@@ -52,6 +53,7 @@ function buildPackageDirectory() {
 
 function createZipArchive() {
   rmSync(zipPath, { force: true });
+  execSync(`find "${packageDir}" -name ".DS_Store" -delete`);
 
   try {
     execSync(`zip -r "${zipPath}" .`, {

@@ -1,18 +1,27 @@
 export class SettingsManager {
   constructor() {
     const storedTimerScale = Number(localStorage.getItem("timerScale"));
+    const defaultBackgroundImage = "https://images.unsplash.com/photo-1748178765097-1c012c848596?q=80&w=1828&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+    const storedBackgroundImage = localStorage.getItem("backgroundImage");
+    const migratedBackgroundImage = this.migrateLegacyBackgroundImage(
+      storedBackgroundImage,
+      defaultBackgroundImage
+    );
 
     this.settings = {
       dateFormat: localStorage.getItem("dateFormat") || "long",
       displayFont: localStorage.getItem("displayFont") || "Roboto Condensed",
       language: localStorage.getItem("language") || "en",
       hideTimers: localStorage.getItem("hideTimers") === "true",
-      showWeekdaysUnderTimer: localStorage.getItem("showWeekdaysUnderTimer") === "true",
       timerScale: Number.isFinite(storedTimerScale) && storedTimerScale >= 70 && storedTimerScale <= 140
         ? storedTimerScale
         : 100,
-      backgroundImage: localStorage.getItem("backgroundImage") || "https://images.unsplash.com/photo-1748178765097-1c012c848596?q=80&w=1828&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      backgroundImage: migratedBackgroundImage
     };
+
+    if (storedBackgroundImage !== migratedBackgroundImage) {
+      localStorage.setItem("backgroundImage", migratedBackgroundImage);
+    }
 
     this.dateFormatOptions = {
       long: {
@@ -34,6 +43,18 @@ export class SettingsManager {
         year: "numeric"
       }
     };
+  }
+
+  migrateLegacyBackgroundImage(storedBackgroundImage, defaultBackgroundImage) {
+    if (typeof storedBackgroundImage !== 'string' || storedBackgroundImage.trim() === '') {
+      return defaultBackgroundImage;
+    }
+
+    if (storedBackgroundImage.includes('source.unsplash.com')) {
+      return defaultBackgroundImage;
+    }
+
+    return storedBackgroundImage;
   }
 
   updateSettings(newSettings) {
@@ -199,93 +220,185 @@ export class SettingsManager {
       throw new Error('Search query is required');
     }
 
-    try {
-      // Try the official Unsplash API first
-      const response = await fetch(`https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&page=${page}&per_page=${perPage}&orientation=landscape&client_id=YOUR_ACCESS_KEY`);
+    const accessKey = localStorage.getItem('unsplashAccessKey');
+    const canUseOfficialApi = accessKey && accessKey !== 'YOUR_ACCESS_KEY';
 
-      if (response.ok) {
-        const data = await response.json();
-        return {
-          results: data.results.map(photo => ({
-            id: photo.id,
-            name: photo.alt_description || photo.description || `${query} photo`,
-            url: `${photo.urls.raw}&w=1920&h=1080&fit=crop&auto=format`,
-            thumbnail: `${photo.urls.small}&w=300&h=200&fit=crop`,
-            photographer: photo.user.name,
-            photographerUrl: photo.user.links.html,
-            unsplashUrl: photo.links.html
-          })),
-          total: data.total,
-          totalPages: data.total_pages
-        };
+    try {
+      // Try the official Unsplash API first when an access key is available.
+      if (canUseOfficialApi) {
+        const response = await fetch(
+          `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&page=${page}&per_page=${perPage}&orientation=landscape`,
+          {
+            headers: {
+              Authorization: `Client-ID ${accessKey}`,
+              'Accept-Version': 'v1'
+            }
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          return {
+            results: data.results.map(photo => ({
+              id: photo.id,
+              name: photo.alt_description || photo.description || `${query} photo`,
+              url: `${photo.urls.raw}&w=1920&h=1080&fit=crop&auto=format`,
+              thumbnail: `${photo.urls.small}&w=300&h=200&fit=crop`,
+              photographer: photo.user.name,
+              photographerUrl: photo.user.links.html,
+              unsplashUrl: photo.links.html
+            })),
+            total: data.total,
+            totalPages: data.total_pages
+          };
+        }
       }
     } catch (error) {
       console.warn('Unsplash API failed, using fallback:', error);
     }
 
-    // Fallback to curated collections
-    return this.getFallbackUnsplashResults(query, perPage);
+    try {
+      // If no API key is configured, use Unsplash web search endpoint.
+      const response = await fetch(
+        `https://unsplash.com/napi/search/photos?query=${encodeURIComponent(query)}&page=${page}&per_page=${perPage}`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        return {
+          results: (data.results || []).map((photo) => ({
+            id: photo.id,
+            name: photo.alt_description || photo.description || `${query} photo`,
+            url: `${photo.urls.raw}&w=1920&h=1080&fit=crop&auto=format`,
+            thumbnail: `${photo.urls.small}&w=480&h=320&fit=crop&auto=format`,
+            photographer: photo.user?.name || 'Unsplash',
+            photographerUrl: photo.user?.links?.html || 'https://unsplash.com',
+            unsplashUrl: photo.links?.html || 'https://unsplash.com'
+          })),
+          total: data.total || 0,
+          totalPages: data.total_pages || 0
+        };
+      }
+    } catch (error) {
+      console.warn('Unsplash public search failed, using curated fallback:', error);
+    }
+
+    // Fallback to curated Unsplash image IDs when no API key is configured.
+    return this.getFallbackUnsplashResults(query, perPage, page);
   }
 
-  getFallbackUnsplashResults(query, count = 12) {
-    // Use curated photo collections that are known to work
-    const photoCollections = {
+  getFallbackUnsplashResults(query, count = 12, page = 1) {
+    const normalizedQuery = (query || 'nature').trim().toLowerCase();
+    const querySlug = encodeURIComponent(normalizedQuery || 'nature');
+
+    const photoLibrary = {
       nature: [
-        'photo-1506905925346-21bda4d32df4', 'photo-1441974231531-c6227db76b6e', 'photo-1507525428034-b723cf961d3e',
-        'photo-1518837695005-2083093ee35b', 'photo-1506905925346-21bda4d32df4', 'photo-1470071459604-3b5ec3a7fe05',
-        'photo-1501594907352-04cda38ebc29', 'photo-1506905925346-21bda4d32df4', 'photo-1441974231531-c6227db76b6e',
-        'photo-1507525428034-b723cf961d3e', 'photo-1518837695005-2083093ee35b', 'photo-1470071459604-3b5ec3a7fe05'
+        'photo-1506905925346-21bda4d32df4',
+        'photo-1441974231531-c6227db76b6e',
+        'photo-1507525428034-b723cf961d3e',
+        'photo-1518837695005-2083093ee35b',
+        'photo-1470071459604-3b5ec3a7fe05',
+        'photo-1501594907352-04cda38ebc29',
+        'photo-1501785888041-af3ef285b470',
+        'photo-1464822759023-fed622ff2c3b',
+        'photo-1501854140801-50d01698950b',
+        'photo-1472214103451-9374bd1c798e'
       ],
       city: [
-        'photo-1449824913935-59a10b8d2000', 'photo-1480714378408-67cf0d13bc1f', 'photo-1514565131-fce0801e5785',
-        'photo-1477959858617-67f85cf4f1df', 'photo-1449824913935-59a10b8d2000', 'photo-1480714378408-67cf0d13bc1f',
-        'photo-1514565131-fce0801e5785', 'photo-1477959858617-67f85cf4f1df', 'photo-1449824913935-59a10b8d2000',
-        'photo-1480714378408-67cf0d13bc1f', 'photo-1514565131-fce0801e5785', 'photo-1477959858617-67f85cf4f1df'
+        'photo-1449824913935-59a10b8d2000',
+        'photo-1519501025264-65ba15a82390',
+        'photo-1514565131-fce0801e5785',
+        'photo-1477959858617-67f85cf4f1df',
+        'photo-1467269204594-9661b134dd2b',
+        'photo-1477959858617-67f85cf4f1df',
+        'photo-1512453979798-5ea266f8880c',
+        'photo-1519608487953-e999c86e7455'
       ],
       abstract: [
-        'photo-1557672172-298e090bd0f1', 'photo-1558618666-fcd25c85cd64', 'photo-1557672172-298e090bd0f1',
-        'photo-1558618666-fcd25c85cd64', 'photo-1557672172-298e090bd0f1', 'photo-1558618666-fcd25c85cd64',
-        'photo-1557672172-298e090bd0f1', 'photo-1558618666-fcd25c85cd64', 'photo-1557672172-298e090bd0f1',
-        'photo-1558618666-fcd25c85cd64', 'photo-1557672172-298e090bd0f1', 'photo-1558618666-fcd25c85cd64'
+        'photo-1557672172-298e090bd0f1',
+        'photo-1558618666-fcd25c85cd64',
+        'photo-1508615039623-a25605d2b022',
+        'photo-1465101046530-73398c7f28ca',
+        'photo-1513151233558-d860c5398176',
+        'photo-1550684848-fac1c5b4e853'
       ],
       space: [
-        'photo-1446776877081-d282a0f896e2', 'photo-1446776653964-20c1d3a81b06', 'photo-1446776877081-d282a0f896e2',
-        'photo-1446776653964-20c1d3a81b06', 'photo-1446776877081-d282a0f896e2', 'photo-1446776653964-20c1d3a81b06',
-        'photo-1446776877081-d282a0f896e2', 'photo-1446776653964-20c1d3a81b06', 'photo-1446776877081-d282a0f896e2',
-        'photo-1446776653964-20c1d3a81b06', 'photo-1446776877081-d282a0f896e2', 'photo-1446776653964-20c1d3a81b06'
+        'photo-1446776877081-d282a0f896e2',
+        'photo-1446776653964-20c1d3a81b06',
+        'photo-1462331940025-496dfbfc7564',
+        'photo-1502134249126-9f3755a50d78',
+        'photo-1451187580459-43490279c0fa'
       ],
       minimal: [
-        'photo-1557672172-298e090bd0f1', 'photo-1558618666-fcd25c85cd64', 'photo-1557672172-298e090bd0f1',
-        'photo-1558618666-fcd25c85cd64', 'photo-1557672172-298e090bd0f1', 'photo-1558618666-fcd25c85cd64',
-        'photo-1557672172-298e090bd0f1', 'photo-1558618666-fcd25c85cd64', 'photo-1557672172-298e090bd0f1',
-        'photo-1558618666-fcd25c85cd64', 'photo-1557672172-298e090bd0f1', 'photo-1558618666-fcd25c85cd64'
+        'photo-1498050108023-c5249f4df085',
+        'photo-1497215842964-222b430dc094',
+        'photo-1497366811353-6870744d04b2',
+        'photo-1531297484001-80022131f5a1',
+        'photo-1525547719571-a2d4ac8945e2'
       ]
     };
 
-    const queryLower = query.toLowerCase();
-    const photoIds = photoCollections[queryLower] || photoCollections.nature;
+    const keywordsToCategory = [
+      { keywords: ['city', 'urban', 'street', 'building', 'architecture'], category: 'city' },
+      { keywords: ['abstract', 'gradient', 'texture', 'pattern'], category: 'abstract' },
+      { keywords: ['space', 'galaxy', 'stars', 'cosmos', 'planet'], category: 'space' },
+      { keywords: ['minimal', 'clean', 'simple', 'white'], category: 'minimal' },
+      { keywords: ['nature', 'forest', 'mountain', 'ocean', 'landscape', 'sunset'], category: 'nature' }
+    ];
+
+    const matchedCategory = keywordsToCategory.find(({ keywords }) =>
+      keywords.some((keyword) => normalizedQuery.includes(keyword))
+    )?.category || 'nature';
+
+    const generalPool = [
+      ...photoLibrary.nature,
+      ...photoLibrary.city,
+      ...photoLibrary.abstract,
+      ...photoLibrary.space,
+      ...photoLibrary.minimal
+    ];
+
+    const primaryPool = photoLibrary[matchedCategory] || photoLibrary.nature;
+    const candidatePool = Array.from(new Set([...primaryPool, ...generalPool]));
+
+    const seed = `${normalizedQuery}-${page}-${Date.now()}`;
+    const shuffledPool = [...candidatePool]
+      .map((photoId, index) => ({
+        photoId,
+        sort: this.simpleHash(`${seed}-${photoId}-${index}`)
+      }))
+      .sort((a, b) => a.sort - b.sort)
+      .map((entry) => entry.photoId);
 
     const results = [];
     for (let i = 0; i < count; i++) {
-      const photoId = photoIds[i % photoIds.length];
-      const variation = Math.floor(i / photoIds.length) + 1; // Add variation for repeated photos
+      const photoId = shuffledPool[i % shuffledPool.length];
+      const variation = `${page}-${i}`;
 
       results.push({
-        id: `${photoId}-${variation}`,
-        name: `${query.charAt(0).toUpperCase() + query.slice(1)} ${i + 1}`,
+        id: `fallback-${photoId}-${variation}`,
+        name: `${normalizedQuery.charAt(0).toUpperCase() + normalizedQuery.slice(1)} ${i + 1}`,
         url: `https://images.unsplash.com/${photoId}?q=80&w=1920&h=1080&auto=format&fit=crop&v=${variation}`,
-        thumbnail: `https://images.unsplash.com/${photoId}?q=80&w=300&h=200&auto=format&fit=crop&v=${variation}`,
+        thumbnail: `https://images.unsplash.com/${photoId}?q=80&w=480&h=320&auto=format&fit=crop&v=${variation}`,
         photographer: 'Unsplash',
         photographerUrl: 'https://unsplash.com',
-        unsplashUrl: `https://unsplash.com/s/photos/${encodeURIComponent(query)}`
+        unsplashUrl: `https://unsplash.com/s/photos/${querySlug}`
       });
     }
 
     return {
       results,
-      total: results.length,
-      totalPages: 1
+      total: 2000,
+      totalPages: 167
     };
+  }
+
+  simpleHash(input) {
+    let hash = 0;
+    for (let i = 0; i < input.length; i++) {
+      hash = (hash * 31 + input.charCodeAt(i)) >>> 0;
+    }
+    return hash;
   }
 
   // Get popular search terms

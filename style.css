@@ -28,7 +28,7 @@ body {
   font-family: "Roboto Condensed", sans-serif;
   margin: 0;
   padding: 0;
-  background-image: url(https://images.unsplash.com/photo-1748178765097-1c012c848596?q=80&w=1828&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D);
+  background-image: url(images/hans-joachim-kaiser-2msFqISyGUU-unsplash.jpg);
   background-size: cover;
 }
 
@@ -133,7 +133,7 @@ body {
 .dw-modal .modal-header {
   padding: 20px 24px;
   border-bottom: 1px solid #e9ecef;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #d5d5d5 100%);
 }
 
 .dw-modal .modal-title {
@@ -688,35 +688,15 @@ body {
   transition: background-color 0.3s ease;
 }
 
-.weekday-strip {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: calc(8px * var(--timer-scale));
+.weekday-count {
   margin: calc(6px * var(--timer-scale)) 0 calc(10px * var(--timer-scale));
-  flex-wrap: wrap;
-}
-
-.weekday-pill {
-  border: 1px solid #d0d5dd;
+  font-size: calc(0.85rem * var(--timer-scale));
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: rgba(56, 81, 116, 0.13);
   border-radius: 999px;
   padding: calc(4px * var(--timer-scale)) calc(10px * var(--timer-scale));
-  font-size: calc(0.9rem * var(--timer-scale));
-  color: #555;
-  background: rgba(255, 255, 255, 0.85);
-  transition: all 0.2s ease;
-}
-
-.weekday-pill.active {
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.weekday-weekend {
-  font-size: 0.9rem;
-  margin-left: 4px;
-  font-weight: 600;
-  color: #666;
 }
 
 /* Location styling in timer */
@@ -872,8 +852,11 @@ body {
 
 .modal-content input[type="checkbox"] {
   width: auto;
-  margin-right: 8px;
   transform: none;
+  padding: 10px;
+  margin-top: 0px;
+  margin-right: 8px;
+  margin-left: 0px;
 }
 
 .checkbox-group label {
@@ -905,7 +888,7 @@ body {
 .modal-actions {
   display: flex;
   gap: 12px;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   margin-top: 20px;
   padding-top: 16px;
@@ -968,7 +951,7 @@ body {
 }
 
 #timer-modal .timer-main-checkbox .form-check-input {
-  margin-top: 0.15rem;
+  margin-top: 0px;
 }
 
 #timer-modal .timer-main-checkbox .form-check-label {
@@ -1048,12 +1031,13 @@ body {
   width: 44px;
   height: 44px;
   padding: 0;
-  border-radius: 5px;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #535353;
+  border: none;
+  border-radius: 5px;
 }
 
 .action-icon {
@@ -1299,11 +1283,7 @@ h1#date {
   align-items: center;
   padding: 16px 18px 12px;
   border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.88),
-    rgba(245, 247, 250, 0.9)
-  );
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(245, 247, 250, 0.9));
   backdrop-filter: blur(4px);
 }
 

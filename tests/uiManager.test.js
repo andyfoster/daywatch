@@ -22,7 +22,7 @@ vi.mock('../modules/elementFactory.js', () => ({
     createLocationElement: vi.fn(),
     createTimerHeader: vi.fn(),
     createTimerName: vi.fn(),
-    createWeekdayStrip: vi.fn(),
+    createWeekdayCount: vi.fn(),
     createEditButton: vi.fn(),
     createSidebarEventText: vi.fn(),
     createDownloadLink: vi.fn()
@@ -52,7 +52,8 @@ describe('UIManager', () => {
         <select id="date-format-select"></select>
         <select id="display-font"></select>
         <select id="language"></select>
-        <input id="show-weekdays-under-timer" type="checkbox">
+        <input id="timer-size-range" type="range">
+        <span id="timer-size-value"></span>
       </form>
       <h2 id="modal-title"></h2>
       <button id="remove-timer-btn"></button>
@@ -91,7 +92,8 @@ describe('UIManager', () => {
       getCurrentSettings: vi.fn().mockReturnValue({
         language: 'en',
         displayFont: 'Arial',
-        dateFormat: 'MM/DD/YYYY'
+        dateFormat: 'MM/DD/YYYY',
+        timerScale: 100
       }),
       updateSettings: vi.fn(),
       formatDate: vi.fn().mockReturnValue('Dec 25, 2024'),

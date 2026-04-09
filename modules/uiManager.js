@@ -37,7 +37,6 @@ export class UIManager {
       languageSelect: document.getElementById("language"),
       timerSizeRange: document.getElementById("timer-size-range"),
       timerSizeValue: document.getElementById("timer-size-value"),
-      showWeekdaysCheckbox: document.getElementById("show-weekdays-under-timer"),
       // Other elements
       modalTitle: document.getElementById("modal-title"),
       removeBtn: document.getElementById("remove-timer-btn")
@@ -46,6 +45,21 @@ export class UIManager {
     this.initializeEventListeners();
     this.setupPrivacyShield();
     this.applyTimerScale(this.settingsManager.getCurrentSettings().timerScale);
+  }
+
+  getImageFallbackUrl() {
+    return 'images/hans-joachim-kaiser-2msFqISyGUU-unsplash.jpg';
+  }
+
+  applyImageFallback(img) {
+    img.addEventListener('error', () => {
+      if (img.dataset.fallbackApplied === 'true') {
+        return;
+      }
+
+      img.dataset.fallbackApplied = 'true';
+      img.src = this.getImageFallbackUrl();
+    });
   }
 
   initializeEventListeners() {
@@ -100,10 +114,7 @@ export class UIManager {
         dateFormat: this.elements.dateFormatSelect.value,
         displayFont: this.elements.displayFontSelect.value,
         language: this.elements.languageSelect.value,
-        timerScale: this.getTimerScaleValue(),
-        showWeekdaysUnderTimer: this.elements.showWeekdaysCheckbox ?
-          this.elements.showWeekdaysCheckbox.checked :
-          false
+        timerScale: this.getTimerScaleValue()
       };
 
       await this.settingsManager.updateSettings(newSettings);
@@ -543,7 +554,7 @@ export class UIManager {
   }
 
   createTimerElement(timer, index) {
-    const { isEventToday, daysRemaining } = this.calculateTimerData(timer);
+    const { isEventToday, daysRemaining, weekdaysRemaining } = this.calculateTimerData(timer);
     const settings = this.settingsManager.getCurrentSettings();
 
     // Create main timer container
@@ -558,9 +569,7 @@ export class UIManager {
     // Create and append elements using ElementFactory
     const headerEl = ElementFactory.createTimerHeader(isEventToday, daysRemaining, this.translations, settings.language);
     const nameEl = ElementFactory.createTimerName(timer);
-    const weekdayStrip = settings.showWeekdaysUnderTimer ?
-      ElementFactory.createWeekdayStrip(timer, this.translations, settings.language) :
-      null;
+    const weekdayCountEl = ElementFactory.createWeekdayCount(weekdaysRemaining, timer.color);
     const locationEl = ElementFactory.createLocationElement(timer);
     const linkEl = ElementFactory.createLinkElement(timer);
     const editBtn = ElementFactory.createEditButton(timer, index, this.showTimerModal.bind(this), this.settingsManager);
@@ -568,9 +577,7 @@ export class UIManager {
     // Append elements
     timerEl.appendChild(headerEl);
     timerEl.appendChild(nameEl);
-    if (weekdayStrip) {
-      timerEl.appendChild(weekdayStrip);
-    }
+    timerEl.appendChild(weekdayCountEl);
     if (locationEl) {
       timerEl.appendChild(locationEl);
     }
@@ -592,8 +599,26 @@ export class UIManager {
     const isEventToday = eventDate.getTime() === currentDate.getTime();
     const timeDifference = eventDate - currentDate;
     const daysRemaining = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+    const weekdaysRemaining = this.calculateWeekdaysDifference(currentDate, eventDate);
 
-    return { isEventToday, daysRemaining };
+    return { isEventToday, daysRemaining, weekdaysRemaining };
+  }
+
+  calculateWeekdaysDifference(startDate, endDate) {
+    const direction = endDate >= startDate ? 1 : -1;
+    const cursor = new Date(startDate);
+    let weekdays = 0;
+
+    while (cursor.getTime() !== endDate.getTime()) {
+      cursor.setDate(cursor.getDate() + direction);
+      const dayOfWeek = cursor.getDay();
+      const isWeekday = dayOfWeek !== 0 && dayOfWeek !== 6;
+      if (isWeekday) {
+        weekdays += direction;
+      }
+    }
+
+    return weekdays;
   }
 
   renderSidebarEvents() {
@@ -742,8 +767,7 @@ export class UIManager {
       'save-settings-btn': this.translations[settings.language].save,
       'date-format-label': this.translations[settings.language].dateFormat,
       'display-font-label': this.translations[settings.language].font,
-      'language-label': this.translations[settings.language].language,
-      'show-weekdays-label': this.translations[settings.language].showWeekdays
+      'language-label': this.translations[settings.language].language
     };
 
     Object.entries(elements).forEach(([id, text]) => {
@@ -786,6 +810,7 @@ export class UIManager {
       img.src = bg.thumbnail;
       img.alt = bg.name;
       img.loading = 'lazy';
+      this.applyImageFallback(img);
 
       const name = document.createElement('div');
       name.className = 'background-name';
@@ -820,10 +845,6 @@ export class UIManager {
       this.elements.timerSizeRange.value = settings.timerScale || 100;
       this.updateTimerSizeDisplay(settings.timerScale || 100);
       this.applyTimerScale(settings.timerScale || 100);
-    }
-    const weekdaysCheckbox = document.getElementById("show-weekdays-under-timer");
-    if (weekdaysCheckbox) {
-      weekdaysCheckbox.checked = Boolean(settings.showWeekdaysUnderTimer);
     }
   }
 
@@ -914,6 +935,7 @@ export class UIManager {
       img.src = photo.thumbnail;
       img.alt = photo.name;
       img.loading = 'lazy';
+      this.applyImageFallback(img);
 
       const name = document.createElement('div');
       name.className = 'background-name';

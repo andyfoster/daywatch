@@ -41,6 +41,24 @@ describe('SettingsManager', () => {
       expect(settings.timerScale).toBe(100);
       expect(settings.backgroundImage).toContain('unsplash.com');
     });
+
+    it('should migrate legacy source.unsplash.com background URLs', () => {
+      const legacyUrl = 'https://source.unsplash.com/random/1920x1080?nature';
+
+      localStorageMock.getItem.mockImplementation((key) => {
+        if (key === 'backgroundImage') {
+          return legacyUrl;
+        }
+        return null;
+      });
+
+      settingsManager = new SettingsManager();
+      const settings = settingsManager.getCurrentSettings();
+
+      expect(settings.backgroundImage).not.toContain('source.unsplash.com');
+      expect(settings.backgroundImage).toContain('images.unsplash.com');
+      expect(localStorageMock.setItem).toHaveBeenCalledWith('backgroundImage', settings.backgroundImage);
+    });
   });
 
   describe('timer scale setting', () => {
@@ -108,6 +126,40 @@ describe('SettingsManager', () => {
     beforeEach(() => {
       // Mock fetch for Unsplash API
       global.fetch = vi.fn();
+    });
+
+    it('should use query-driven Unsplash public search when no API key is configured', async () => {
+      global.fetch.mockResolvedValue({
+        ok: true,
+        json: vi.fn().mockResolvedValue({
+          total: 1,
+          total_pages: 1,
+          results: [
+            {
+              id: 'photo-1',
+              alt_description: 'mountain view',
+              description: null,
+              urls: {
+                raw: 'https://images.unsplash.com/photo-123?ixid=test',
+                small: 'https://images.unsplash.com/photo-123-small?ixid=test'
+              },
+              user: {
+                name: 'Photographer',
+                links: { html: 'https://unsplash.com/@photographer' }
+              },
+              links: { html: 'https://unsplash.com/photos/photo-1' }
+            }
+          ]
+        })
+      });
+
+      const results = await settingsManager.searchUnsplashBackgrounds('mountain');
+
+      expect(global.fetch).toHaveBeenCalledWith(
+        expect.stringContaining('https://unsplash.com/napi/search/photos?query=mountain')
+      );
+      expect(results.results[0].id).toBe('photo-1');
+      expect(results.results[0].name).toBe('mountain view');
     });
 
     it('should return fallback results when API fails', async () => {
