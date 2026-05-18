@@ -391,6 +391,7 @@
                 <div class="background-tabs nav nav-tabs mb-3" role="tablist">
                   <button type="button" class="background-tab nav-link active" data-bs-toggle="tab" data-bs-target="#preset-backgrounds" role="tab" aria-selected="true">Presets</button>
                   <button type="button" class="background-tab nav-link" data-bs-toggle="tab" data-bs-target="#unsplash-search" role="tab" aria-selected="false">Browse Unsplash</button>
+                  <button type="button" class="background-tab nav-link" data-bs-toggle="tab" data-bs-target="#user-photos" role="tab" aria-selected="false">My Photos</button>
                 </div>
 
                 <div class="tab-content">
@@ -427,6 +428,23 @@
 
                     <div id="unsplash-loading" class="loading-indicator is-hidden">
                       <p>Searching Unsplash...</p>
+                    </div>
+                  </div>
+
+                  <!-- User-uploaded photos -->
+                  <div id="user-photos" class="background-section tab-pane fade" role="tabpanel">
+                    <div class="user-photos-controls">
+                      <label for="user-photo-input" class="btn btn-primary">
+                        Upload photo
+                        <input type="file" id="user-photo-input" accept="image/*" multiple hidden />
+                      </label>
+                      <span class="user-photos-hint">JPG, PNG, GIF or WebP &mdash; up to 15 MB each</span>
+                    </div>
+                    <div id="user-photos-grid" class="background-grid">
+                      <div class="search-placeholder">
+                        <p>No uploaded photos yet</p>
+                        <p class="search-hint">Click "Upload photo" to add your own background</p>
+                      </div>
                     </div>
                   </div>
                 </div>

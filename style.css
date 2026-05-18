@@ -504,6 +504,52 @@ body {
   font-size: 16px;
 }
 
+/* User-uploaded photos */
+.user-photos-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+
+.user-photos-controls .btn {
+  margin: 0;
+}
+
+.user-photos-hint {
+  font-size: 12px;
+  color: #666;
+}
+
+.user-photo-option .user-photo-delete {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: white;
+  font-size: 16px;
+  line-height: 20px;
+  text-align: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+}
+
+.user-photo-option:hover .user-photo-delete,
+.user-photo-option:focus-within .user-photo-delete {
+  opacity: 1;
+}
+
+.user-photo-option .user-photo-delete:hover {
+  background: rgba(220, 53, 69, 0.9);
+}
+
 /* Unsplash attribution */
 .unsplash-attribution {
   font-size: 11px;

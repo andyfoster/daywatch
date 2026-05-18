@@ -186,6 +186,11 @@ export class UIManager {
           this.setupUnsplashSearch();
           this.unsplashSearchInitialized = true;
         }
+        if (!this.userPhotosInitialized) {
+          this.setupUserPhotosTab();
+          this.userPhotosInitialized = true;
+        }
+        void this.populateUserPhotos();
       }
     });
   }
@@ -1003,6 +1008,162 @@ export class UIManager {
     placeholder.appendChild(titleEl);
     placeholder.appendChild(hintEl);
     container.appendChild(placeholder);
+  }
+
+  // User-uploaded photos
+  setupUserPhotosTab() {
+    const input = document.getElementById('user-photo-input');
+    if (!input) {
+      return;
+    }
+    this.userPhotoThumbnailUrls = new Map();
+
+    input.addEventListener('change', async (event) => {
+      const files = Array.from(event.target.files || []);
+      event.target.value = '';
+      if (files.length === 0) {
+        return;
+      }
+      await this.handleUserPhotoUploads(files);
+    });
+  }
+
+  async handleUserPhotoUploads(files) {
+    let lastAdded = null;
+    let successCount = 0;
+
+    for (const file of files) {
+      try {
+        lastAdded = await this.settingsManager.addUserPhoto(file);
+        successCount += 1;
+      } catch (error) {
+        this.showError(`Could not upload "${file.name}": ${error.message}`);
+      }
+    }
+
+    if (lastAdded) {
+      this.settingsManager.updateBackgroundImage(
+        this.settingsManager.buildUserPhotoUrl(lastAdded.id)
+      );
+      this.showNotification(
+        successCount > 1
+          ? `${successCount} photos uploaded`
+          : `Photo "${lastAdded.name}" set as background`,
+        'success'
+      );
+    }
+
+    await this.populateUserPhotos();
+  }
+
+  async populateUserPhotos() {
+    const container = document.getElementById('user-photos-grid');
+    if (!container) {
+      return;
+    }
+
+    this.revokeUserPhotoThumbnails();
+
+    const photos = await this.settingsManager.listUserPhotos();
+
+    if (!photos.length) {
+      this.renderSearchPlaceholder(
+        container,
+        'No uploaded photos yet',
+        'Click "Upload photo" to add your own background'
+      );
+      return;
+    }
+
+    container.innerHTML = '';
+    const currentBackground = this.settingsManager.getCurrentBackgroundImage();
+
+    photos.forEach((photo) => {
+      const photoUrl = this.settingsManager.buildUserPhotoUrl(photo.id);
+      const thumbnailUrl = URL.createObjectURL(photo.blob);
+      this.userPhotoThumbnailUrls.set(photo.id, thumbnailUrl);
+
+      const option = document.createElement('div');
+      option.className = 'background-option user-photo-option';
+      option.dataset.backgroundUrl = photoUrl;
+      if (photoUrl === currentBackground) {
+        option.classList.add('selected');
+      }
+
+      const img = document.createElement('img');
+      img.src = thumbnailUrl;
+      img.alt = photo.name;
+      img.loading = 'lazy';
+
+      const name = document.createElement('div');
+      name.className = 'background-name';
+      name.textContent = photo.name;
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.className = 'user-photo-delete';
+      deleteBtn.setAttribute('aria-label', `Delete ${photo.name}`);
+      deleteBtn.textContent = '×';
+      deleteBtn.addEventListener('click', async (event) => {
+        event.stopPropagation();
+        await this.handleUserPhotoDelete(photo);
+      });
+
+      option.appendChild(img);
+      option.appendChild(name);
+      option.appendChild(deleteBtn);
+
+      option.addEventListener('click', () => {
+        document.querySelectorAll('.background-option').forEach((opt) => {
+          opt.classList.remove('selected');
+        });
+        option.classList.add('selected');
+        this.settingsManager.updateBackgroundImage(photoUrl);
+        this.showNotification(`Background updated to "${photo.name}"`, 'success');
+      });
+
+      container.appendChild(option);
+    });
+  }
+
+  async handleUserPhotoDelete(photo) {
+    const wasActive =
+      this.settingsManager.getCurrentBackgroundImage() ===
+      this.settingsManager.buildUserPhotoUrl(photo.id);
+
+    try {
+      await this.settingsManager.deleteUserPhoto(photo.id);
+    } catch (error) {
+      this.showError(`Failed to delete photo: ${error.message}`);
+      return;
+    }
+
+    if (wasActive) {
+      const fallback = this.settingsManager
+        .getBackgroundOptions()
+        .find((bg) => bg.id !== 'current')?.url;
+      if (fallback) {
+        this.settingsManager.updateBackgroundImage(fallback);
+      }
+      this.populateBackgroundOptions();
+    }
+
+    await this.populateUserPhotos();
+    this.showNotification(`Deleted "${photo.name}"`, 'success');
+  }
+
+  revokeUserPhotoThumbnails() {
+    if (!this.userPhotoThumbnailUrls) {
+      return;
+    }
+    this.userPhotoThumbnailUrls.forEach((url) => {
+      try {
+        URL.revokeObjectURL(url);
+      } catch (error) {
+        // ignore
+      }
+    });
+    this.userPhotoThumbnailUrls.clear();
   }
 
   // Bulk actions functionality

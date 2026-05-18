@@ -12,6 +12,11 @@ export class SettingsManager {
     const dateColor = this.isValidColor(storedDateColor) ? storedDateColor : defaultDateColor;
 
     this.backgroundCacheName = "daywatch-background-cache-v1";
+    this.userPhotosDbName = "daywatch-user-photos";
+    this.userPhotosDbVersion = 1;
+    this.userPhotosStoreName = "photos";
+    this.userPhotoScheme = "userphoto://";
+    this.maxUserPhotoBytes = 15 * 1024 * 1024;
     this.currentBackgroundObjectUrl = null;
 
     this.settings = {
@@ -66,6 +71,14 @@ export class SettingsManager {
     }
 
     return storedBackgroundImage;
+  }
+
+  isUserPhotoUrl(value) {
+    return typeof value === 'string' && value.startsWith(this.userPhotoScheme);
+  }
+
+  getUserPhotoId(value) {
+    return this.isUserPhotoUrl(value) ? value.slice(this.userPhotoScheme.length) : null;
   }
 
   isValidColor(value) {
@@ -169,13 +182,18 @@ export class SettingsManager {
 
   // Background-related methods
   getBackgroundOptions() {
-    return [
-      {
+    const current = this.settings.backgroundImage;
+    const presets = [];
+    if (this.isRemoteBackgroundImage(current)) {
+      presets.push({
         id: 'current',
         name: 'Current',
-        url: this.settings.backgroundImage,
-        thumbnail: this.settings.backgroundImage + '&w=300&h=200'
-      },
+        url: current,
+        thumbnail: current + '&w=300&h=200'
+      });
+    }
+    return [
+      ...presets,
       {
         id: 'nature1',
         name: 'Mountain Lake',
@@ -222,6 +240,12 @@ export class SettingsManager {
 
     this.settings.backgroundImage = imageUrl;
     localStorage.setItem('backgroundImage', imageUrl);
+
+    if (this.isUserPhotoUrl(imageUrl)) {
+      void this.applyUserPhotoBackground(imageUrl);
+      return;
+    }
+
     this.releaseBackgroundObjectUrl();
     this.setBackgroundImage(imageUrl);
     void this.cacheBackgroundImage(imageUrl);
@@ -230,6 +254,11 @@ export class SettingsManager {
   applyBackgroundImage() {
     const imageUrl = this.settings.backgroundImage;
 
+    if (this.isUserPhotoUrl(imageUrl)) {
+      void this.applyUserPhotoBackground(imageUrl);
+      return;
+    }
+
     if (!this.isRemoteBackgroundImage(imageUrl)) {
       this.releaseBackgroundObjectUrl();
       this.setBackgroundImage(imageUrl);
@@ -237,6 +266,25 @@ export class SettingsManager {
     }
 
     this.applyBackgroundFromCache(imageUrl);
+  }
+
+  async applyUserPhotoBackground(imageUrl) {
+    const id = this.getUserPhotoId(imageUrl);
+    if (!id) {
+      return;
+    }
+
+    try {
+      const photo = await this.getUserPhoto(id);
+      if (!photo?.blob) {
+        console.warn('User photo not found in storage:', id);
+        return;
+      }
+      const objectUrl = URL.createObjectURL(photo.blob);
+      this.setBackgroundImage(objectUrl, true);
+    } catch (error) {
+      console.warn('Failed to apply user photo background:', error);
+    }
   }
 
   getCurrentBackgroundImage() {
@@ -525,6 +573,132 @@ export class SettingsManager {
       hash = (hash * 31 + input.charCodeAt(i)) >>> 0;
     }
     return hash;
+  }
+
+  // User photo storage (IndexedDB)
+  openUserPhotosDb() {
+    if (this.userPhotosDbPromise) {
+      return this.userPhotosDbPromise;
+    }
+
+    this.userPhotosDbPromise = new Promise((resolve, reject) => {
+      if (typeof indexedDB === 'undefined') {
+        reject(new Error('IndexedDB is not available'));
+        return;
+      }
+
+      const request = indexedDB.open(this.userPhotosDbName, this.userPhotosDbVersion);
+      request.onupgradeneeded = () => {
+        const db = request.result;
+        if (!db.objectStoreNames.contains(this.userPhotosStoreName)) {
+          const store = db.createObjectStore(this.userPhotosStoreName, { keyPath: 'id' });
+          store.createIndex('createdAt', 'createdAt');
+        }
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+
+    return this.userPhotosDbPromise;
+  }
+
+  async runUserPhotoTransaction(mode, callback) {
+    const db = await this.openUserPhotosDb();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(this.userPhotosStoreName, mode);
+      const store = tx.objectStore(this.userPhotosStoreName);
+      let result;
+      try {
+        result = callback(store);
+      } catch (error) {
+        reject(error);
+        return;
+      }
+      tx.oncomplete = () => resolve(result);
+      tx.onerror = () => reject(tx.error);
+      tx.onabort = () => reject(tx.error);
+    });
+  }
+
+  generateUserPhotoId() {
+    if (typeof crypto?.randomUUID === 'function') {
+      return crypto.randomUUID();
+    }
+    return `photo-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  }
+
+  async addUserPhoto(file) {
+    if (!(file instanceof Blob)) {
+      throw new Error('Invalid file');
+    }
+    if (file.type && !file.type.startsWith('image/')) {
+      throw new Error('File is not an image');
+    }
+    if (file.size > this.maxUserPhotoBytes) {
+      const maxMb = Math.round(this.maxUserPhotoBytes / (1024 * 1024));
+      throw new Error(`Image is larger than ${maxMb} MB`);
+    }
+
+    const record = {
+      id: this.generateUserPhotoId(),
+      name: (file.name || 'Uploaded photo').slice(0, 200),
+      blob: file,
+      type: file.type || 'image/jpeg',
+      size: file.size,
+      createdAt: Date.now()
+    };
+
+    await this.runUserPhotoTransaction('readwrite', (store) => {
+      store.put(record);
+    });
+
+    return record;
+  }
+
+  async listUserPhotos() {
+    try {
+      const db = await this.openUserPhotosDb();
+      return await new Promise((resolve, reject) => {
+        const tx = db.transaction(this.userPhotosStoreName, 'readonly');
+        const store = tx.objectStore(this.userPhotosStoreName);
+        const request = store.getAll();
+        request.onsuccess = () => {
+          const photos = (request.result || []).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          resolve(photos);
+        };
+        request.onerror = () => reject(request.error);
+      });
+    } catch (error) {
+      console.warn('Failed to list user photos:', error);
+      return [];
+    }
+  }
+
+  async getUserPhoto(id) {
+    if (!id) {
+      return null;
+    }
+    const db = await this.openUserPhotosDb();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(this.userPhotosStoreName, 'readonly');
+      const store = tx.objectStore(this.userPhotosStoreName);
+      const request = store.get(id);
+      request.onsuccess = () => resolve(request.result || null);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async deleteUserPhoto(id) {
+    if (!id) {
+      return;
+    }
+    await this.runUserPhotoTransaction('readwrite', (store) => {
+      store.delete(id);
+    });
+  }
+
+  buildUserPhotoUrl(id) {
+    return `${this.userPhotoScheme}${id}`;
   }
 
   // Get popular search terms
