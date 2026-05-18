@@ -52,6 +52,7 @@ describe('UIManager', () => {
         <select id="date-format-select"></select>
         <select id="display-font"></select>
         <select id="language"></select>
+        <input id="date-color" type="color" value="#333333">
         <input id="timer-size-range" type="range">
         <span id="timer-size-value"></span>
       </form>
@@ -93,6 +94,7 @@ describe('UIManager', () => {
         language: 'en',
         displayFont: 'Arial',
         dateFormat: 'MM/DD/YYYY',
+        dateColor: '#333333',
         timerScale: 100
       }),
       updateSettings: vi.fn(),

@@ -2,11 +2,17 @@ export class SettingsManager {
   constructor() {
     const storedTimerScale = Number(localStorage.getItem("timerScale"));
     const defaultBackgroundImage = "https://images.unsplash.com/photo-1748178765097-1c012c848596?q=80&w=1828&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+    const defaultDateColor = "#333333";
     const storedBackgroundImage = localStorage.getItem("backgroundImage");
     const migratedBackgroundImage = this.migrateLegacyBackgroundImage(
       storedBackgroundImage,
       defaultBackgroundImage
     );
+    const storedDateColor = localStorage.getItem("dateColor");
+    const dateColor = this.isValidColor(storedDateColor) ? storedDateColor : defaultDateColor;
+
+    this.backgroundCacheName = "daywatch-background-cache-v1";
+    this.currentBackgroundObjectUrl = null;
 
     this.settings = {
       dateFormat: localStorage.getItem("dateFormat") || "long",
@@ -16,11 +22,16 @@ export class SettingsManager {
       timerScale: Number.isFinite(storedTimerScale) && storedTimerScale >= 70 && storedTimerScale <= 140
         ? storedTimerScale
         : 100,
-      backgroundImage: migratedBackgroundImage
+      backgroundImage: migratedBackgroundImage,
+      dateColor
     };
 
     if (storedBackgroundImage !== migratedBackgroundImage) {
       localStorage.setItem("backgroundImage", migratedBackgroundImage);
+    }
+
+    if (storedDateColor !== dateColor) {
+      localStorage.setItem("dateColor", dateColor);
     }
 
     this.dateFormatOptions = {
@@ -57,6 +68,10 @@ export class SettingsManager {
     return storedBackgroundImage;
   }
 
+  isValidColor(value) {
+    return typeof value === "string" && /^#(?:[0-9a-fA-F]{3}){1,2}$/.test(value);
+  }
+
   updateSettings(newSettings) {
     // Input validation
     if (!newSettings || typeof newSettings !== 'object') {
@@ -74,6 +89,10 @@ export class SettingsManager {
         throw new Error('Invalid timer scale');
       }
       newSettings.timerScale = scale;
+    }
+
+    if (newSettings.dateColor !== undefined && !this.isValidColor(newSettings.dateColor)) {
+      throw new Error("Invalid date color");
     }
 
     // Update only valid settings
@@ -203,15 +222,120 @@ export class SettingsManager {
 
     this.settings.backgroundImage = imageUrl;
     localStorage.setItem('backgroundImage', imageUrl);
-    this.applyBackgroundImage();
+    this.releaseBackgroundObjectUrl();
+    this.setBackgroundImage(imageUrl);
+    void this.cacheBackgroundImage(imageUrl);
   }
 
   applyBackgroundImage() {
-    document.body.style.backgroundImage = `url(${this.settings.backgroundImage})`;
+    const imageUrl = this.settings.backgroundImage;
+
+    if (!this.isRemoteBackgroundImage(imageUrl)) {
+      this.releaseBackgroundObjectUrl();
+      this.setBackgroundImage(imageUrl);
+      return;
+    }
+
+    this.applyBackgroundFromCache(imageUrl);
   }
 
   getCurrentBackgroundImage() {
     return this.settings.backgroundImage;
+  }
+
+  async applyBackgroundFromCache(imageUrl) {
+    try {
+      const cachedObjectUrl = await this.getCachedBackgroundObjectUrl(imageUrl);
+      if (cachedObjectUrl) {
+        this.setBackgroundImage(cachedObjectUrl, true);
+        return;
+      }
+    } catch (error) {
+      console.warn("Failed to load cached background image:", error);
+    }
+
+    this.releaseBackgroundObjectUrl();
+    this.setBackgroundImage(imageUrl);
+    void this.cacheBackgroundImage(imageUrl);
+  }
+
+  setBackgroundImage(imageUrl, isObjectUrl = false) {
+    if (!document?.body?.style || !imageUrl) {
+      return;
+    }
+
+    if (!isObjectUrl) {
+      this.releaseBackgroundObjectUrl();
+    } else if (this.currentBackgroundObjectUrl && this.currentBackgroundObjectUrl !== imageUrl) {
+      URL.revokeObjectURL(this.currentBackgroundObjectUrl);
+    }
+
+    if (isObjectUrl) {
+      this.currentBackgroundObjectUrl = imageUrl;
+    }
+
+    document.body.style.backgroundImage = `url(${imageUrl})`;
+  }
+
+  releaseBackgroundObjectUrl() {
+    if (!this.currentBackgroundObjectUrl) {
+      return;
+    }
+
+    if (typeof URL?.revokeObjectURL === "function") {
+      URL.revokeObjectURL(this.currentBackgroundObjectUrl);
+    }
+    this.currentBackgroundObjectUrl = null;
+  }
+
+  isRemoteBackgroundImage(imageUrl) {
+    return /^https?:\/\//i.test(imageUrl);
+  }
+
+  async cacheBackgroundImage(imageUrl) {
+    if (!this.isRemoteBackgroundImage(imageUrl) || typeof caches === "undefined") {
+      return;
+    }
+
+    try {
+      const cache = await caches.open(this.backgroundCacheName);
+      const cached = await cache.match(imageUrl);
+      if (cached) {
+        return;
+      }
+
+      const response = await fetch(imageUrl);
+      if (!response.ok) {
+        return;
+      }
+
+      await cache.put(imageUrl, response.clone());
+    } catch (error) {
+      console.warn("Failed to cache background image:", error);
+    }
+  }
+
+  async getCachedBackgroundObjectUrl(imageUrl) {
+    if (typeof caches === "undefined") {
+      return null;
+    }
+
+    const cache = await caches.open(this.backgroundCacheName);
+    const cachedResponse = await cache.match(imageUrl);
+    if (!cachedResponse) {
+      return null;
+    }
+
+    const blob = await cachedResponse.blob();
+    if (!blob || blob.size === 0) {
+      return null;
+    }
+
+    if (typeof URL?.createObjectURL !== "function") {
+      return null;
+    }
+
+    return URL.createObjectURL(blob);
   }
 
   // Unsplash search functionality
@@ -266,15 +390,17 @@ export class SettingsManager {
       if (response.ok) {
         const data = await response.json();
         return {
-          results: (data.results || []).map((photo) => ({
-            id: photo.id,
-            name: photo.alt_description || photo.description || `${query} photo`,
-            url: `${photo.urls.raw}&w=1920&h=1080&fit=crop&auto=format`,
-            thumbnail: `${photo.urls.small}&w=480&h=320&fit=crop&auto=format`,
-            photographer: photo.user?.name || 'Unsplash',
-            photographerUrl: photo.user?.links?.html || 'https://unsplash.com',
-            unsplashUrl: photo.links?.html || 'https://unsplash.com'
-          })),
+          results: (data.results || [])
+            .filter((photo) => photo?.urls?.raw && photo?.urls?.small)
+            .map((photo) => ({
+              id: photo.id,
+              name: photo.alt_description || photo.description || `${query} photo`,
+              url: `${photo.urls.raw}&w=1920&h=1080&fit=crop&auto=format`,
+              thumbnail: `${photo.urls.small}&w=480&h=320&fit=crop&auto=format`,
+              photographer: photo.user?.name || 'Unsplash',
+              photographerUrl: photo.user?.links?.html || 'https://unsplash.com',
+              unsplashUrl: photo.links?.html || 'https://unsplash.com'
+            })),
           total: data.total || 0,
           totalPages: data.total_pages || 0
         };

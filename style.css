@@ -32,6 +32,10 @@ body {
   background-size: cover;
 }
 
+.is-hidden {
+  display: none;
+}
+
 .timer {
   /* background-color: #f5f5f5; */
   background-color: rgba(255, 255, 255, 0.8);
@@ -883,6 +887,14 @@ body {
   font-weight: 600;
 }
 
+.date-color-control .form-control-color {
+  width: 64px;
+  min-width: 64px;
+  height: 40px;
+  padding: 4px;
+  border-radius: 10px;
+}
+
 /* Button Groups and Modal Actions */
 .button-group,
 .modal-actions {
@@ -1250,31 +1262,57 @@ h1#date {
 
 #toggle-panel {
   position: absolute;
-  right: -40px; /* Adjust based on the width of the toggle panel */
-  top: 96%;
-  transform: translateY(-50%);
-  width: 40px; /* Width of the toggle panel */
-  height: 80px; /* Height of the toggle panel */
-  /* background: #ccc; */
+  right: -54px;
+  bottom: 18px;
+  top: auto;
+  transform: none;
+  width: 54px;
+  height: 104px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-left: none;
+  box-shadow: 0 8px 18px rgba(9, 18, 33, 0.24);
   display: flex;
+  flex-direction: column;
+  gap: 8px;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-  /* opacity: 0.9; */
+  border-top-right-radius: 14px;
+  border-bottom-right-radius: 14px;
+  transition: all 0.2s ease;
+}
+
+#toggle-panel:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 12px 22px rgba(9, 18, 33, 0.3);
+}
+
+#toggle-panel:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.95);
+  outline-offset: 2px;
 }
 
 #toggle-arrow {
-  font-size: 24px;
-  color: gainsboro;
+  font-size: 22px;
+  color: #ffffff;
+  font-weight: 700;
+  line-height: 1;
   user-select: none;
-  padding: 10px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
-#toggle-arrow:hover {
-  background: rgb(236 236 236 / 30%);
-  border-radius: 50px;
+.toggle-label {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  user-select: none;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 #events-side-panel .events-header-bar {

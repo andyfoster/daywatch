@@ -66,6 +66,7 @@
       <div id="sidebar-resize-handle" role="separator" aria-label="Resize sidebar" aria-orientation="vertical" tabindex="0"></div>
       <div id="toggle-panel" class="toggle-panel" role="button" aria-label="Toggle sidebar" tabindex="0">
         <span id="toggle-arrow" aria-hidden="true">></span>
+        <span class="toggle-label" aria-hidden="true">events</span>
       </div>
     </div>
 
@@ -172,8 +173,7 @@
                 <button
                   type="button"
                   id="remove-timer-btn"
-                  class="btn btn-danger"
-                  style="display: none"
+                  class="btn btn-danger is-hidden"
                   aria-label="Remove timer"
                 >
                   Remove
@@ -206,7 +206,7 @@
                 <div class="file-drop-zone" id="file-drop-zone">
                   <div class="drop-zone-content">
                     <p>Drop your file here or click to browse</p>
-                    <input type="file" id="file-input" accept=".txt,.csv,.json" style="display: none;">
+                    <input type="file" id="file-input" class="is-hidden" accept=".txt,.csv,.json">
                     <button type="button" id="browse-btn" class="btn btn-secondary">Browse Files</button>
                   </div>
                 </div>
@@ -251,7 +251,7 @@
               </div>
             </div>
 
-            <div id="import-preview" class="import-preview" style="display: none;">
+            <div id="import-preview" class="import-preview is-hidden">
               <h3>Preview</h3>
               <div id="preview-content"></div>
               <p id="preview-summary"></p>
@@ -325,6 +325,17 @@
                 >
                   <!-- Options will be populated dynamically -->
                 </select>
+              </div>
+              <div class="mb-3 date-color-control">
+                <label for="date-color" id="date-color-label" class="form-label">Date Color</label>
+                <input
+                  type="color"
+                  id="date-color"
+                  name="date-color"
+                  class="form-control form-control-color"
+                  aria-label="Choose date text color"
+                  value="#333333"
+                />
               </div>
               <div class="mb-3">
                 <label for="display-font" class="form-label">Display Font</label>
@@ -414,7 +425,7 @@
                       </div>
                     </div>
 
-                    <div id="unsplash-loading" class="loading-indicator" style="display: none;">
+                    <div id="unsplash-loading" class="loading-indicator is-hidden">
                       <p>Searching Unsplash...</p>
                     </div>
                   </div>

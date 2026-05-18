@@ -20,6 +20,7 @@
   "host_permissions": [
     "https://api.unsplash.com/*",
     "https://images.unsplash.com/*",
+    "https://plus.unsplash.com/*",
     "https://unsplash.com/*"
   ],
   "content_security_policy": {

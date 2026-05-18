@@ -35,6 +35,7 @@ export class UIManager {
       dateFormatSelect: document.getElementById("date-format-select"),
       displayFontSelect: document.getElementById("display-font"),
       languageSelect: document.getElementById("language"),
+      dateColorInput: document.getElementById("date-color"),
       timerSizeRange: document.getElementById("timer-size-range"),
       timerSizeValue: document.getElementById("timer-size-value"),
       // Other elements
@@ -114,6 +115,7 @@ export class UIManager {
         dateFormat: this.elements.dateFormatSelect.value,
         displayFont: this.elements.displayFontSelect.value,
         language: this.elements.languageSelect.value,
+        dateColor: this.elements.dateColorInput?.value || this.settingsManager.getCurrentSettings().dateColor || "#333333",
         timerScale: this.getTimerScaleValue()
       };
 
@@ -698,6 +700,7 @@ export class UIManager {
       month: "long",
       day: "numeric"
     });
+    this.elements.dateEl.style.color = settings.dateColor || "#333333";
 
     this.updateTranslations();
   }
@@ -766,6 +769,7 @@ export class UIManager {
       'settings-title': this.translations[settings.language].settings,
       'save-settings-btn': this.translations[settings.language].save,
       'date-format-label': this.translations[settings.language].dateFormat,
+      'date-color-label': this.translations[settings.language].dateColor || 'Date Color',
       'display-font-label': this.translations[settings.language].font,
       'language-label': this.translations[settings.language].language
     };
@@ -841,6 +845,9 @@ export class UIManager {
     document.getElementById("date-format-select").value = settings.dateFormat;
     document.getElementById("display-font").value = settings.displayFont;
     document.getElementById("language").value = settings.language;
+    if (this.elements.dateColorInput) {
+      this.elements.dateColorInput.value = settings.dateColor || "#333333";
+    }
     if (this.elements.timerSizeRange) {
       this.elements.timerSizeRange.value = settings.timerScale || 100;
       this.updateTimerSizeDisplay(settings.timerScale || 100);
@@ -863,8 +870,10 @@ export class UIManager {
     });
 
     // Enter key in search input
-    searchInput.addEventListener('keypress', (e) => {
+    searchInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
+        e.preventDefault();
+        e.stopPropagation();
         const query = searchInput.value.trim();
         if (query) {
           this.searchUnsplashBackgrounds(query);

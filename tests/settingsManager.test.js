@@ -39,6 +39,7 @@ describe('SettingsManager', () => {
       expect(settings.language).toBe('en');
       expect(settings.hideTimers).toBe(false);
       expect(settings.timerScale).toBe(100);
+      expect(settings.dateColor).toBe('#333333');
       expect(settings.backgroundImage).toContain('unsplash.com');
     });
 
@@ -73,6 +74,21 @@ describe('SettingsManager', () => {
       expect(() => {
         settingsManager.updateSettings({ timerScale: 20 });
       }).toThrow('Invalid timer scale');
+    });
+  });
+
+  describe('date color setting', () => {
+    it('should persist valid date color', () => {
+      settingsManager.updateSettings({ dateColor: '#112233' });
+
+      expect(settingsManager.getCurrentSettings().dateColor).toBe('#112233');
+      expect(localStorageMock.setItem).toHaveBeenCalledWith('dateColor', '#112233');
+    });
+
+    it('should reject invalid date color', () => {
+      expect(() => {
+        settingsManager.updateSettings({ dateColor: 'blue' });
+      }).toThrow('Invalid date color');
     });
   });
 

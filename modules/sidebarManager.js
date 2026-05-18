@@ -25,6 +25,12 @@ export class SidebarManager {
   setupEventListeners() {
     const togglePanel = document.getElementById("toggle-panel");
     togglePanel.addEventListener("click", () => this.toggle());
+    togglePanel.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        this.toggle();
+      }
+    });
 
     if (this.elements.overlay) {
       this.elements.overlay.addEventListener("click", () => {
@@ -44,21 +50,19 @@ export class SidebarManager {
   }
 
   toggle() {
-    this.elements.sidePanel.classList.toggle("visible");
-
     if (this.isVisible) {
       this.hide();
     } else {
       this.show();
     }
-
-    this.isVisible = !this.isVisible;
   }
 
   show() {
     this.elements.sidebarContainer.style.transform = "translateX(0)";
     this.elements.toggleArrow.textContent = "<";
+    this.elements.sidePanel.classList.add("visible");
     this.elements.overlay.classList.add("overlay-visible");
+    this.isVisible = true;
   }
 
   hide() {
