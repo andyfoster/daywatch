@@ -1,110 +1,190 @@
 /* Dark mode palette */
 @media (prefers-color-scheme: dark) {
+  :root {
+    /* Base surfaces */
+    --dw-bg: #1b1f24;
+    --dw-surface: #262b32;
+    --dw-surface-elevated: #30363f;
+    --dw-surface-soft: #2c323a;
+    --dw-chip: rgba(255, 255, 255, 0.08);
+
+    /* Lines */
+    --dw-border: #3a414b;
+    --dw-border-strong: #4a525d;
+    --dw-divider: rgba(255, 255, 255, 0.08);
+
+    /* Type */
+    --dw-text: #e6e9ee;
+    --dw-text-muted: #a5acb6;
+    --dw-text-subtle: #7c848e;
+
+    /* Accents */
+    --dw-accent: #5fa8ff;
+    --dw-accent-strong: #7cb8ff;
+    --dw-accent-soft: rgba(95, 168, 255, 0.18);
+
+    /* Status */
+    --dw-success: #54c987;
+    --dw-warning: #f5a957;
+    --dw-danger: #ef5b6a;
+  }
+
+  /* ---------- Page chrome ---------- */
   body {
-    background-color: #333;
-    color: #fff;
+    background-color: var(--dw-bg);
+    color: var(--dw-text);
   }
 
   h1#date {
     color: gainsboro;
   }
 
-  #add-timer-btn {
+  /* ---------- Timer cards ---------- */
+  .timer {
+    background-color: rgba(38, 43, 50, 0.85);
+    border: 1px solid var(--dw-border);
+    color: var(--dw-text);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  }
+
+  .timer:hover {
+    background-color: rgba(48, 54, 63, 0.92);
+    border-color: var(--dw-border-strong);
+  }
+
+  .timer.small {
+    background-color: rgba(28, 32, 38, 0.85);
+    border: 1px solid var(--dw-border);
+  }
+
+  .days-remaining {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
+
+  .due-date {
+    color: var(--dw-text-muted);
+    text-shadow: none;
+  }
+
+  .timer:hover .due-date {
+    color: var(--dw-text);
+    text-shadow: none;
+  }
+
+  .weekday-count {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--dw-text-muted);
+  }
+
+  .timer-location,
+  .timer-link {
+    color: var(--dw-text-muted);
+  }
+
+  .timer-location a:hover,
+  .timer-link a:hover {
+    color: var(--dw-accent-strong);
+  }
+
+  .add-timer-placeholder {
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  #timers-container:hover .add-timer-placeholder,
+  #timers-container:focus-within .add-timer-placeholder {
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .add-timer-placeholder:hover,
+  .add-timer-placeholder:focus-visible {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.85);
+    color: #fff;
+  }
+
+  /* ---------- Bottom buttons ---------- */
+  #add-timer-btn,
+  #settings-btn {
     background-color: transparent;
-    color: #666;
+    color: #888;
   }
 
   #settings-btn {
-    width: initial;
     padding-left: 20px;
     padding-right: 20px;
-    background-color: transparent;
-    color: #666;
   }
 
   #add-timer-btn:hover,
   #settings-btn:hover {
-    color: gray;
-  }
-
-  .timer {
-    background-color: #444;
-    border: 1px solid #777;
-    color: #fff;
-  }
-
-  .timer:hover {
-    background-color: #555;
-    border: 1px solid #888;
-  }
-
-  .timer.small {
-    background-color: #222;
-    border: 1px solid #444;
-    color: #fff;
-  }
-
-  .days-remaining {
-    text-shadow: 3px 3px 2px black;
-  }
-
-  .due-date {
-    text-shadow: -5px -2px 7px #555;
-    transition: text-shadow 0.3s ease;
-  }
-
-  .timer:hover .due-date {
-    text-shadow: -5px -2px 1px #555;
-  }
-
-  .edit-btn {
-    text-shadow: 2px 2px 10px black;
+    color: #c8ced6;
   }
 
   .edit-btn,
   .remove-btn,
   .settings-btn,
   .add-timer-btn {
-    color: #ccc;
+    color: #b3b9c2;
   }
 
-  .modal-content {
-    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  .edit-btn:hover,
+  .remove-btn:hover,
+  .settings-btn:hover,
+  .add-timer-btn:hover {
     color: #fff;
+    background: rgba(255, 255, 255, 0.08);
   }
 
-  .modal-content h2 {
-    color: #fff;
-    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
-    border-bottom-color: #4a5568;
+  /* ---------- Modal (Bootstrap) ---------- */
+  .dw-modal .modal-content {
+    background: linear-gradient(135deg, var(--dw-surface) 0%, var(--dw-bg) 100%);
+    border: 1px solid var(--dw-border);
+    color: var(--dw-text);
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.6),
+      0 8px 32px rgba(0, 0, 0, 0.45);
   }
 
-  .modal-header {
-    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
-    border-bottom-color: #4a5568;
+  .dw-modal .modal-header {
+    background: linear-gradient(135deg, var(--dw-surface-elevated) 0%, var(--dw-surface) 100%);
+    border-bottom: 1px solid var(--dw-border);
   }
 
-  .modal-content label {
-    color: #e2e8f0;
+  .dw-modal .modal-title,
+  .modal-content h2,
+  #modal-title {
+    color: var(--dw-text);
+    border-bottom-color: var(--dw-border);
+  }
+
+  .modal-content label,
+  .input-group label,
+  #timer-modal .form-label {
+    color: var(--dw-text);
   }
 
   .modal-content input,
   .modal-content select,
-  .modal-content textarea {
-    color: #fff;
-    background-color: #4a5568;
-    border-color: #718096;
+  .modal-content textarea,
+  #timer-modal .form-control {
+    color: var(--dw-text);
+    background-color: var(--dw-surface-elevated);
+    border-color: var(--dw-border);
   }
 
   .modal-content input:focus,
   .modal-content select:focus,
-  .modal-content textarea:focus {
-    border-color: #63b3ed;
-    box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.1);
+  .modal-content textarea:focus,
+  #timer-modal .form-control:focus {
+    border-color: var(--dw-accent);
+    box-shadow: 0 0 0 3px var(--dw-accent-soft);
   }
 
   .modal-content input::placeholder {
-    color: #a0aec0;
+    color: var(--dw-text-subtle);
+  }
+
+  .helper-text {
+    color: var(--dw-text-muted);
   }
 
   .dw-modal .btn-close {
@@ -112,20 +192,296 @@
     opacity: 0.75;
   }
 
-  .edit-btn:hover {
-    color: #fff;
+  .dw-modal .btn-primary {
+    background-color: var(--dw-accent);
+    border-color: var(--dw-accent);
+    color: #0e1116;
   }
 
-  .dw-modal .btn-primary {
-    background-color: #4caf50;
-    border-color: #4caf50;
+  .dw-modal .btn-primary:hover {
+    background-color: var(--dw-accent-strong);
+    border-color: var(--dw-accent-strong);
+    color: #0e1116;
   }
 
   .dw-modal .btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
+    background-color: var(--dw-danger);
+    border-color: var(--dw-danger);
   }
 
+  .button-group,
+  .modal-actions {
+    border-top-color: var(--dw-border);
+  }
+
+  #timer-modal .timer-main-checkbox {
+    background: var(--dw-surface-soft);
+    border-color: var(--dw-border);
+  }
+
+  #timer-size-value {
+    color: var(--dw-accent-strong);
+  }
+
+  /* ---------- Settings: background tabs & grid ---------- */
+  .background-tabs {
+    border-bottom-color: var(--dw-border);
+  }
+
+  .background-tab {
+    color: var(--dw-text-muted);
+  }
+
+  .background-tab.active {
+    color: var(--dw-accent-strong);
+    border-bottom-color: var(--dw-accent);
+  }
+
+  .background-tab:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--dw-text);
+  }
+
+  .background-option:hover {
+    border-color: var(--dw-accent);
+  }
+
+  .background-option.selected {
+    border-color: var(--dw-accent);
+    box-shadow: 0 0 0 2px var(--dw-accent-soft);
+  }
+
+  /* ---------- Settings: Unsplash search ---------- */
+  #unsplash-search-input {
+    background-color: var(--dw-surface-elevated);
+    border-color: var(--dw-border);
+    color: var(--dw-text);
+  }
+
+  .suggestion-label {
+    color: var(--dw-text-muted);
+  }
+
+  .suggestion-btn {
+    background: var(--dw-surface-soft);
+    border-color: var(--dw-border);
+    color: var(--dw-text-muted);
+  }
+
+  .suggestion-btn:hover {
+    background: var(--dw-surface-elevated);
+    border-color: var(--dw-accent);
+    color: var(--dw-accent-strong);
+  }
+
+  .search-placeholder,
+  .search-hint,
+  .loading-indicator {
+    color: var(--dw-text-muted);
+  }
+
+  .unsplash-attribution {
+    background: var(--dw-surface-soft);
+    color: var(--dw-text-muted);
+  }
+
+  .unsplash-attribution a {
+    color: var(--dw-accent-strong);
+  }
+
+  /* ---------- Settings: user photos ---------- */
+  .user-photos-hint {
+    color: var(--dw-text-muted);
+  }
+
+  /* ---------- Import modal ---------- */
+  .import-tabs {
+    border-bottom-color: var(--dw-border);
+  }
+
+  .import-tab {
+    color: var(--dw-text-muted);
+  }
+
+  .import-tab.active {
+    color: var(--dw-accent-strong);
+    border-bottom-color: var(--dw-accent);
+  }
+
+  .file-drop-zone {
+    border-color: var(--dw-border);
+    background: var(--dw-surface-soft);
+  }
+
+  .file-drop-zone:hover,
+  .file-drop-zone.dragover {
+    border-color: var(--dw-accent);
+    background: var(--dw-surface-elevated);
+  }
+
+  .drop-zone-content p {
+    color: var(--dw-text-muted);
+  }
+
+  .supported-formats,
+  .import-options {
+    background: var(--dw-surface-soft);
+    color: var(--dw-text);
+  }
+
+  .import-preview {
+    border-color: var(--dw-border);
+    background: var(--dw-surface);
+  }
+
+  .import-preview h3 {
+    color: var(--dw-text);
+  }
+
+  .preview-timer {
+    background: var(--dw-surface-soft);
+    color: var(--dw-text);
+  }
+
+  #preview-summary {
+    color: var(--dw-accent-strong);
+  }
+
+  /* ---------- Mass-delete modal ---------- */
+  .timer-selection-list {
+    border-color: var(--dw-border);
+    background: var(--dw-surface-soft);
+  }
+
+  .timer-checkbox-item {
+    border-bottom-color: var(--dw-divider);
+  }
+
+  .timer-checkbox-date {
+    color: var(--dw-text-muted);
+  }
+
+  .timer-checkbox-status.past {
+    background: rgba(239, 91, 106, 0.18);
+    color: #ff8a96;
+  }
+
+  .timer-checkbox-status.today {
+    background: rgba(245, 169, 87, 0.18);
+    color: #ffb474;
+  }
+
+  .timer-checkbox-status.future {
+    background: rgba(84, 201, 135, 0.18);
+    color: #74dfa1;
+  }
+
+  .quick-filters h3 {
+    color: var(--dw-text);
+  }
+
+  .filter-btn {
+    background: var(--dw-surface-soft);
+    border-color: var(--dw-border);
+    color: var(--dw-text-muted);
+  }
+
+  .filter-btn:hover {
+    background: var(--dw-surface-elevated);
+    border-color: var(--dw-accent);
+    color: var(--dw-accent-strong);
+  }
+
+  #selected-count {
+    color: var(--dw-text-muted);
+  }
+
+  /* ---------- Sidebar ---------- */
+  .side-panel {
+    background: var(--dw-bg);
+  }
+
+  #events-side-panel {
+    background: rgba(27, 31, 36, 0.94);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  }
+
+  #events-side-panel .events-header-bar {
+    background: linear-gradient(180deg, rgba(38, 43, 50, 0.94), rgba(27, 31, 36, 0.94));
+    border-bottom-color: var(--dw-divider);
+  }
+
+  #events-side-panel h2 {
+    color: var(--dw-text);
+  }
+
+  #events-side-panel .new-timer-btn {
+    background: var(--dw-surface-elevated);
+    border-color: var(--dw-border);
+    color: var(--dw-text);
+  }
+
+  #events-side-panel .new-timer-btn:hover {
+    background: var(--dw-surface);
+    border-color: var(--dw-accent);
+    color: var(--dw-accent-strong);
+  }
+
+  #events-list li {
+    background: rgba(48, 54, 63, 0.72);
+    border-color: var(--dw-divider);
+    color: var(--dw-text);
+  }
+
+  #events-list li:hover {
+    background: rgba(58, 65, 75, 0.9);
+    border-color: var(--dw-border-strong);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  }
+
+  .sidebar-event-name {
+    color: var(--dw-text);
+  }
+
+  .sidebar-event-date,
+  .sidebar-event-time {
+    color: var(--dw-text-muted);
+  }
+
+  .sidebar-days-remaining {
+    color: #c6d4e6;
+    background: rgba(95, 168, 255, 0.18);
+  }
+
+  .sidebar-location {
+    color: var(--dw-text-muted);
+  }
+
+  .sidebar-location a {
+    color: var(--dw-accent-strong);
+  }
+
+  .sidebar-footer {
+    background: rgba(38, 43, 50, 0.95);
+    border-top: 1px solid var(--dw-divider);
+  }
+
+  .sidebar-footer #settings-btn,
+  .sidebar-footer #import-timers-btn,
+  .sidebar-footer #download-timers-btn,
+  .sidebar-footer #mass-delete-btn {
+    color: var(--dw-text-muted);
+  }
+
+  .sidebar-footer #settings-btn:hover,
+  .sidebar-footer #import-timers-btn:hover,
+  .sidebar-footer #download-timers-btn:hover,
+  .sidebar-footer #mass-delete-btn:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--dw-text);
+  }
+
+  /* ---------- Today / accents ---------- */
   .today {
     color: palevioletred;
   }

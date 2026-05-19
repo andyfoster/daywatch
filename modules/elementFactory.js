@@ -1,10 +1,52 @@
 export class ElementFactory {
+  static getReadableColor(color) {
+    if (!color || typeof color !== "string") return color;
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+      return color;
+    }
+
+    const hex = color.startsWith("#") ? color.slice(1) : color;
+    let r, g, b;
+    if (hex.length === 3) {
+      r = parseInt(hex[0] + hex[0], 16);
+      g = parseInt(hex[1] + hex[1], 16);
+      b = parseInt(hex[2] + hex[2], 16);
+    } else if (hex.length === 6) {
+      r = parseInt(hex.slice(0, 2), 16);
+      g = parseInt(hex.slice(2, 4), 16);
+      b = parseInt(hex.slice(4, 6), 16);
+    } else {
+      return color;
+    }
+    if ([r, g, b].some((v) => Number.isNaN(v))) return color;
+
+    const toLin = (c) => {
+      const s = c / 255;
+      return s <= 0.03928 ? s / 12.92 : ((s + 0.055) / 1.055) ** 2.4;
+    };
+    const luminance = 0.2126 * toLin(r) + 0.7152 * toLin(g) + 0.0722 * toLin(b);
+    const toHex = (c) => c.toString(16).padStart(2, "0");
+    const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+    if (isDark) {
+      if (luminance >= 0.35) return color;
+      const t = luminance < 0.05 ? 0.72 : luminance < 0.15 ? 0.55 : 0.4;
+      const mix = (c) => Math.round(c + (255 - c) * t);
+      return `#${toHex(mix(r))}${toHex(mix(g))}${toHex(mix(b))}`;
+    }
+
+    if (luminance <= 0.5) return color;
+    const t = luminance > 0.85 ? 0.78 : luminance > 0.7 ? 0.6 : 0.4;
+    const mix = (c) => Math.round(c * (1 - t));
+    return `#${toHex(mix(r))}${toHex(mix(g))}${toHex(mix(b))}`;
+  }
+
   static createLocationElement(timer, className = "timer-location") {
     if (!timer.location) return null;
 
     const locationEl = document.createElement("p");
     locationEl.className = className;
-    locationEl.style.color = timer.color;
+    locationEl.style.color = ElementFactory.getReadableColor(timer.color);
 
     if (timer.link) {
       const linkEl = document.createElement("a");
@@ -25,7 +67,7 @@ export class ElementFactory {
 
     const linkEl = document.createElement("p");
     linkEl.className = className;
-    linkEl.style.color = timer.color;
+    linkEl.style.color = ElementFactory.getReadableColor(timer.color);
 
     const anchorEl = document.createElement("a");
     anchorEl.href = timer.link;
@@ -61,7 +103,7 @@ export class ElementFactory {
   static createTimerName(timer) {
     const nameEl = document.createElement("p");
     nameEl.className = "due-date";
-    nameEl.style.color = timer.color;
+    nameEl.style.color = ElementFactory.getReadableColor(timer.color);
     nameEl.textContent = timer.name;
     return nameEl;
   }
@@ -69,7 +111,7 @@ export class ElementFactory {
   static createWeekdayCount(weekdaysRemaining, timerColor = "#385174") {
     const weekdayCountEl = document.createElement("p");
     weekdayCountEl.className = "weekday-count";
-    weekdayCountEl.style.color = timerColor;
+    weekdayCountEl.style.color = ElementFactory.getReadableColor(timerColor);
 
     const absWeekdays = Math.abs(weekdaysRemaining);
     const label = absWeekdays === 1 ? "weekday" : "weekdays";

@@ -558,6 +558,30 @@ export class UIManager {
         this.createTimerElement(timer, index);
       }
     });
+
+    this.appendAddTimerPlaceholder();
+  }
+
+  appendAddTimerPlaceholder() {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = "timer add-timer-placeholder";
+    card.setAttribute("aria-label", "Add new timer");
+
+    const icon = document.createElement("span");
+    icon.className = "add-timer-placeholder-icon";
+    icon.setAttribute("aria-hidden", "true");
+    icon.textContent = "+";
+
+    const label = document.createElement("span");
+    label.className = "add-timer-placeholder-label";
+    label.textContent = "Add timer";
+
+    card.appendChild(icon);
+    card.appendChild(label);
+    card.addEventListener("click", () => this.showTimerModal());
+
+    this.elements.timersContainer.appendChild(card);
   }
 
   createTimerElement(timer, index) {
@@ -569,7 +593,7 @@ export class UIManager {
     timerEl.classList.add("timer");
     if (isEventToday) {
       timerEl.classList.add("today-timer");
-      timerEl.style.borderColor = timer.color;
+      timerEl.style.borderColor = ElementFactory.getReadableColor(timer.color);
     }
     timerEl.style.fontFamily = settings.displayFont;
 
@@ -641,7 +665,7 @@ export class UIManager {
 
   createSidebarEventItem(timer, index) {
     const li = document.createElement("li");
-    li.style.color = timer.color;
+    li.style.color = ElementFactory.getReadableColor(timer.color);
     li.setAttribute("data-date", new Date(timer.date).toLocaleDateString());
     li.classList.add(timer.showOnMainScreen ? "shown-on-main" : "not-shown-on-main");
 
@@ -1212,7 +1236,7 @@ export class UIManager {
       const nameSpan = document.createElement('span');
       nameSpan.className = 'timer-checkbox-name';
       nameSpan.textContent = timer.name;
-      nameSpan.style.color = timer.color;
+      nameSpan.style.color = ElementFactory.getReadableColor(timer.color);
 
       const dateSpan = document.createElement('span');
       dateSpan.className = 'timer-checkbox-date';

@@ -68,6 +68,47 @@ body {
   min-height: calc(130px * var(--timer-scale));
 }
 
+.add-timer-placeholder {
+  background-color: transparent;
+  border: 2px dashed rgba(255, 255, 255, 0);
+  box-shadow: none;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  font: inherit;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  opacity: 0;
+  transition: opacity 0.25s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+#timers-container:hover .add-timer-placeholder,
+#timers-container:focus-within .add-timer-placeholder {
+  opacity: 0.45;
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.add-timer-placeholder:hover,
+.add-timer-placeholder:focus-visible {
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.95);
+  color: #fff;
+  outline: none;
+  transform: scale(1.01);
+}
+
+.add-timer-placeholder-icon {
+  font-size: calc(clamp(2.4rem, 4.5vw, 3.4rem) * var(--timer-scale));
+  font-weight: 300;
+  line-height: 1;
+}
+
+.add-timer-placeholder-label {
+  font-size: calc(clamp(0.9rem, 1.2vw, 1.05rem) * var(--timer-scale));
+  letter-spacing: 0.02em;
+}
+
 .edit-btn,
 .remove-btn,
 .settings-btn,

@@ -242,11 +242,19 @@ describe('UIManager', () => {
     });
 
     it('should clear container before rendering', () => {
-      uiManager.elements.timersContainer.innerHTML = '<div>existing content</div>';
+      uiManager.elements.timersContainer.innerHTML = '<div class="existing-content">existing content</div>';
 
       uiManager.renderMainTimers();
 
-      expect(uiManager.elements.timersContainer.innerHTML).toBe('');
+      expect(uiManager.elements.timersContainer.querySelector('.existing-content')).toBeNull();
+    });
+
+    it('should append an add-timer placeholder card', () => {
+      uiManager.renderMainTimers();
+
+      const placeholder = uiManager.elements.timersContainer.querySelector('.add-timer-placeholder');
+      expect(placeholder).not.toBeNull();
+      expect(placeholder).toBe(uiManager.elements.timersContainer.lastElementChild);
     });
   });
 
