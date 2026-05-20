@@ -723,12 +723,7 @@ export class UIManager {
     const settings = this.settingsManager.getCurrentSettings();
     const today = new Date();
 
-    this.elements.dateEl.textContent = today.toLocaleDateString(settings.language, {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric"
-    });
+    this.elements.dateEl.textContent = this.settingsManager.formatDate(today);
     this.elements.dateEl.style.color = settings.dateColor || "#333333";
 
     this.updateTranslations();

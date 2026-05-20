@@ -40,25 +40,17 @@ export class SettingsManager {
     }
 
     this.dateFormatOptions = {
-      long: {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-      },
-      short: {
-        weekday: "short",
-        year: "numeric",
-        month: "short",
-        day: "numeric"
-      },
-      full: {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-      }
+      long: { weekday: "long", year: "numeric", month: "long", day: "numeric" },
+      medium: { weekday: "short", year: "numeric", month: "short", day: "numeric" },
+      short: { year: "numeric", month: "short", day: "numeric" },
+      numeric: { year: "numeric", month: "numeric", day: "numeric" },
+      iso: "iso"
     };
+
+    if (!Object.prototype.hasOwnProperty.call(this.dateFormatOptions, this.settings.dateFormat)) {
+      this.settings.dateFormat = "long";
+      localStorage.setItem("dateFormat", "long");
+    }
   }
 
   migrateLegacyBackgroundImage(storedBackgroundImage, defaultBackgroundImage) {
@@ -91,8 +83,7 @@ export class SettingsManager {
       throw new Error('Invalid settings object');
     }
 
-    const validDateFormats = ['long', 'short', 'full'];
-    if (newSettings.dateFormat && !validDateFormats.includes(newSettings.dateFormat)) {
+    if (newSettings.dateFormat && !Object.prototype.hasOwnProperty.call(this.dateFormatOptions, newSettings.dateFormat)) {
       throw new Error('Invalid date format');
     }
 
@@ -125,15 +116,24 @@ export class SettingsManager {
     if (!(date instanceof Date) && typeof date !== 'number') {
       throw new Error('Invalid date');
     }
+    return this.formatDateValue(new Date(date), this.settings.dateFormat);
+  }
+
+  formatDateValue(date, formatKey) {
+    const options = this.dateFormatOptions[formatKey] ?? this.dateFormatOptions.long;
+
+    if (options === "iso") {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, "0");
+      const d = String(date.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
 
     try {
-      return new Date(date).toLocaleDateString(
-        this.settings.language,
-        this.dateFormatOptions[this.settings.dateFormat]
-      );
+      return date.toLocaleDateString(this.settings.language, options);
     } catch (error) {
       console.error('Date formatting error:', error);
-      return new Date(date).toISOString().split('T')[0];
+      return date.toISOString().split('T')[0];
     }
   }
 
@@ -149,9 +149,9 @@ export class SettingsManager {
 
   getDateFormatOptionsForLanguage() {
     const today = new Date();
-    return Object.entries(this.dateFormatOptions).map(([key, options]) => ({
+    return Object.keys(this.dateFormatOptions).map((key) => ({
       value: key,
-      label: today.toLocaleDateString(this.settings.language, options)
+      label: this.formatDateValue(today, key)
     }));
   }
 
