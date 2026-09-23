@@ -129,6 +129,14 @@ describe('UIManager', () => {
         document.getElementById('download-timers-btn').click();
       }).not.toThrow();
     });
+
+    it('should wire up feature-scoped sub-managers', () => {
+      expect(uiManager.notificationManager).toBeDefined();
+      expect(uiManager.timerRenderer).toBeDefined();
+      expect(uiManager.importManager).toBeDefined();
+      expect(uiManager.massActionsManager).toBeDefined();
+      expect(uiManager.backgroundPickerManager).toBeDefined();
+    });
   });
 
   describe('showTimerModal', () => {
@@ -223,38 +231,13 @@ describe('UIManager', () => {
     });
   });
 
-  describe('renderMainTimers', () => {
-    it('should render timers that show on main screen', () => {
-      const mockTimers = [
-        { name: 'Event 1', showOnMainScreen: true, date: Date.now(), color: '#ff0000' },
-        { name: 'Event 2', showOnMainScreen: false, date: Date.now(), color: '#00ff00' },
-        { name: 'Event 3', showOnMainScreen: true, date: Date.now(), color: '#0000ff' }
-      ];
+  describe('renderTimers', () => {
+    it('should delegate rendering to the timer renderer', () => {
+      const renderSpy = vi.spyOn(uiManager.timerRenderer, 'renderTimers').mockImplementation(() => {});
 
-      mockTimerManager.getTimers.mockReturnValue(mockTimers);
-      const createTimerElementSpy = vi.spyOn(uiManager, 'createTimerElement').mockImplementation(() => {});
+      uiManager.renderTimers();
 
-      uiManager.renderMainTimers();
-
-      expect(createTimerElementSpy).toHaveBeenCalledTimes(2); // Only events 1 and 3
-      expect(createTimerElementSpy).toHaveBeenCalledWith(mockTimers[0], 0);
-      expect(createTimerElementSpy).toHaveBeenCalledWith(mockTimers[2], 2);
-    });
-
-    it('should clear container before rendering', () => {
-      uiManager.elements.timersContainer.innerHTML = '<div class="existing-content">existing content</div>';
-
-      uiManager.renderMainTimers();
-
-      expect(uiManager.elements.timersContainer.querySelector('.existing-content')).toBeNull();
-    });
-
-    it('should append an add-timer placeholder card', () => {
-      uiManager.renderMainTimers();
-
-      const placeholder = uiManager.elements.timersContainer.querySelector('.add-timer-placeholder');
-      expect(placeholder).not.toBeNull();
-      expect(placeholder).toBe(uiManager.elements.timersContainer.lastElementChild);
+      expect(renderSpy).toHaveBeenCalled();
     });
   });
 
