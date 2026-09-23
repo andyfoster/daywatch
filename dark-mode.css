@@ -489,4 +489,8 @@
   .today-timer {
     border-color: red;
   }
+
+  .event-countdown {
+    color: palevioletred;
+  }
 }

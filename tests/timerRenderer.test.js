@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { TimerRenderer } from '../modules/timerRenderer.js';
 
 describe('TimerRenderer', () => {
@@ -103,6 +103,62 @@ describe('TimerRenderer', () => {
       timerRenderer.timersContainer.querySelector('.edit-btn').click();
 
       expect(onEditTimer).toHaveBeenCalledWith(3);
+    });
+  });
+
+  describe('event countdown', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2024-06-15T10:00:00'));
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should render a ticking countdown when the event is today and has a time', () => {
+      const todayMidnight = new Date('2024-06-15T00:00:00').getTime();
+      const timer = { name: 'Standup', date: todayMidnight, time: '12:00', color: '#ff0000' };
+
+      timerRenderer.createTimerElement(timer, 0);
+
+      const countdownEl = timerRenderer.timersContainer.querySelector('.event-countdown');
+      expect(countdownEl).not.toBeNull();
+      expect(countdownEl.textContent).toBe('02:00:00');
+
+      vi.advanceTimersByTime(1000);
+      expect(countdownEl.textContent).toBe('01:59:59');
+    });
+
+    it('should not render a countdown when the event is today but has no time', () => {
+      const todayMidnight = new Date('2024-06-15T00:00:00').getTime();
+      const timer = { name: 'All-day event', date: todayMidnight, time: null, color: '#ff0000' };
+
+      timerRenderer.createTimerElement(timer, 0);
+
+      expect(timerRenderer.timersContainer.querySelector('.event-countdown')).toBeNull();
+    });
+
+    it('should not render a countdown when the event is not today, even with a time set', () => {
+      const tomorrow = new Date('2024-06-16T00:00:00').getTime();
+      const timer = { name: 'Standup', date: tomorrow, time: '12:00', color: '#ff0000' };
+
+      timerRenderer.createTimerElement(timer, 0);
+
+      expect(timerRenderer.timersContainer.querySelector('.event-countdown')).toBeNull();
+    });
+
+    it('should clear previous countdown intervals on re-render instead of accumulating them', () => {
+      const todayMidnight = new Date('2024-06-15T00:00:00').getTime();
+      mockTimerManager.getTimers.mockReturnValue([
+        { name: 'Standup', date: todayMidnight, time: '12:00', color: '#ff0000', showOnMainScreen: true }
+      ]);
+
+      timerRenderer.renderMainTimers();
+      expect(timerRenderer.countdownIntervals.length).toBe(1);
+
+      timerRenderer.renderMainTimers();
+      expect(timerRenderer.countdownIntervals.length).toBe(1);
     });
   });
 

@@ -1135,6 +1135,7 @@ body {
   align-items: center;
   justify-content: center;
   color: #535353;
+  background-color: transparent;
   border: none;
   border-radius: 5px;
 }
@@ -1273,6 +1274,15 @@ h1#date {
   border-image-slice: 1;
   border-width: 5px;
   border-image-source: linear-gradient(to left, #743ad5, #d53a9d);
+}
+
+.event-countdown {
+  margin: 0 0 calc(8px * var(--timer-scale));
+  font-size: calc(1.3rem * var(--timer-scale));
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: #743ad5;
 }
 
 /* Sidebar initial state */

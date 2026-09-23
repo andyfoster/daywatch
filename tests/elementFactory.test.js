@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { ElementFactory } from '../modules/elementFactory.js';
 
 describe('ElementFactory', () => {
@@ -133,6 +133,66 @@ describe('ElementFactory', () => {
 
       const daysLabel = element.querySelector('.days-label');
       expect(daysLabel.textContent).toBe('days'); // Math.abs(-3) = 3, so plural
+    });
+  });
+
+  describe('formatCountdown', () => {
+    it('should format seconds as HH:MM:SS', () => {
+      expect(ElementFactory.formatCountdown(3661)).toBe('01:01:01');
+    });
+
+    it('should zero-pad each unit', () => {
+      expect(ElementFactory.formatCountdown(5)).toBe('00:00:05');
+    });
+
+    it('should clamp negative values to zero', () => {
+      expect(ElementFactory.formatCountdown(-42)).toBe('00:00:00');
+    });
+  });
+
+  describe('calculateSecondsRemainingToday', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2024-06-15T10:00:00'));
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should return 0 when no time is given', () => {
+      expect(ElementFactory.calculateSecondsRemainingToday(null)).toBe(0);
+    });
+
+    it('should return seconds remaining until a later time today', () => {
+      expect(ElementFactory.calculateSecondsRemainingToday('12:00')).toBe(2 * 60 * 60);
+    });
+
+    it('should return 0 when the time has already passed today', () => {
+      expect(ElementFactory.calculateSecondsRemainingToday('09:00')).toBe(0);
+    });
+  });
+
+  describe('createEventCountdown', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2024-06-15T10:00:00'));
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('should return null when the timer has no time set', () => {
+      expect(ElementFactory.createEventCountdown({ ...mockTimer, time: null })).toBe(null);
+    });
+
+    it('should create a countdown element showing time remaining', () => {
+      const element = ElementFactory.createEventCountdown({ ...mockTimer, time: '12:00' });
+
+      expect(element.tagName).toBe('P');
+      expect(element.className).toBe('event-countdown');
+      expect(element.textContent).toBe('02:00:00');
     });
   });
 

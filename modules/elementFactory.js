@@ -100,6 +100,43 @@ export class ElementFactory {
     return headerEl;
   }
 
+  static calculateSecondsRemainingToday(timeString) {
+    if (!timeString) return 0;
+
+    const [hours, minutes] = timeString.split(":").map(Number);
+    if (Number.isNaN(hours) || Number.isNaN(minutes)) return 0;
+
+    const target = new Date();
+    target.setHours(hours, minutes, 0, 0);
+
+    const diffMs = target.getTime() - Date.now();
+    return Math.max(0, Math.round(diffMs / 1000));
+  }
+
+  static formatCountdown(totalSeconds) {
+    const safeSeconds = Math.max(0, Math.floor(totalSeconds));
+    const hours = Math.floor(safeSeconds / 3600);
+    const minutes = Math.floor((safeSeconds % 3600) / 60);
+    const seconds = safeSeconds % 60;
+
+    return [hours, minutes, seconds]
+      .map((unit) => String(unit).padStart(2, "0"))
+      .join(":");
+  }
+
+  static createEventCountdown(timer) {
+    if (!timer.time) return null;
+
+    const countdownEl = document.createElement("p");
+    countdownEl.className = "event-countdown";
+    countdownEl.setAttribute("aria-live", "polite");
+    countdownEl.textContent = ElementFactory.formatCountdown(
+      ElementFactory.calculateSecondsRemainingToday(timer.time)
+    );
+
+    return countdownEl;
+  }
+
   static createTimerName(timer) {
     const nameEl = document.createElement("p");
     nameEl.className = "due-date";

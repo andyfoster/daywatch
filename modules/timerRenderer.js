@@ -10,6 +10,7 @@ export class TimerRenderer {
 
     this.timersContainer = document.getElementById("timers-container");
     this.eventsList = document.getElementById("events-list");
+    this.countdownIntervals = [];
   }
 
   renderTimers() {
@@ -18,6 +19,7 @@ export class TimerRenderer {
   }
 
   renderMainTimers() {
+    this.clearCountdownIntervals();
     this.timersContainer.innerHTML = "";
     const timers = this.timerManager.getTimers();
 
@@ -74,6 +76,15 @@ export class TimerRenderer {
     const editBtn = ElementFactory.createEditButton(timer, index, () => this.onEditTimer(index), this.settingsManager);
 
     timerEl.appendChild(headerEl);
+
+    if (isEventToday) {
+      const countdownEl = ElementFactory.createEventCountdown(timer);
+      if (countdownEl) {
+        timerEl.appendChild(countdownEl);
+        this.registerCountdown(countdownEl, timer.time);
+      }
+    }
+
     timerEl.appendChild(nameEl);
     timerEl.appendChild(weekdayCountEl);
     if (locationEl) {
@@ -85,6 +96,24 @@ export class TimerRenderer {
     timerEl.appendChild(editBtn);
 
     this.timersContainer.appendChild(timerEl);
+  }
+
+  registerCountdown(countdownEl, timeString) {
+    const intervalId = setInterval(() => {
+      const secondsRemaining = ElementFactory.calculateSecondsRemainingToday(timeString);
+      countdownEl.textContent = ElementFactory.formatCountdown(secondsRemaining);
+
+      if (secondsRemaining <= 0) {
+        clearInterval(intervalId);
+      }
+    }, 1000);
+
+    this.countdownIntervals.push(intervalId);
+  }
+
+  clearCountdownIntervals() {
+    this.countdownIntervals.forEach((intervalId) => clearInterval(intervalId));
+    this.countdownIntervals = [];
   }
 
   calculateTimerData(timer) {
