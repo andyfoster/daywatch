@@ -187,6 +187,10 @@ describe('ElementFactory', () => {
       expect(ElementFactory.createEventCountdown({ ...mockTimer, time: null })).toBe(null);
     });
 
+    it('should return null when the time has already passed today', () => {
+      expect(ElementFactory.createEventCountdown({ ...mockTimer, time: '09:00' })).toBe(null);
+    });
+
     it('should create a countdown element showing time remaining', () => {
       const element = ElementFactory.createEventCountdown({ ...mockTimer, time: '12:00' });
 
@@ -207,39 +211,88 @@ describe('ElementFactory', () => {
     });
   });
 
-  describe('createEditButton', () => {
+  describe('createDateDisplay', () => {
     let mockSettingsManager;
-    let mockClickHandler;
 
     beforeEach(() => {
       mockSettingsManager = {
         formatDate: vi.fn().mockReturnValue('Dec 25, 2024')
       };
-      mockClickHandler = vi.fn();
     });
 
-    it('should create edit button with date only', () => {
+    it('should display the date only when no time is set', () => {
       const timerWithoutTime = { ...mockTimer, time: null };
-      const element = ElementFactory.createEditButton(timerWithoutTime, 0, mockClickHandler, mockSettingsManager);
+      const element = ElementFactory.createDateDisplay(timerWithoutTime, mockSettingsManager);
 
-      expect(element.tagName).toBe('BUTTON');
-      expect(element.className).toBe('edit-btn');
+      expect(element.tagName).toBe('P');
+      expect(element.className).toBe('timer-date-label');
       expect(element.textContent).toBe('Dec 25, 2024');
       expect(mockSettingsManager.formatDate).toHaveBeenCalledWith(mockTimer.date);
     });
 
-    it('should create edit button with date and time', () => {
-      const element = ElementFactory.createEditButton(mockTimer, 0, mockClickHandler, mockSettingsManager);
+    it('should display the date and time when a time is set', () => {
+      const element = ElementFactory.createDateDisplay(mockTimer, mockSettingsManager);
 
       expect(element.textContent).toBe('Dec 25, 2024 12:00');
     });
 
-    it('should call click handler when clicked', () => {
-      const element = ElementFactory.createEditButton(mockTimer, 5, mockClickHandler, mockSettingsManager);
+    it('should not be a button and should have no click behavior', () => {
+      const element = ElementFactory.createDateDisplay(mockTimer, mockSettingsManager);
+
+      expect(element.tagName).not.toBe('BUTTON');
+      expect(element.onclick).toBeNull();
+    });
+  });
+
+  describe('createEditIconButton', () => {
+    it('should create a labeled edit button', () => {
+      const element = ElementFactory.createEditIconButton(mockTimer, 2, vi.fn());
+
+      expect(element.tagName).toBe('BUTTON');
+      expect(element.className).toBe('timer-edit-btn');
+      expect(element.getAttribute('aria-label')).toBe('Edit Test Event');
+      expect(element.querySelector('svg.action-icon')).not.toBeNull();
+    });
+
+    it('should call the click handler with the timer index and not bubble the click', () => {
+      const onClickHandler = vi.fn();
+      const element = ElementFactory.createEditIconButton(mockTimer, 4, onClickHandler);
+
+      const parent = document.createElement('div');
+      const parentClickHandler = vi.fn();
+      parent.addEventListener('click', parentClickHandler);
+      parent.appendChild(element);
 
       element.click();
 
-      expect(mockClickHandler).toHaveBeenCalledWith(true, 5);
+      expect(onClickHandler).toHaveBeenCalledWith(4);
+      expect(parentClickHandler).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('createHideButton', () => {
+    it('should create a labeled hide button', () => {
+      const element = ElementFactory.createHideButton(mockTimer, 2, vi.fn());
+
+      expect(element.tagName).toBe('BUTTON');
+      expect(element.className).toBe('timer-hide-btn');
+      expect(element.getAttribute('aria-label')).toBe('Hide Test Event from main screen');
+      expect(element.querySelector('svg.action-icon')).not.toBeNull();
+    });
+
+    it('should call the click handler with the timer index and not bubble the click', () => {
+      const onClickHandler = vi.fn();
+      const element = ElementFactory.createHideButton(mockTimer, 3, onClickHandler);
+
+      const parent = document.createElement('div');
+      const parentClickHandler = vi.fn();
+      parent.addEventListener('click', parentClickHandler);
+      parent.appendChild(element);
+
+      element.click();
+
+      expect(onClickHandler).toHaveBeenCalledWith(3);
+      expect(parentClickHandler).not.toHaveBeenCalled();
     });
   });
 

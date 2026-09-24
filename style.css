@@ -63,6 +63,50 @@ body {
   background-color: #e8e8e8;
 }
 
+.timer-actions {
+  position: absolute;
+  top: calc(8px * var(--timer-scale));
+  right: calc(8px * var(--timer-scale));
+  display: flex;
+  gap: calc(4px * var(--timer-scale));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.timer:hover .timer-actions,
+.timer:focus-within .timer-actions,
+.timer-actions:focus-within {
+  opacity: 1;
+}
+
+.timer-edit-btn,
+.timer-hide-btn {
+  width: calc(28px * var(--timer-scale));
+  height: calc(28px * var(--timer-scale));
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.08);
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.timer-edit-btn .action-icon,
+.timer-hide-btn .action-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.timer-edit-btn:hover,
+.timer-hide-btn:hover {
+  background-color: rgba(0, 0, 0, 0.16);
+  color: #333;
+}
+
 .timer.small {
   max-width: calc(240px * var(--timer-scale));
   min-height: calc(130px * var(--timer-scale));
@@ -109,36 +153,11 @@ body {
   letter-spacing: 0.02em;
 }
 
-.edit-btn,
-.remove-btn,
-.settings-btn,
-.add-timer-btn {
-  background-color: transparent;
-  border: none;
+.timer-date-label {
   color: #999;
-  padding: 8px 16px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
   font-size: 20px;
-  margin-top: 10px;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: color 0.2s;
-}
-
-.remove-btn,
-.settings-btn,
-.add-timer-btn {
-  margin-left: auto;
-}
-
-.edit-btn:hover,
-.remove-btn:hover,
-.settings-btn:hover,
-.add-timer-btn:hover {
-  color: #000;
-  background: #cecece;
+  margin: 10px 0 0;
+  padding: 0;
 }
 
 #overlay {
@@ -841,40 +860,6 @@ body {
   transition: font-size 0.2s;
 }
 
-.button-container {
-  display: flex;
-  justify-content: space-between;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: 0;
-  padding: 10px;
-}
-
-.edit-btn,
-.remove-btn,
-.settings-btn,
-.add-timer-btn {
-  background-color: transparent;
-  border: none;
-  color: #999;
-  padding: 0;
-  text-align: center;
-  text-decoration: none;
-  font-size: 16px;
-  margin: 0;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.edit-btn:hover,
-.remove-btn:hover,
-.settings-btn:hover,
-.add-timer-btn:hover {
-  color: #555;
-}
-
 #modal-title {
   border-bottom: 2px solid #aaaaaa;
   margin-top: 0;
@@ -1071,20 +1056,6 @@ body {
   bottom: 20px;
 }
 
-#download-timers-btn {
-  width: 100px;
-  height: 50px;
-  border: none;
-  /* background-color: white; */
-  /* color: gainsboro; */
-  border-radius: 20%;
-  cursor: pointer;
-  font-size: 1rem;
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-}
-
 #add-timer-btn {
   right: 20px;
   user-select: none;
@@ -1130,6 +1101,7 @@ body {
   width: 44px;
   height: 44px;
   padding: 0;
+  cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;

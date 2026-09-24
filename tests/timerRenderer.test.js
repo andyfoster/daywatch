@@ -96,13 +96,38 @@ describe('TimerRenderer', () => {
       expect(card.querySelector('.due-date').textContent).toBe('Test Event');
     });
 
-    it('should invoke onEditTimer when the edit button is clicked', () => {
+    it('should invoke onEditTimer when the edit icon button is clicked', () => {
       const timer = { name: 'Test Event', date: Date.now(), color: '#ff0000' };
 
       timerRenderer.createTimerElement(timer, 3);
-      timerRenderer.timersContainer.querySelector('.edit-btn').click();
+      timerRenderer.timersContainer.querySelector('.timer-edit-btn').click();
 
       expect(onEditTimer).toHaveBeenCalledWith(3);
+    });
+
+    it('should not open the edit modal when the date label is clicked', () => {
+      const timer = { name: 'Test Event', date: Date.now(), color: '#ff0000' };
+
+      timerRenderer.createTimerElement(timer, 3);
+      const dateLabel = timerRenderer.timersContainer.querySelector('.timer-date-label');
+
+      expect(dateLabel).not.toBeNull();
+      expect(dateLabel.tagName).not.toBe('BUTTON');
+
+      dateLabel.click();
+
+      expect(onEditTimer).not.toHaveBeenCalled();
+    });
+
+    it('should hide the timer from the main screen when the hide button is clicked, without opening the edit modal', () => {
+      const timer = { name: 'Test Event', date: Date.now(), color: '#ff0000', showOnMainScreen: true };
+      mockTimerManager.getTimers.mockReturnValue([timer]);
+
+      timerRenderer.createTimerElement(timer, 2);
+      timerRenderer.timersContainer.querySelector('.timer-hide-btn').click();
+
+      expect(mockTimerManager.setTimerVisibility).toHaveBeenCalledWith(2, false);
+      expect(onEditTimer).not.toHaveBeenCalled();
     });
   });
 
@@ -130,9 +155,32 @@ describe('TimerRenderer', () => {
       expect(countdownEl.textContent).toBe('01:59:59');
     });
 
+    it('should remove the countdown element once it reaches zero, instead of showing 00:00:00', () => {
+      const todayMidnight = new Date('2024-06-15T00:00:00').getTime();
+      // Target time is 2 seconds away from the faked "now" of 10:00:00
+      const timer = { name: 'Standup', date: todayMidnight, time: '10:00', color: '#ff0000' };
+      vi.setSystemTime(new Date('2024-06-15T09:59:58'));
+
+      timerRenderer.createTimerElement(timer, 0);
+      expect(timerRenderer.timersContainer.querySelector('.event-countdown')).not.toBeNull();
+
+      vi.advanceTimersByTime(2000);
+
+      expect(timerRenderer.timersContainer.querySelector('.event-countdown')).toBeNull();
+    });
+
     it('should not render a countdown when the event is today but has no time', () => {
       const todayMidnight = new Date('2024-06-15T00:00:00').getTime();
       const timer = { name: 'All-day event', date: todayMidnight, time: null, color: '#ff0000' };
+
+      timerRenderer.createTimerElement(timer, 0);
+
+      expect(timerRenderer.timersContainer.querySelector('.event-countdown')).toBeNull();
+    });
+
+    it('should not render a countdown when the event time has already passed today', () => {
+      const todayMidnight = new Date('2024-06-15T00:00:00').getTime();
+      const timer = { name: 'Standup', date: todayMidnight, time: '09:00', color: '#ff0000' };
 
       timerRenderer.createTimerElement(timer, 0);
 

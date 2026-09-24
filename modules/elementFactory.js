@@ -127,12 +127,13 @@ export class ElementFactory {
   static createEventCountdown(timer) {
     if (!timer.time) return null;
 
+    const secondsRemaining = ElementFactory.calculateSecondsRemainingToday(timer.time);
+    if (secondsRemaining <= 0) return null;
+
     const countdownEl = document.createElement("p");
     countdownEl.className = "event-countdown";
     countdownEl.setAttribute("aria-live", "polite");
-    countdownEl.textContent = ElementFactory.formatCountdown(
-      ElementFactory.calculateSecondsRemainingToday(timer.time)
-    );
+    countdownEl.textContent = ElementFactory.formatCountdown(secondsRemaining);
 
     return countdownEl;
   }
@@ -164,18 +165,61 @@ export class ElementFactory {
     return weekdayCountEl;
   }
 
-  static createEditButton(timer, index, onClickHandler, settingsManager) {
-    const editBtn = document.createElement("button");
-    editBtn.className = "edit-btn";
+  static createDateDisplay(timer, settingsManager) {
+    const dateLabelEl = document.createElement("p");
+    dateLabelEl.className = "timer-date-label";
 
     let dateText = settingsManager.formatDate(timer.date);
     if (timer.time) {
       dateText += ` ${timer.time}`;
     }
 
-    editBtn.textContent = dateText;
-    editBtn.addEventListener("click", () => onClickHandler(true, index));
+    dateLabelEl.textContent = dateText;
+    return dateLabelEl;
+  }
+
+  static createEditIconButton(timer, index, onClickHandler) {
+    const editBtn = document.createElement("button");
+    editBtn.type = "button";
+    editBtn.className = "timer-edit-btn";
+    editBtn.setAttribute("aria-label", `Edit ${timer.name}`);
+    editBtn.title = "Edit";
+    editBtn.innerHTML = `
+      <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"></path>
+      </svg>
+    `;
+
+    editBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      onClickHandler(index);
+    });
+
     return editBtn;
+  }
+
+  static createHideButton(timer, index, onClickHandler) {
+    const hideBtn = document.createElement("button");
+    hideBtn.type = "button";
+    hideBtn.className = "timer-hide-btn";
+    hideBtn.setAttribute("aria-label", `Hide ${timer.name} from main screen`);
+    hideBtn.title = "Hide from main screen";
+    hideBtn.innerHTML = `
+      <svg class="action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"></path>
+        <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"></path>
+        <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"></path>
+        <line x1="1" y1="1" x2="23" y2="23"></line>
+      </svg>
+    `;
+
+    hideBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      onClickHandler(index);
+    });
+
+    return hideBtn;
   }
 
   static createSidebarEventText(timer) {

@@ -57,6 +57,22 @@
     border: 1px solid var(--dw-border);
   }
 
+  .timer-edit-btn,
+  .timer-hide-btn {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--dw-text-muted);
+  }
+
+  .timer-edit-btn:hover,
+  .timer-hide-btn:hover {
+    background-color: rgba(255, 255, 255, 0.16);
+    color: var(--dw-text);
+  }
+
+  .timer-date-label {
+    color: var(--dw-text-muted);
+  }
+
   .days-remaining {
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   }
@@ -119,20 +135,6 @@
     color: #c8ced6;
   }
 
-  .edit-btn,
-  .remove-btn,
-  .settings-btn,
-  .add-timer-btn {
-    color: #b3b9c2;
-  }
-
-  .edit-btn:hover,
-  .remove-btn:hover,
-  .settings-btn:hover,
-  .add-timer-btn:hover {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.08);
-  }
 
   /* ---------- Modal (Bootstrap) ---------- */
   .dw-modal .modal-content {

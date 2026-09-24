@@ -73,8 +73,16 @@ export class TimerRenderer {
     const weekdayCountEl = ElementFactory.createWeekdayCount(weekdaysRemaining, timer.color);
     const locationEl = ElementFactory.createLocationElement(timer);
     const linkEl = ElementFactory.createLinkElement(timer);
-    const editBtn = ElementFactory.createEditButton(timer, index, () => this.onEditTimer(index), this.settingsManager);
+    const dateLabelEl = ElementFactory.createDateDisplay(timer, this.settingsManager);
+    const editBtn = ElementFactory.createEditIconButton(timer, index, (idx) => this.onEditTimer(idx));
+    const hideBtn = ElementFactory.createHideButton(timer, index, (idx) => this.hideTimerFromMainScreen(idx));
 
+    const actionsEl = document.createElement("div");
+    actionsEl.className = "timer-actions";
+    actionsEl.appendChild(editBtn);
+    actionsEl.appendChild(hideBtn);
+
+    timerEl.appendChild(actionsEl);
     timerEl.appendChild(headerEl);
 
     if (isEventToday) {
@@ -93,19 +101,27 @@ export class TimerRenderer {
     if (linkEl) {
       timerEl.appendChild(linkEl);
     }
-    timerEl.appendChild(editBtn);
+    timerEl.appendChild(dateLabelEl);
 
     this.timersContainer.appendChild(timerEl);
+  }
+
+  hideTimerFromMainScreen(index) {
+    this.timerManager.setTimerVisibility(index, false);
+    this.renderTimers();
   }
 
   registerCountdown(countdownEl, timeString) {
     const intervalId = setInterval(() => {
       const secondsRemaining = ElementFactory.calculateSecondsRemainingToday(timeString);
-      countdownEl.textContent = ElementFactory.formatCountdown(secondsRemaining);
 
       if (secondsRemaining <= 0) {
+        countdownEl.remove();
         clearInterval(intervalId);
+        return;
       }
+
+      countdownEl.textContent = ElementFactory.formatCountdown(secondsRemaining);
     }, 1000);
 
     this.countdownIntervals.push(intervalId);
