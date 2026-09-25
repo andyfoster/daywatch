@@ -211,6 +211,32 @@ describe('ElementFactory', () => {
     });
   });
 
+  describe('createWeekdayCount', () => {
+    it('should return null when there are 0 weekdays remaining', () => {
+      expect(ElementFactory.createWeekdayCount(0, '#ff0000')).toBe(null);
+    });
+
+    it('should show singular "weekday" remaining', () => {
+      const element = ElementFactory.createWeekdayCount(1, '#ff0000');
+
+      expect(element.tagName).toBe('P');
+      expect(element.className).toBe('weekday-count');
+      expect(element.textContent).toBe('1 weekday remaining');
+    });
+
+    it('should show plural "weekdays" remaining', () => {
+      const element = ElementFactory.createWeekdayCount(4, '#ff0000');
+
+      expect(element.textContent).toBe('4 weekdays remaining');
+    });
+
+    it('should show weekdays ago for past events', () => {
+      const element = ElementFactory.createWeekdayCount(-2, '#ff0000');
+
+      expect(element.textContent).toBe('2 weekdays ago');
+    });
+  });
+
   describe('createDateDisplay', () => {
     let mockSettingsManager;
 

@@ -63,24 +63,10 @@ body {
   background-color: #e8e8e8;
 }
 
-.timer-actions {
-  position: absolute;
-  top: calc(8px * var(--timer-scale));
-  right: calc(8px * var(--timer-scale));
-  display: flex;
-  gap: calc(4px * var(--timer-scale));
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.timer:hover .timer-actions,
-.timer:focus-within .timer-actions,
-.timer-actions:focus-within {
-  opacity: 1;
-}
-
 .timer-edit-btn,
 .timer-hide-btn {
+  position: absolute;
+  top: calc(8px * var(--timer-scale));
   width: calc(28px * var(--timer-scale));
   height: calc(28px * var(--timer-scale));
   padding: 0;
@@ -92,7 +78,16 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  opacity: 0;
+  transition: opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.timer-edit-btn {
+  left: calc(8px * var(--timer-scale));
+}
+
+.timer-hide-btn {
+  right: calc(8px * var(--timer-scale));
 }
 
 .timer-edit-btn .action-icon,
@@ -101,10 +96,27 @@ body {
   height: 16px;
 }
 
+.timer:hover .timer-edit-btn,
+.timer:hover .timer-hide-btn,
+.timer:focus-within .timer-edit-btn,
+.timer:focus-within .timer-hide-btn,
+.timer-edit-btn:focus-visible,
+.timer-hide-btn:focus-visible {
+  opacity: 1;
+}
+
 .timer-edit-btn:hover,
 .timer-hide-btn:hover {
   background-color: rgba(0, 0, 0, 0.16);
   color: #333;
+}
+
+.timer-hide-ghost {
+  position: fixed;
+  margin: 0;
+  z-index: 2000;
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease-in;
 }
 
 .timer.small {

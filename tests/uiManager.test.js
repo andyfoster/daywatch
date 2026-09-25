@@ -55,6 +55,7 @@ describe('UIManager', () => {
         <input id="date-color" type="color" value="#333333">
         <input id="timer-size-range" type="range">
         <span id="timer-size-value"></span>
+        <input id="show-weekdays-toggle" type="checkbox">
       </form>
       <h2 id="modal-title"></h2>
       <button id="remove-timer-btn"></button>
@@ -95,7 +96,8 @@ describe('UIManager', () => {
         displayFont: 'Arial',
         dateFormat: 'MM/DD/YYYY',
         dateColor: '#333333',
-        timerScale: 100
+        timerScale: 100,
+        showWeekdays: true
       }),
       updateSettings: vi.fn(),
       formatDate: vi.fn().mockReturnValue('Dec 25, 2024'),
@@ -282,6 +284,31 @@ describe('UIManager', () => {
       uiManager.updateUI();
 
       expect(uiManager.elements.dateEl.textContent).toBeTruthy();
+    });
+  });
+
+  describe('settings form: show weekdays remaining', () => {
+    it('should populate the toggle from current settings', () => {
+      mockSettingsManager.getCurrentSettings.mockReturnValue({
+        language: 'en', displayFont: 'Arial', dateFormat: 'MM/DD/YYYY',
+        dateColor: '#333333', timerScale: 100, showWeekdays: false
+      });
+
+      uiManager.populateCurrentSettings();
+
+      expect(document.getElementById('show-weekdays-toggle').checked).toBe(false);
+    });
+
+    it('should include the toggle value when saving settings', async () => {
+      document.getElementById('show-weekdays-toggle').checked = false;
+
+      const event = new Event('submit');
+      event.preventDefault = vi.fn();
+      await uiManager.handleSettingsFormSubmit(event);
+
+      expect(mockSettingsManager.updateSettings).toHaveBeenCalledWith(
+        expect.objectContaining({ showWeekdays: false })
+      );
     });
   });
 });

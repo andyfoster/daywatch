@@ -129,7 +129,8 @@ export class UIManager {
         displayFont: this.elements.displayFontSelect.value,
         language: this.elements.languageSelect.value,
         dateColor: this.elements.dateColorInput?.value || this.settingsManager.getCurrentSettings().dateColor || "#333333",
-        timerScale: this.getTimerScaleValue()
+        timerScale: this.getTimerScaleValue(),
+        showWeekdays: document.getElementById("show-weekdays-toggle").checked
       };
 
       await this.settingsManager.updateSettings(newSettings);
@@ -342,5 +343,6 @@ export class UIManager {
       this.updateTimerSizeDisplay(settings.timerScale || 100);
       this.applyTimerScale(settings.timerScale || 100);
     }
+    document.getElementById("show-weekdays-toggle").checked = settings.showWeekdays !== false;
   }
 }

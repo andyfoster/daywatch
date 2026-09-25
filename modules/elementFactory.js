@@ -147,6 +147,8 @@ export class ElementFactory {
   }
 
   static createWeekdayCount(weekdaysRemaining, timerColor = "#385174") {
+    if (weekdaysRemaining === 0) return null;
+
     const weekdayCountEl = document.createElement("p");
     weekdayCountEl.className = "weekday-count";
     weekdayCountEl.style.color = ElementFactory.getReadableColor(timerColor);
@@ -156,8 +158,6 @@ export class ElementFactory {
 
     if (weekdaysRemaining < 0) {
       weekdayCountEl.textContent = `${absWeekdays} ${label} ago`;
-    } else if (weekdaysRemaining === 0) {
-      weekdayCountEl.textContent = `0 ${label} remaining`;
     } else {
       weekdayCountEl.textContent = `${weekdaysRemaining} ${label} remaining`;
     }

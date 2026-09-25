@@ -96,6 +96,31 @@ describe('TimerRenderer', () => {
       expect(card.querySelector('.due-date').textContent).toBe('Test Event');
     });
 
+    it('should not show the weekday count when there are 0 weekdays remaining', () => {
+      const timer = { name: 'Today Event', date: Date.now(), color: '#ff0000' };
+
+      timerRenderer.createTimerElement(timer, 0);
+
+      expect(timerRenderer.timersContainer.querySelector('.weekday-count')).toBeNull();
+    });
+
+    it('should not show the weekday count when the showWeekdays setting is disabled', () => {
+      mockSettingsManager.getCurrentSettings.mockReturnValue({ displayFont: 'Arial', language: 'en', showWeekdays: false });
+      const timer = { name: 'Future Event', date: Date.now() + 5 * 86400000, color: '#ff0000' };
+
+      timerRenderer.createTimerElement(timer, 0);
+
+      expect(timerRenderer.timersContainer.querySelector('.weekday-count')).toBeNull();
+    });
+
+    it('should show the weekday count by default when there are weekdays remaining', () => {
+      const timer = { name: 'Future Event', date: Date.now() + 5 * 86400000, color: '#ff0000' };
+
+      timerRenderer.createTimerElement(timer, 0);
+
+      expect(timerRenderer.timersContainer.querySelector('.weekday-count')).not.toBeNull();
+    });
+
     it('should invoke onEditTimer when the edit icon button is clicked', () => {
       const timer = { name: 'Test Event', date: Date.now(), color: '#ff0000' };
 
@@ -120,14 +145,44 @@ describe('TimerRenderer', () => {
     });
 
     it('should hide the timer from the main screen when the hide button is clicked, without opening the edit modal', () => {
-      const timer = { name: 'Test Event', date: Date.now(), color: '#ff0000', showOnMainScreen: true };
-      mockTimerManager.getTimers.mockReturnValue([timer]);
+      vi.useFakeTimers();
+      try {
+        const timer = { name: 'Test Event', date: Date.now(), color: '#ff0000', showOnMainScreen: true };
+        mockTimerManager.getTimers.mockReturnValue([timer]);
 
-      timerRenderer.createTimerElement(timer, 2);
-      timerRenderer.timersContainer.querySelector('.timer-hide-btn').click();
+        timerRenderer.createTimerElement(timer, 2);
+        timerRenderer.timersContainer.querySelector('.timer-hide-btn').click();
 
-      expect(mockTimerManager.setTimerVisibility).toHaveBeenCalledWith(2, false);
-      expect(onEditTimer).not.toHaveBeenCalled();
+        // Visibility update is deferred until the fly-away animation finishes
+        expect(mockTimerManager.setTimerVisibility).not.toHaveBeenCalled();
+
+        vi.advanceTimersByTime(500);
+
+        expect(mockTimerManager.setTimerVisibility).toHaveBeenCalledWith(2, false);
+        expect(onEditTimer).not.toHaveBeenCalled();
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it('should animate a detached copy of the card and hide the original immediately', () => {
+      vi.useFakeTimers();
+      try {
+        const timer = { name: 'Test Event', date: Date.now(), color: '#ff0000', showOnMainScreen: true };
+
+        timerRenderer.createTimerElement(timer, 0);
+        const card = timerRenderer.timersContainer.querySelector('.timer');
+        card.querySelector('.timer-hide-btn').click();
+
+        expect(card.style.visibility).toBe('hidden');
+        expect(document.body.querySelector('.timer-hide-ghost')).not.toBeNull();
+
+        vi.advanceTimersByTime(500);
+
+        expect(document.body.querySelector('.timer-hide-ghost')).toBeNull();
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 

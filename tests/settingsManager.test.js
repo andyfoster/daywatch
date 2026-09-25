@@ -38,6 +38,7 @@ describe('SettingsManager', () => {
       expect(settings.displayFont).toBe('Roboto Condensed');
       expect(settings.language).toBe('en');
       expect(settings.hideTimers).toBe(false);
+      expect(settings.showWeekdays).toBe(true);
       expect(settings.timerScale).toBe(100);
       expect(settings.dateColor).toBe('#333333');
       expect(settings.backgroundImage).toContain('unsplash.com');
@@ -74,6 +75,27 @@ describe('SettingsManager', () => {
       expect(() => {
         settingsManager.updateSettings({ timerScale: 20 });
       }).toThrow('Invalid timer scale');
+    });
+  });
+
+  describe('show weekdays setting', () => {
+    it('should default to true when nothing is stored', () => {
+      expect(settingsManager.getCurrentSettings().showWeekdays).toBe(true);
+    });
+
+    it('should read a stored false value', () => {
+      localStorageMock.getItem.mockImplementation((key) => (key === 'showWeekdays' ? 'false' : null));
+
+      settingsManager = new SettingsManager();
+
+      expect(settingsManager.getCurrentSettings().showWeekdays).toBe(false);
+    });
+
+    it('should persist the setting when updated', () => {
+      settingsManager.updateSettings({ showWeekdays: false });
+
+      expect(settingsManager.getCurrentSettings().showWeekdays).toBe(false);
+      expect(localStorageMock.setItem).toHaveBeenCalledWith('showWeekdays', 'false');
     });
   });
 

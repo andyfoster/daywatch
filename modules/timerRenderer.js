@@ -70,19 +70,17 @@ export class TimerRenderer {
     // Create and append elements using ElementFactory
     const headerEl = ElementFactory.createTimerHeader(isEventToday, daysRemaining, this.translations, settings.language);
     const nameEl = ElementFactory.createTimerName(timer);
-    const weekdayCountEl = ElementFactory.createWeekdayCount(weekdaysRemaining, timer.color);
+    const weekdayCountEl = settings.showWeekdays !== false
+      ? ElementFactory.createWeekdayCount(weekdaysRemaining, timer.color)
+      : null;
     const locationEl = ElementFactory.createLocationElement(timer);
     const linkEl = ElementFactory.createLinkElement(timer);
     const dateLabelEl = ElementFactory.createDateDisplay(timer, this.settingsManager);
     const editBtn = ElementFactory.createEditIconButton(timer, index, (idx) => this.onEditTimer(idx));
-    const hideBtn = ElementFactory.createHideButton(timer, index, (idx) => this.hideTimerFromMainScreen(idx));
+    const hideBtn = ElementFactory.createHideButton(timer, index, (idx) => this.hideTimerFromMainScreen(idx, timerEl));
 
-    const actionsEl = document.createElement("div");
-    actionsEl.className = "timer-actions";
-    actionsEl.appendChild(editBtn);
-    actionsEl.appendChild(hideBtn);
-
-    timerEl.appendChild(actionsEl);
+    timerEl.appendChild(editBtn);
+    timerEl.appendChild(hideBtn);
     timerEl.appendChild(headerEl);
 
     if (isEventToday) {
@@ -94,7 +92,9 @@ export class TimerRenderer {
     }
 
     timerEl.appendChild(nameEl);
-    timerEl.appendChild(weekdayCountEl);
+    if (weekdayCountEl) {
+      timerEl.appendChild(weekdayCountEl);
+    }
     if (locationEl) {
       timerEl.appendChild(locationEl);
     }
@@ -106,9 +106,57 @@ export class TimerRenderer {
     this.timersContainer.appendChild(timerEl);
   }
 
-  hideTimerFromMainScreen(index) {
-    this.timerManager.setTimerVisibility(index, false);
-    this.renderTimers();
+  hideTimerFromMainScreen(index, timerEl) {
+    if (!timerEl) {
+      this.timerManager.setTimerVisibility(index, false);
+      this.renderTimers();
+      return;
+    }
+
+    this.flyCardIntoStack(timerEl, () => {
+      this.timerManager.setTimerVisibility(index, false);
+      this.renderTimers();
+    });
+  }
+
+  flyCardIntoStack(timerEl, onComplete) {
+    const stackTarget = document.getElementById("toggle-panel");
+    const startRect = timerEl.getBoundingClientRect();
+    const targetRect = stackTarget ? stackTarget.getBoundingClientRect() : null;
+
+    const endX = targetRect ? targetRect.left + targetRect.width / 2 : startRect.left;
+    const endY = targetRect ? targetRect.top + targetRect.height / 2 : startRect.top + startRect.height / 2;
+    const dx = endX - (startRect.left + startRect.width / 2);
+    const dy = endY - (startRect.top + startRect.height / 2);
+
+    // Animate a fixed-position copy so the flight isn't clipped by the
+    // scrollable grid and isn't cut short if the grid re-renders mid-flight.
+    const ghost = timerEl.cloneNode(true);
+    ghost.classList.add("timer-hide-ghost");
+    ghost.style.top = `${startRect.top}px`;
+    ghost.style.left = `${startRect.left}px`;
+    ghost.style.width = `${startRect.width}px`;
+    ghost.style.height = `${startRect.height}px`;
+    document.body.appendChild(ghost);
+    timerEl.style.visibility = "hidden";
+
+    void ghost.offsetWidth; // force layout so the transform below actually transitions
+
+    requestAnimationFrame(() => {
+      ghost.style.transform = `translate(${dx}px, ${dy}px) scale(0.05)`;
+      ghost.style.opacity = "0";
+    });
+
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      ghost.remove();
+      onComplete();
+    };
+
+    ghost.addEventListener("transitionend", finish);
+    setTimeout(finish, 450);
   }
 
   registerCountdown(countdownEl, timeString) {

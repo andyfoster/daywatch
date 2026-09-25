@@ -24,6 +24,7 @@ export class SettingsManager {
       displayFont: localStorage.getItem("displayFont") || "Roboto Condensed",
       language: localStorage.getItem("language") || "en",
       hideTimers: localStorage.getItem("hideTimers") === "true",
+      showWeekdays: localStorage.getItem("showWeekdays") !== "false",
       timerScale: Number.isFinite(storedTimerScale) && storedTimerScale >= 70 && storedTimerScale <= 140
         ? storedTimerScale
         : 100,
